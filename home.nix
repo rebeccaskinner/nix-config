@@ -169,7 +169,7 @@ feh --bg-scale /home/rebecca/.config/wallpaper
     windowManager.xmonad = {
       enable = true;
       enableContribAndExtras = true;
-      config = "/home/rebecca/.config/nixpkgs/xmonad/xmonad.hs";
+      config = ./xmonad/xmonad.hs;
     };
   };
 
