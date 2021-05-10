@@ -2,6 +2,64 @@
 
 let
   gtkDarkTheme = { gtk-application-prefer-dark-theme = true; };
+
+  haskellDevEnvironment = pkgs.haskellPackages.ghcWithPackages(hsPkgs: with hsPkgs; [
+    ## Haskell Tooling
+    cabal-install
+    cabal2nix
+    stylish-haskell
+    ghcide
+    hoogle
+    threadscope
+
+    ## Common Haskell Libraries
+    stm
+    bytestring
+    text
+    containers
+    vector
+    time
+    unix
+    mtl
+    transformers
+    aeson
+    aeson-pretty
+    lens
+    conduit
+  ]);
+
+  commandLineTools = with pkgs; [
+    htop
+    bat
+    silver-searcher
+  ];
+
+  polybarFonts = with pkgs; [
+    font-awesome-ttf
+    siji
+    material-design-icons
+  ];
+
+  writingTools = with pkgs; [
+    pandoc
+  ];
+
+  xserverTools = with pkgs; [
+    xmobar
+    scrot
+    trayer
+    neofetch
+    qiv
+    pcmanfm
+    networkmanagerapplet
+    xmonad-log
+  ];
+
+  productivity = with pkgs; [
+    slack
+    thunderbird
+  ];
+
 in
 {
   nixpkgs.config.allowUnfree = true;
@@ -14,23 +72,16 @@ in
   home.username = "rebecca";
   home.homeDirectory = "/home/rebecca";
 
-  home.packages = with pkgs; [
-    htop
-    slack
-    bat
-    silver-searcher
-    pandoc
-    thunderbird
-    ctags
-    xmobar
-    dmenu
-    scrot
-    trayer
-    networkmanagerapplet
-    neofetch
-    qiv
-    pcmanfm
-  ];
+  imports = (import ./programs)
+         ++ (import ./services);
+
+  home.packages =
+    [haskellDevEnvironment]
+    ++ commandLineTools
+    ++ writingTools
+    ++ xserverTools
+    ++ polybarFonts
+    ++ productivity;
 
   home.keyboard.options = ["ctrl:nocaps"];
 
@@ -41,98 +92,8 @@ in
 
   services.emacs.enable = true;
   services.emacs.client.enable = true;
-
-  programs.emacs = {
-    enable = true;
-    extraPackages = epkgs: [
-      epkgs.ace-window
-      epkgs.flycheck
-      epkgs.direnv
-      epkgs.fill-column-indicator
-      epkgs.dante
-      epkgs.auto-complete
-      epkgs.pdf-tools
-      epkgs.dhall-mode
-      epkgs.proof-general
-      epkgs.rebecca-theme
-      epkgs.nix-mode
-      epkgs.magit
-      epkgs.ox-gfm
-      epkgs.nix-buffer
-      epkgs.nix-sandbox
-      epkgs.restclient
-      epkgs.protobuf-mode
-      epkgs.darcula-theme
-      epkgs.format-sql
-      epkgs.paredit
-      epkgs.ox-pandoc
-      epkgs.json-mode
-      epkgs.graphviz-dot-mode
-      epkgs.go-mode
-      epkgs.go-playground
-      epkgs.expand-region
-      epkgs.cargo
-      epkgs.rainbow-delimiters
-      epkgs.sql-indent
-      epkgs.spacemacs-theme
-      epkgs.use-package
-      epkgs.pdf-tools
-    ];
-  };
-
-  programs.gpg = {
-    enable = true;
-  };
-
-  programs.git = {
-    enable = true;
-    userEmail = "rebecca@rebeccaskinner.net";
-    userName = "rebecca skinner";
-    aliases = {
-      co = "checkout";
-      br = "branch";
-      ff = "merge --ff-only";
-      st = "status";
-    };
-    extraConfig = {
-      init = {
-        defaultBranch = "main";
-      };
-    };
-  };
-
-  programs.kitty = {
-    enable = true;
-    font.name = "Fira Code";
-  };
-
-  programs.dircolors = {
-    enable = true;
-    enableBashIntegration = true;
-  };
-
-  programs.direnv = {
-    enable = true;
-    enableBashIntegration = true;
-    enableNixDirenvIntegration = true;
-  };
-
-  programs.bash = {
-    enable = true;
-    enableVteIntegration = true;
-    shellAliases = {
-      ll = "ls -alF";
-      la = "ls -A";
-      ls = "ls --color=tty --classify";
-      gitk = "gitk --all &";
-      qiv = "qiv -t -I";
-      emacs = "emacsclient -nw";
-    };
-  };
-
-  programs.feh = {
-    enable = true;
-  };
+  services.blueman-applet.enable = true;
+  services.network-manager-applet.enable = true;
 
   gtk = {
     enable = true;
@@ -140,36 +101,9 @@ in
   };
 
   home.file = {
-    ".emacs.d" = {
-      source = ./emacs;
-      recursive = true;
-    };
-    ".xmobarrc" = {
-      source = ./xmonad/xmobarrc;
-      recursive = false;
-    };
     ".config/gtk-4.0/settings.ini" = {
       source = ./gtk-4.0-settings.ini;
       recursive = false;
-    };
-    ".ghci" = {
-      source = ./ghci;
-      recursive = false;
-    };
-  };
-
-  xsession = {
-    enable = true;
-    initExtra = ''
-xrandr --dpi 90
-xrandr --output eDP-1-1 --brightness 0.2
-xrandr --output eDP-1-1 --off
-feh --bg-scale /home/rebecca/.config/wallpaper
-'';
-    windowManager.xmonad = {
-      enable = true;
-      enableContribAndExtras = true;
-      config = ./xmonad/xmonad.hs;
     };
   };
 

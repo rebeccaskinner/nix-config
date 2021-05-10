@@ -4,11 +4,6 @@
 
 ;;; Code:
 
-;; disable the menu bar
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(toggle-scroll-bar -1)
-
 
 ;; Disable the splash screen
 (setq inhibit-splash-screen t)
@@ -570,5 +565,10 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
 ;  (load-theme 'idea-darkula-theme)
   )
 (configure-theme)
+
+;; disable the menu bar
+(menu-bar-mode -1)
+(tool-bar-mode -1)
+(toggle-scroll-bar -1)
 
 ;;; init.el ends here

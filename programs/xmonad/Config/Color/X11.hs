@@ -1,0 +1,736 @@
+module Config.Color.X11 where
+import Config.Color.Type
+
+data X11Color
+  = AliceBlue
+  | AntiqueWhite
+  | Aqua
+  | Aquamarine
+  | Azure
+  | Beige
+  | Bisque
+  | Black
+  | BlanchedAlmond
+  | Blue
+  | BlueViolet
+  | Brown
+  | Burlywood
+  | CadetBlue
+  | Chartreuse
+  | Chocolate
+  | Coral
+  | CornflowerBlue
+  | Cornsilk
+  | Crimson
+  | Cyan
+  | DarkBlue
+  | DarkCyan
+  | DarkGoldenrod
+  | DarkGray
+  | DarkGreen
+  | DarkKhaki
+  | DarkMagenta
+  | DarkOlive
+  | DarkOrange
+  | DarkOrchid
+  | DarkRed
+  | DarkSalmon
+  | DarkSea
+  | DarkSlate
+  | DarkSlate
+  | DarkTurquoise
+  | DarkViolet
+  | DeepPink
+  | DeepSkyBlue
+  | DimGray
+  | DodgerBlue
+  | Firebrick
+  | FloralWhite
+  | ForestGreen
+  | Fuchsia
+  | Gainsboro
+  | GhostWhite
+  | Gold
+  | Goldenrod
+  | Gray
+  | WebGray
+  | Green
+  | WebGreen
+  | Green
+  | Honeydew
+  | HotPink
+  | Indian
+  | Indigo
+  | Ivory
+  | Khaki
+  | Lavender
+  | LavenderBlush
+  | LawnGreen
+  | LemonChiffon
+  | LightBlue
+  | LightCoral
+  | LightCyan
+  | LightGoldenrod
+  | LightGray
+  | LightGreen
+  | LightPink
+  | LightSalmon
+  | LightSea
+  | LightSky
+  | LightSlate
+  | LightSteel
+  | LightYellow
+  | Lime
+  | LimeGreen
+  | Linen
+  | Magenta
+  | Maroon
+  | Web
+  | MediumAquamarine
+  | MediumBlue
+  | MediumOrchid
+  | MediumPurple
+  | MediumSeaGreen
+  | MediumSlateBlue
+  | MediumSpringGreen
+  | MediumTurquoise
+  | MediumVioletRed
+  | MidnightBlue
+  | MintCream
+  | MistyRose
+  | Moccasin
+  | NavajoWhite
+  | NavyBlue
+  | OldLace
+  | Olive
+  | OliveDrab
+  | Orange
+  | OrangeRed
+  | Orchid
+  | PaleGoldenrod
+  | PaleGreen
+  | PaleTurquoise
+  | PaleViolet
+  | PapayaWhip
+  | PeachPuff
+  | Peru
+  | Pink
+  | Plum
+  | Powder
+  | Purple
+  | WebPurple
+  | RebeccaPurple
+  | Red
+  | RosyBrown
+  | RoyalBlue
+  | SaddleBrown
+  | Salmon
+  | SandyBrown
+  | SeaGreen
+  | Seashell
+  | Sienna
+  | Silver
+  | SkyBlue
+  | SlateBlue
+  | SlateGray
+  | Snow
+  | SpringGreen
+  | SteelBlue
+  | Tan
+  | Teal
+  | Thistle
+  | Tomato
+  | Turquoise
+  | Violet
+  | Wheat
+  | White
+  | WhiteSmoke
+  | Yellow
+  | YellowGreen
+  deriving (Eq, Ord, Bounded, Enum, Show)
+
+x11ToColor :: X11Color -> Color
+x11ToColor = \case
+  AliceBlue -> Color 0xF0 0xF8 0xFF
+  AntiqueWhite -> Color 0xFA 0xEB 0xD7
+  Aqua -> Color 0x00 0xFF 0xFF
+  Aquamarine -> Color 0x7F 0xFF 0xD4
+  Azure -> Color 0xF0 0xFF 0xFF
+  Beige -> Color 0xF5 0xF5 0xDC
+  Bisque -> Color 0xFF 0xE4 0xC4
+  Black -> Color 0x00 0x00 0x00
+  BlanchedAlmond -> Color 0xFF 0xEB 0xCD
+  Blue -> Color 0x00 0x00 0xFF
+  BlueViolet -> Color 0x8A 0x2B 0xE2
+  Brown -> Color 0xA5 0x2A 0x2A
+  Burlywood -> Color 0xDE 0xB8 0x87
+  CadetBlue -> Color 0x5F 0x9E 0xA0
+  Chartreuse -> Color 0x7F 0xFF 0x00
+  Chocolate -> Color 0xD2 0x69 0x1E
+  Coral -> Color 0xFF 0x7F 0x50
+  CornflowerBlue -> Color 0x64 0x95 0xED
+  Cornsilk -> Color 0xFF 0xF8 0xDC
+  Crimson -> Color 0xDC 0x14 0x3C
+  Cyan -> Color 0x00 0xFF 0xFF
+  DarkBlue -> Color 0x00 0x00 0x8B
+  DarkCyan -> Color 0x00 0x8B 0x8B
+  DarkGoldenrod -> Color 0xB8 0x86 0x0B
+  DarkGray -> Color 0xA9 0xA9 0xA9
+  DarkGreen -> Color 0x00 0x64 0x00
+  DarkKhaki -> Color 0xBD 0xB7 0x6B
+  DarkMagenta -> Color 0x8B 0x00 0x8B
+  DarkOlive -> Color 0x55 0x6B 0x2F
+  DarkOrange -> Color 0xFF 0x8C 0x00
+  DarkOrchid -> Color 0x99 0x32 0xCC
+  DarkRed -> Color 0x8B 0x00 0x00
+  DarkSalmon -> Color 0xE9 0x96 0x7A
+  DarkSea -> Color 0x8F 0xBC 0x8F
+  DarkSlate -> Color 0x48 0x3D 0x8B
+  DarkSlate -> Color 0x2F 0x4F 0x4F
+  DarkTurquoise -> Color 0x00 0xCE 0xD1
+  DarkViolet -> Color 0x94 0x00 0xD3
+  DeepPink -> Color 0xFF 0x14 0x93
+  DeepSkyBlue -> Color 0x00 0xBF 0xFF
+  DimGray -> Color 0x69 0x69 0x69
+  DodgerBlue -> Color 0x1E 0x90 0xFF
+  Firebrick -> Color 0xB2 0x22 0x22
+  FloralWhite -> Color 0xFF 0xFA 0xF0
+  ForestGreen -> Color 0x22 0x8B 0x22
+  Fuchsia -> Color 0xFF 0x00 0xFF
+  Gainsboro -> Color 0xDC 0xDC 0xDC
+  GhostWhite -> Color 0xF8 0xF8 0xFF
+  Gold -> Color 0xFF 0xD7 0x00
+  Goldenrod -> Color 0xDA 0xA5 0x20
+  Gray -> Color 0xBE 0xBE 0xBE
+  WebGray -> Color 0x80 0x80 0x80
+  Green -> Color 0x00 0xFF 0x00
+  WebGreen -> Color 0x00 0x80 0x00
+  Green -> Color 0xAD 0xFF 0x2F
+  Honeydew -> Color 0xF0 0xFF 0xF0
+  HotPink -> Color 0xFF 0x69 0xB4
+  Indian -> Color 0xCD 0x5C 0x5C
+  Indigo -> Color 0x4B 0x00 0x82
+  Ivory -> Color 0xFF 0xFF 0xF0
+  Khaki -> Color 0xF0 0xE6 0x8C
+  Lavender -> Color 0xE6 0xE6 0xFA
+  LavenderBlush -> Color 0xFF 0xF0 0xF5
+  LawnGreen -> Color 0x7C 0xFC 0x00
+  LemonChiffon -> Color 0xFF 0xFA 0xCD
+  LightBlue -> Color 0xAD 0xD8 0xE6
+  LightCoral -> Color 0xF0 0x80 0x80
+  LightCyan -> Color 0xE0 0xFF 0xFF
+  LightGoldenrod -> Color 0xFA 0xFA 0xD2
+  LightGray -> Color 0xD3 0xD3 0xD3
+  LightGreen -> Color 0x90 0xEE 0x90
+  LightPink -> Color 0xFF 0xB6 0xC1
+  LightSalmon -> Color 0xFF 0xA0 0x7A
+  LightSea -> Color 0x20 0xB2 0xAA
+  LightSky -> Color 0x87 0xCE 0xFA
+  LightSlate -> Color 0x77 0x88 0x99
+  LightSteel -> Color 0xB0 0xC4 0xDE
+  LightYellow -> Color 0xFF 0xFF 0xE0
+  Lime -> Color 0x00 0xFF 0x00
+  LimeGreen -> Color 0x32 0xCD 0x32
+  Linen -> Color 0xFA 0xF0 0xE6
+  Magenta -> Color 0xFF 0x00 0xFF
+  Maroon -> Color 0xB0 0x30 0x60
+  Web -> Color 0x80 0x00 0x00
+  MediumAquamarine -> Color 0x66 0xCD 0xAA
+  MediumBlue -> Color 0x00 0x00 0xCD
+  MediumOrchid -> Color 0xBA 0x55 0xD3
+  MediumPurple -> Color 0x93 0x70 0xDB
+  MediumSeaGreen -> Color 0x3C 0xB3 0x71
+  MediumSlateBlue -> Color 0x7B 0x68 0xEE
+  MediumSpringGreen -> Color 0x00 0xFA 0x9A
+  MediumTurquoise -> Color 0x48 0xD1 0xCC
+  MediumVioletRed -> Color 0xC7 0x15 0x85
+  MidnightBlue -> Color 0x19 0x19 0x70
+  MintCream -> Color 0xF5 0xFF 0xFA
+  MistyRose -> Color 0xFF 0xE4 0xE1
+  Moccasin -> Color 0xFF 0xE4 0xB5
+  NavajoWhite -> Color 0xFF 0xDE 0xAD
+  NavyBlue -> Color 0x00 0x00 0x80
+  OldLace -> Color 0xFD 0xF5 0xE6
+  Olive -> Color 0x80 0x80 0x00
+  OliveDrab -> Color 0x6B 0x8E 0x23
+  Orange -> Color 0xFF 0xA5 0x00
+  OrangeRed -> Color 0xFF 0x45 0x00
+  Orchid -> Color 0xDA 0x70 0xD6
+  PaleGoldenrod -> Color 0xEE 0xE8 0xAA
+  PaleGreen -> Color 0x98 0xFB 0x98
+  PaleTurquoise -> Color 0xAF 0xEE 0xEE
+  PaleViolet -> Color 0xDB 0x70 0x93
+  PapayaWhip -> Color 0xFF 0xEF 0xD5
+  PeachPuff -> Color 0xFF 0xDA 0xB9
+  Peru -> Color 0xCD 0x85 0x3F
+  Pink -> Color 0xFF 0xC0 0xCB
+  Plum -> Color 0xDD 0xA0 0xDD
+  Powder -> Color 0xB0 0xE0 0xE6
+  Purple -> Color 0xA0 0x20 0xF0
+  WebPurple -> Color 0x80 0x00 0x80
+  RebeccaPurple -> Color 0x66 0x33 0x99
+  Red -> Color 0xFF 0x00 0x00
+  RosyBrown -> Color 0xBC 0x8F 0x8F
+  RoyalBlue -> Color 0x41 0x69 0xE1
+  SaddleBrown -> Color 0x8B 0x45 0x13
+  Salmon -> Color 0xFA 0x80 0x72
+  SandyBrown -> Color 0xF4 0xA4 0x60
+  SeaGreen -> Color 0x2E 0x8B 0x57
+  Seashell -> Color 0xFF 0xF5 0xEE
+  Sienna -> Color 0xA0 0x52 0x2D
+  Silver -> Color 0xC0 0xC0 0xC0
+  SkyBlue -> Color 0x87 0xCE 0xEB
+  SlateBlue -> Color 0x6A 0x5A 0xCD
+  SlateGray -> Color 0x70 0x80 0x90
+  Snow -> Color 0xFF 0xFA 0xFA
+  SpringGreen -> Color 0x00 0xFF 0x7F
+  SteelBlue -> Color 0x46 0x82 0xB4
+  Tan -> Color 0xD2 0xB4 0x8C
+  Teal -> Color 0x00 0x80 0x80
+  Thistle -> Color 0xD8 0xBF 0xD8
+  Tomato -> Color 0xFF 0x63 0x47
+  Turquoise -> Color 0x40 0xE0 0xD0
+  Violet -> Color 0xEE 0x82 0xEE
+  Wheat -> Color 0xF5 0xDE 0xB3
+  White -> Color 0xFF 0xFF 0xFF
+  WhiteSmoke -> Color 0xF5 0xF5 0xF5
+  Yellow -> Color 0xFF 0xFF 0x00
+  YellowGreen -> Color 0x9A 0xCD 0x32
+
+class X11Color a where
+  x11Color :: X11Color
+
+instance IsColor 'AliceBlue where
+  isColor = Color 0xF0 0xF8 0xFF
+
+instance IsColor 'AntiqueWhite where
+  isColor = Color 0xFA 0xEB 0xD7
+
+instance IsColor 'Aqua where
+  isColor = Color 0x00 0xFF 0xFF
+
+instance IsColor 'Aquamarine where
+  isColor = Color 0x7F 0xFF 0xD4
+
+instance IsColor 'Azure where
+  isColor = Color 0xF0 0xFF 0xFF
+
+instance IsColor 'Beige where
+  isColor = Color 0xF5 0xF5 0xDC
+
+instance IsColor 'Bisque where
+  isColor = Color 0xFF 0xE4 0xC4
+
+instance IsColor 'Black where
+  isColor = Color 0x00 0x00 0x00
+
+instance IsColor 'BlanchedAlmond where
+  isColor = Color 0xFF 0xEB 0xCD
+
+instance IsColor 'Blue where
+  isColor = Color 0x00 0x00 0xFF
+
+instance IsColor 'BlueViolet where
+  isColor = Color 0x8A 0x2B 0xE2
+
+instance IsColor 'Brown where
+  isColor = Color 0xA5 0x2A 0x2A
+
+instance IsColor 'Burlywood where
+  isColor = Color 0xDE 0xB8 0x87
+
+instance IsColor 'CadetBlue where
+  isColor = Color 0x5F 0x9E 0xA0
+
+instance IsColor 'Chartreuse where
+  isColor = Color 0x7F 0xFF 0x00
+
+instance IsColor 'Chocolate where
+  isColor = Color 0xD2 0x69 0x1E
+
+instance IsColor 'Coral where
+  isColor = Color 0xFF 0x7F 0x50
+
+instance IsColor 'CornflowerBlue where
+  isColor = Color 0x64 0x95 0xED
+
+instance IsColor 'Cornsilk where
+  isColor = Color 0xFF 0xF8 0xDC
+
+instance IsColor 'Crimson where
+  isColor = Color 0xDC 0x14 0x3C
+
+instance IsColor 'Cyan where
+  isColor = Color 0x00 0xFF 0xFF
+
+instance IsColor 'DarkBlue where
+  isColor = Color 0x00 0x00 0x8B
+
+instance IsColor 'DarkCyan where
+  isColor = Color 0x00 0x8B 0x8B
+
+instance IsColor 'DarkGoldenrod where
+  isColor = Color 0xB8 0x86 0x0B
+
+instance IsColor 'DarkGray where
+  isColor = Color 0xA9 0xA9 0xA9
+
+instance IsColor 'DarkGreen where
+  isColor = Color 0x00 0x64 0x00
+
+instance IsColor 'DarkKhaki where
+  isColor = Color 0xBD 0xB7 0x6B
+
+instance IsColor 'DarkMagenta where
+  isColor = Color 0x8B 0x00 0x8B
+
+instance IsColor 'DarkOlive where
+  isColor = Color 0x55 0x6B 0x2F
+
+instance IsColor 'DarkOrange where
+  isColor = Color 0xFF 0x8C 0x00
+
+instance IsColor 'DarkOrchid where
+  isColor = Color 0x99 0x32 0xCC
+
+instance IsColor 'DarkRed where
+  isColor = Color 0x8B 0x00 0x00
+
+instance IsColor 'DarkSalmon where
+  isColor = Color 0xE9 0x96 0x7A
+
+instance IsColor 'DarkSea where
+  isColor = Color 0x8F 0xBC 0x8F
+
+instance IsColor 'DarkSlate where
+  isColor = Color 0x48 0x3D 0x8B
+
+instance IsColor 'DarkSlate where
+  isColor = Color 0x2F 0x4F 0x4F
+
+instance IsColor 'DarkTurquoise where
+  isColor = Color 0x00 0xCE 0xD1
+
+instance IsColor 'DarkViolet where
+  isColor = Color 0x94 0x00 0xD3
+
+instance IsColor 'DeepPink where
+  isColor = Color 0xFF 0x14 0x93
+
+instance IsColor 'DeepSkyBlue where
+  isColor = Color 0x00 0xBF 0xFF
+
+instance IsColor 'DimGray where
+  isColor = Color 0x69 0x69 0x69
+
+instance IsColor 'DodgerBlue where
+  isColor = Color 0x1E 0x90 0xFF
+
+instance IsColor 'Firebrick where
+  isColor = Color 0xB2 0x22 0x22
+
+instance IsColor 'FloralWhite where
+  isColor = Color 0xFF 0xFA 0xF0
+
+instance IsColor 'ForestGreen where
+  isColor = Color 0x22 0x8B 0x22
+
+instance IsColor 'Fuchsia where
+  isColor = Color 0xFF 0x00 0xFF
+
+instance IsColor 'Gainsboro where
+  isColor = Color 0xDC 0xDC 0xDC
+
+instance IsColor 'GhostWhite where
+  isColor = Color 0xF8 0xF8 0xFF
+
+instance IsColor 'Gold where
+  isColor = Color 0xFF 0xD7 0x00
+
+instance IsColor 'Goldenrod where
+  isColor = Color 0xDA 0xA5 0x20
+
+instance IsColor 'Gray where
+  isColor = Color 0xBE 0xBE 0xBE
+
+instance IsColor 'WebGray where
+  isColor = Color 0x80 0x80 0x80
+
+instance IsColor 'Green where
+  isColor = Color 0x00 0xFF 0x00
+
+instance IsColor 'WebGreen where
+  isColor = Color 0x00 0x80 0x00
+
+instance IsColor 'Green where
+  isColor = Color 0xAD 0xFF 0x2F
+
+instance IsColor 'Honeydew where
+  isColor = Color 0xF0 0xFF 0xF0
+
+instance IsColor 'HotPink where
+  isColor = Color 0xFF 0x69 0xB4
+
+instance IsColor 'Indian where
+  isColor = Color 0xCD 0x5C 0x5C
+
+instance IsColor 'Indigo where
+  isColor = Color 0x4B 0x00 0x82
+
+instance IsColor 'Ivory where
+  isColor = Color 0xFF 0xFF 0xF0
+
+instance IsColor 'Khaki where
+  isColor = Color 0xF0 0xE6 0x8C
+
+instance IsColor 'Lavender where
+  isColor = Color 0xE6 0xE6 0xFA
+
+instance IsColor 'LavenderBlush where
+  isColor = Color 0xFF 0xF0 0xF5
+
+instance IsColor 'LawnGreen where
+  isColor = Color 0x7C 0xFC 0x00
+
+instance IsColor 'LemonChiffon where
+  isColor = Color 0xFF 0xFA 0xCD
+
+instance IsColor 'LightBlue where
+  isColor = Color 0xAD 0xD8 0xE6
+
+instance IsColor 'LightCoral where
+  isColor = Color 0xF0 0x80 0x80
+
+instance IsColor 'LightCyan where
+  isColor = Color 0xE0 0xFF 0xFF
+
+instance IsColor 'LightGoldenrod where
+  isColor = Color 0xFA 0xFA 0xD2
+
+instance IsColor 'LightGray where
+  isColor = Color 0xD3 0xD3 0xD3
+
+instance IsColor 'LightGreen where
+  isColor = Color 0x90 0xEE 0x90
+
+instance IsColor 'LightPink where
+  isColor = Color 0xFF 0xB6 0xC1
+
+instance IsColor 'LightSalmon where
+  isColor = Color 0xFF 0xA0 0x7A
+
+instance IsColor 'LightSea where
+  isColor = Color 0x20 0xB2 0xAA
+
+instance IsColor 'LightSky where
+  isColor = Color 0x87 0xCE 0xFA
+
+instance IsColor 'LightSlate where
+  isColor = Color 0x77 0x88 0x99
+
+instance IsColor 'LightSteel where
+  isColor = Color 0xB0 0xC4 0xDE
+
+instance IsColor 'LightYellow where
+  isColor = Color 0xFF 0xFF 0xE0
+
+instance IsColor 'Lime where
+  isColor = Color 0x00 0xFF 0x00
+
+instance IsColor 'LimeGreen where
+  isColor = Color 0x32 0xCD 0x32
+
+instance IsColor 'Linen where
+  isColor = Color 0xFA 0xF0 0xE6
+
+instance IsColor 'Magenta where
+  isColor = Color 0xFF 0x00 0xFF
+
+instance IsColor 'Maroon where
+  isColor = Color 0xB0 0x30 0x60
+
+instance IsColor 'Web where
+  isColor = Color 0x80 0x00 0x00
+
+instance IsColor 'MediumAquamarine where
+  isColor = Color 0x66 0xCD 0xAA
+
+instance IsColor 'MediumBlue where
+  isColor = Color 0x00 0x00 0xCD
+
+instance IsColor 'MediumOrchid where
+  isColor = Color 0xBA 0x55 0xD3
+
+instance IsColor 'MediumPurple where
+  isColor = Color 0x93 0x70 0xDB
+
+instance IsColor 'MediumSeaGreen where
+  isColor = Color 0x3C 0xB3 0x71
+
+instance IsColor 'MediumSlateBlue where
+  isColor = Color 0x7B 0x68 0xEE
+
+instance IsColor 'MediumSpringGreen where
+  isColor = Color 0x00 0xFA 0x9A
+
+instance IsColor 'MediumTurquoise where
+  isColor = Color 0x48 0xD1 0xCC
+
+instance IsColor 'MediumVioletRed where
+  isColor = Color 0xC7 0x15 0x85
+
+instance IsColor 'MidnightBlue where
+  isColor = Color 0x19 0x19 0x70
+
+instance IsColor 'MintCream where
+  isColor = Color 0xF5 0xFF 0xFA
+
+instance IsColor 'MistyRose where
+  isColor = Color 0xFF 0xE4 0xE1
+
+instance IsColor 'Moccasin where
+  isColor = Color 0xFF 0xE4 0xB5
+
+instance IsColor 'NavajoWhite where
+  isColor = Color 0xFF 0xDE 0xAD
+
+instance IsColor 'NavyBlue where
+  isColor = Color 0x00 0x00 0x80
+
+instance IsColor 'OldLace where
+  isColor = Color 0xFD 0xF5 0xE6
+
+instance IsColor 'Olive where
+  isColor = Color 0x80 0x80 0x00
+
+instance IsColor 'OliveDrab where
+  isColor = Color 0x6B 0x8E 0x23
+
+instance IsColor 'Orange where
+  isColor = Color 0xFF 0xA5 0x00
+
+instance IsColor 'OrangeRed where
+  isColor = Color 0xFF 0x45 0x00
+
+instance IsColor 'Orchid where
+  isColor = Color 0xDA 0x70 0xD6
+
+instance IsColor 'PaleGoldenrod where
+  isColor = Color 0xEE 0xE8 0xAA
+
+instance IsColor 'PaleGreen where
+  isColor = Color 0x98 0xFB 0x98
+
+instance IsColor 'PaleTurquoise where
+  isColor = Color 0xAF 0xEE 0xEE
+
+instance IsColor 'PaleViolet where
+  isColor = Color 0xDB 0x70 0x93
+
+instance IsColor 'PapayaWhip where
+  isColor = Color 0xFF 0xEF 0xD5
+
+instance IsColor 'PeachPuff where
+  isColor = Color 0xFF 0xDA 0xB9
+
+instance IsColor 'Peru where
+  isColor = Color 0xCD 0x85 0x3F
+
+instance IsColor 'Pink where
+  isColor = Color 0xFF 0xC0 0xCB
+
+instance IsColor 'Plum where
+  isColor = Color 0xDD 0xA0 0xDD
+
+instance IsColor 'Powder where
+  isColor = Color 0xB0 0xE0 0xE6
+
+instance IsColor 'Purple where
+  isColor = Color 0xA0 0x20 0xF0
+
+instance IsColor 'WebPurple where
+  isColor = Color 0x80 0x00 0x80
+
+instance IsColor 'RebeccaPurple where
+  isColor = Color 0x66 0x33 0x99
+
+instance IsColor 'Red where
+  isColor = Color 0xFF 0x00 0x00
+
+instance IsColor 'RosyBrown where
+  isColor = Color 0xBC 0x8F 0x8F
+
+instance IsColor 'RoyalBlue where
+  isColor = Color 0x41 0x69 0xE1
+
+instance IsColor 'SaddleBrown where
+  isColor = Color 0x8B 0x45 0x13
+
+instance IsColor 'Salmon where
+  isColor = Color 0xFA 0x80 0x72
+
+instance IsColor 'SandyBrown where
+  isColor = Color 0xF4 0xA4 0x60
+
+instance IsColor 'SeaGreen where
+  isColor = Color 0x2E 0x8B 0x57
+
+instance IsColor 'Seashell where
+  isColor = Color 0xFF 0xF5 0xEE
+
+instance IsColor 'Sienna where
+  isColor = Color 0xA0 0x52 0x2D
+
+instance IsColor 'Silver where
+  isColor = Color 0xC0 0xC0 0xC0
+
+instance IsColor 'SkyBlue where
+  isColor = Color 0x87 0xCE 0xEB
+
+instance IsColor 'SlateBlue where
+  isColor = Color 0x6A 0x5A 0xCD
+
+instance IsColor 'SlateGray where
+  isColor = Color 0x70 0x80 0x90
+
+instance IsColor 'Snow where
+  isColor = Color 0xFF 0xFA 0xFA
+
+instance IsColor 'SpringGreen where
+  isColor = Color 0x00 0xFF 0x7F
+
+instance IsColor 'SteelBlue where
+  isColor = Color 0x46 0x82 0xB4
+
+instance IsColor 'Tan where
+  isColor = Color 0xD2 0xB4 0x8C
+
+instance IsColor 'Teal where
+  isColor = Color 0x00 0x80 0x80
+
+instance IsColor 'Thistle where
+  isColor = Color 0xD8 0xBF 0xD8
+
+instance IsColor 'Tomato where
+  isColor = Color 0xFF 0x63 0x47
+
+instance IsColor 'Turquoise where
+  isColor = Color 0x40 0xE0 0xD0
+
+instance IsColor 'Violet where
+  isColor = Color 0xEE 0x82 0xEE
+
+instance IsColor 'Wheat where
+  isColor = Color 0xF5 0xDE 0xB3
+
+instance IsColor 'White where
+  isColor = Color 0xFF 0xFF 0xFF
+
+instance IsColor 'WhiteSmoke where
+  isColor = Color 0xF5 0xF5 0xF5
+
+instance IsColor 'Yellow where
+  isColor = Color 0xFF 0xFF 0x00
+
+instance IsColor 'YellowGreen where
+  isColor = Color 0x9A 0xCD 0x32
