@@ -1,3 +1,4 @@
+{-# LANGUAGE GADTs   #-}
 {-# LANGUAGE AllowAmbiguousTypes   #-}
 {-# LANGUAGE DataKinds             #-}
 {-# LANGUAGE FlexibleContexts      #-}
@@ -15,6 +16,10 @@
 module Config.Color.Type
   ( Color(..)
   , toHex
+  , DefaultThemeType (..)
+  , (:||:)
+  , UnifyColorScheme (..)
+  , getColor
   ) where
 
 import           Control.Applicative
@@ -28,22 +33,36 @@ import           Data.Word
 import           GHC.TypeLits
 import           Text.Printf
 
+
+data a :|: b = a :|: b
+type a :||: b = a ':|: b
+
 class IsColor a where
-  isColor :: Color
+  toColor :: a -> Color
 
 data Color
   = RGBColor { red :: !Word8, green :: !Word8, blue :: !Word8 }
   deriving (Eq, Show)
 
-toHex :: Color -> String
-toHex RGBColor{..} =
-  printf "#%x%x%x" red green blue
+instance IsColor Color where
+  toColor = id
+
+toHex :: IsColor a => a -> String
+toHex color =
+  case toColor color of
+    RGBColor{..} ->
+      printf "#%x%x%x" red green blue
 
 symBS :: forall n. KnownSymbol n => BS.ByteString
 symBS = BS.pack . symbolVal $ Proxy @n
 
-newtype ColorScheme theme =
-  ColorScheme { getColorScheme :: Map.Map BS.ByteString Color } deriving Show
+data SomeColor = forall a. IsColor a => SomeColor a
+
+instance IsColor SomeColor where
+  toColor (SomeColor a) = toColor a
+
+data ColorScheme theme =
+  ColorScheme { getColorScheme :: Map.Map BS.ByteString SomeColor }
 
 class UnifyColorScheme a where
   unifyColorScheme :: Map.Map BS.ByteString Color -> Maybe (ColorScheme a)
@@ -55,14 +74,14 @@ instance
   ( KnownSymbol color
   , KnownSymbol fallbackColor
   , fallbackColor ~ DefaultThemeSymbol fallback
-  , UnifyColorScheme colors) => UnifyColorScheme ('(color, fallback) ': colors) where
+  , UnifyColorScheme colors) => UnifyColorScheme ((color :||: fallback) ': colors) where
   unifyColorScheme m = do
     let
       colorName = symBS @color
       fallbackName = symBS @fallbackColor
     color <- Map.lookup colorName m <|> Map.lookup fallbackName m
     ColorScheme theme <- unifyColorScheme @colors m
-    pure . ColorScheme $ Map.insert colorName color theme
+    pure . ColorScheme $ Map.insert colorName (SomeColor color) theme
 
 data DefaultColorTheme = DefaultColorTheme
   { defaultBG1           :: !Color
@@ -96,10 +115,10 @@ type family DefaultThemeSymbol (defaultField :: DefaultThemeType) :: Symbol wher
   DefaultThemeSymbol DefaultText1 = "default_text_1"
   DefaultThemeSymbol DefaultText2 = "default_text_2"
 
-type family FindColor' colorName (themes :: [(Symbol, DefaultThemeType)]) where
+type family FindColor' colorName (themes :: [Symbol :|: DefaultThemeType]) where
    FindColor' name '[] = False
-   FindColor' name ('(name, def) ': rest) = True
-   FindColor' name ('(name', def) ': rest) = FindColor' name rest
+   FindColor' name ((name  :||: def) ': rest) = True
+   FindColor' name ((name' :||: def) ': rest) = FindColor' name rest
 
 type family HasColor colorName themes where
   HasColor colorName themes = (True ~ FindColor' colorName themes)
@@ -111,44 +130,4 @@ getColor
   => ColorScheme theme
   -> Color
 getColor (ColorScheme scheme) =
-  scheme Map.! (symBS @element)
-
-testMap :: Map.Map BS.ByteString Color
-testMap = Map.fromList $
-  [("foo", RGBColor 0 0 0)
-  ,("bar", RGBColor 1 1 1)
-  ,("default_background_3", RGBColor 2 2 2)
-  ]
-
-scheme :: ColorScheme ['("foo", DefaultBG1),'("bar", DefaultBG2),'("baz", DefaultBG3)]
--- scheme :: ColorScheme [ "foo" :||: DefaultBG1
---                       , "bar" :||: DefaultBG2
---                       , "baz" :||: DefaultBG3]
-scheme =
-  let (Just u) = unifyColorScheme $ testMap
-  in u
-
-data a :||: b
--- data (a :: Symbol) :||: (b :: DefaultThemeType)
--- type Theme (a :: Symbol) (b :: DefaultThemeType) = '[a :||: b]
-
--- type PolybarTheme =
---   '[ "foo" :||: DefaultBG1
---    , "bar" :||: DefaultBG2
---    , "baz" :||: DefaultBG3
---    ]
-
-
-type PolybarTheme =
-  '[ '("foo", DefaultBG1)
-   , '("bar", DefaultBG2)
-   , '("baz", DefaultBG3)
-   ]
-
-parseScheme = unifyColorScheme @PolybarTheme
-
-runTest scheme =
-  let fooColor = getColor @"foo" scheme
-      barColor = getColor @"bar" scheme
-      bazColor = getColor @"baz" scheme
-  in (fooColor, barColor, bazColor)
+  toColor $ scheme Map.! (symBS @element)
