@@ -1,8 +1,8 @@
-{-# LANGUAGE RecordWildCards #-}
 {-# LANGUAGE AllowAmbiguousTypes   #-}
 {-# LANGUAGE DataKinds             #-}
 {-# LANGUAGE FlexibleContexts      #-}
 {-# LANGUAGE FlexibleInstances     #-}
+{-# LANGUAGE ImportQualifiedPost   #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings     #-}
 {-# LANGUAGE PolyKinds             #-}
@@ -15,29 +15,36 @@
 
 module Config.Polybar where
 
-import           Codec.Binary.UTF8.String as Utf8
+import qualified Codec.Binary.UTF8.String as Utf8
 import           Config.Color.Type
+import qualified Config.Color.X11 as X11
 import           Control.Monad.IO.Class
+import Data.Aeson
+import qualified Data.Text as Text
+import qualified Data.Text.Encoding as Text
 import qualified DBus                     as D
 import qualified DBus.Client              as D
+import qualified Data.ByteString.Lazy     as BL
+import qualified Data.ByteString.Char8 as BS
 import           XMonad.Hooks.DynamicLog
+import qualified Data.Map.Strict as Map
 
-type PolybarThemeType =
-  '[ "focused_workspace_text"            :||: DefaultText1
-   , "focused_workspace_background"      :||: DefaultText1
-   , "visible_workspace_text"            :||: DefaultText2
-   , "visible_workspace_background"      :||: DefaultText2
-   , "hidden_workspace_text"             :||: DefaultText2
-   , "hidden_workspace_background"       :||: DefaultText2
-   , "empty_hidden_workspace_text"       :||: DefaultText2
-   , "empty_hidden_workspace_background" :||: DefaultText2
-   , "urgent_workspace_text"             :||: DefaultText1
-   , "urgent_workspace_background"       :||: DefaultText1
-   , "section_separator"                 :||: DefaultFG1
-   , "workspace_separator"               :||: DefaultFG2
-   ]
+type PolybarTheme
+  =   "focused_workspace_text"            :||: DefaultText1
+  :.: "focused_workspace_background"      :||: DefaultText1
+  :.: "visible_workspace_text"            :||: DefaultText2
+  :.: "visible_workspace_background"      :||: DefaultText2
+  :.: "hidden_workspace_text"             :||: DefaultText2
+  :.: "hidden_workspace_background"       :||: DefaultText2
+  :.: "empty_hidden_workspace_text"       :||: DefaultText2
+  :.: "empty_hidden_workspace_background" :||: DefaultText2
+  :.: "urgent_workspace_text"             :||: DefaultText1
+  :.: "urgent_workspace_background"       :||: DefaultText1
+  :.: "section_separator"                 :||: DefaultFG1
+  :.: "workspace_separator"               :||: DefaultFG2
+  :.: DefaultTheme
 
-data PolybarTheme = PolybarTheme
+data PolybarScheme = PolybarScheme
   { _themeFocusedWorkspaceText           :: Color
   , _themeFocusedWorkspaceBackground     :: Color
   , _themeVisibleWorkspaceText           :: Color
@@ -52,7 +59,8 @@ data PolybarTheme = PolybarTheme
   , _themeWorkspaceSeparator             :: Color
   }
 
-themeFromColorScheme colorScheme = PolybarTheme
+polybarScheme :: ColorScheme PolybarTheme -> PolybarScheme
+polybarScheme colorScheme = PolybarScheme
   { _themeFocusedWorkspaceText            = getColor @"focused_workspace_text" colorScheme
   , _themeFocusedWorkspaceBackground      = getColor @"focused_workspace_background" colorScheme
   , _themeVisibleWorkspaceText            = getColor @"visible_workspace_text" colorScheme
@@ -67,9 +75,33 @@ themeFromColorScheme colorScheme = PolybarTheme
   , _themeWorkspaceSeparator              = getColor @"workspace_separator" colorScheme
   }
 
+defaultColorScheme :: ColorScheme PolybarTheme
+defaultColorScheme = unsafeVerifyColorScheme . Map.fromList $
+  [ "focused_workspace_text"            .== X11.Plum
+  , "focused_workspace_background"      .== X11.RebeccaPurple
+  , "visible_workspace_text"            .== X11.Plum
+  , "visible_workspace_background"      .== X11.RebeccaPurple
+  , "hidden_workspace_text"             .== X11.WebPurple
+  , "hidden_workspace_background"       .== X11.RebeccaPurple
+  , "empty_hidden_workspace_text"       .== X11.WebPurple
+  , "empty_hidden_workspace_background" .== X11.RebeccaPurple
+  , "urgent_workspace_text"             .== X11.Magenta
+--  , "urgent_workspace_background"       .== X11.RebeccaPurple
+  , "section_separator"                 .== X11.MediumOrchid
+  , "workspace_separator"               .== X11.MediumOrchid
+  , "default_background_1"              .== RGBColor 26 26 26
+  , "default_background_2"              .== RGBColor 26 26 26
+  , "default_background_3"              .== RGBColor 26 26 26
+  , "default_foreground_1"              .== X11.Plum
+  , "default_foreground_2"              .== X11.Plum
+  , "default_foreground_3"              .== X11.Plum
+  , "default_text_1"                    .== X11.Magenta
+  , "default_text_2"                    .== X11.Magenta
+  ]
+
 data PolybarConfig = PolybarConfig
   { client :: D.Client
-  , theme  :: PolybarTheme
+  , theme  :: PolybarScheme
   }
 
 dbusClient :: IO D.Client
@@ -91,7 +123,7 @@ dbusClient =  do
 dbusOutput :: PolybarConfig -> String -> IO ()
 dbusOutput cfg msg =
   let
-    PolybarConfig dbus PolybarTheme{..} = cfg
+    PolybarConfig dbus PolybarScheme{..} = cfg
     objPath = D.objectPath_ "/org/xmonad/Log"
     ifaceName = D.interfaceName_ "org.xmonad.Log"
     memberName = D.memberName_ "Update"

@@ -12,6 +12,7 @@ feh --bg-scale /home/rebecca/.config/wallpaper
       enable = true;
       enableContribAndExtras = true;
       extraPackages = xmonadPackage: with xmonadPackage; [
+        aeson
         dbus
         monad-logger
         xmonad-contrib
