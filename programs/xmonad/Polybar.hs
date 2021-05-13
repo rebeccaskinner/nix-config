@@ -81,7 +81,7 @@ defaultColorScheme = unsafeVerifyColorScheme @PolybarTheme . Map.fromList $
   , "focused_workspace_background"      .== X11.RebeccaPurple
   , "visible_workspace_text"            .== X11.Plum
   , "visible_workspace_background"      .== X11.RebeccaPurple
-  , "hidden_workspace_text"             .== X11.WebPurple
+  , "hidden_workspace_text"             .== RGBColor 0x88 0x55 0xBB
   , "hidden_workspace_background"       .== X11.RebeccaPurple
   , "empty_hidden_workspace_text"       .== X11.WebPurple
   , "empty_hidden_workspace_background" .== X11.RebeccaPurple
@@ -89,9 +89,9 @@ defaultColorScheme = unsafeVerifyColorScheme @PolybarTheme . Map.fromList $
   , "urgent_workspace_background"       .== X11.RebeccaPurple
   , "section_separator"                 .== X11.MediumOrchid
   , "workspace_separator"               .== X11.MediumOrchid
-  , "default_background_1"              .== RGBColor 26 26 26
-  , "default_background_2"              .== RGBColor 26 26 26
-  , "default_background_3"              .== RGBColor 26 26 26
+  , "default_background_1"              .== RGBColor 0x26 0x26 0x26
+  , "default_background_2"              .== RGBColor 0x26 0x26 0x26
+  , "default_background_3"              .== RGBColor 0x26 0x26 0x26
   , "default_foreground_1"              .== X11.Plum
   , "default_foreground_2"              .== X11.Plum
   , "default_foreground_3"              .== X11.Plum
@@ -107,15 +107,23 @@ themedPP config =
       let
         wrapperFront = "%{F"<>color<>"}"
       in \s -> wrapperFront <> s <> "%{F-}"
+
+    underline s = "%{U}"<>s<>"%{U-}"
+
   in def
      { ppOutput           = dbusOutput config
-     , ppCurrent          = fmt _themeFocusedWorkspaceText
+     , ppCurrent          = \s -> fmt _themeFocusedWorkspaceText $ "["<>s<>"]"
      , ppVisible          = fmt _themeVisibleWorkspaceText
      , ppHidden           = fmt _themeHiddenWorkspaceText
-     , ppHiddenNoWindows  = fmt _themeEmptyHiddenWorkspaceText
+     , ppHiddenNoWindows  = const ""
+     , ppOrder            = \(workspace:layout:title:rest) -> title:workspace:(rest <> pure layout)
      , ppUrgent           = fmt _themeUrgentWorkspaceText
-     , ppTitle            = fmt _themeFocusedWorkspaceText
+     , ppTitle            = \title ->
+                              case title of
+                                "" -> fmt _themeFocusedWorkspaceText "<Desktop>"
+                                title' -> fmt _themeFocusedWorkspaceText title'
      , ppLayout           = fmt _themeFocusedWorkspaceText
+     , ppSep              = fmt _themeSectionSeparator " · "
      }
 
 data PolybarConfig = PolybarConfig

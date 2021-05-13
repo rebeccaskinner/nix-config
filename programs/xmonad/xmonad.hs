@@ -24,10 +24,6 @@ import Polybar
 -- general definitions
 terminalEmulator = "kitty"
 
-launchTrayer :: MonadIO m => m ()
-launchTrayer =
-  spawn "trayer --edge top --align right --widthtype percent --width 10 --transparent true --alpha 0 --tint '0x000000' --padding 10  --heighttype pixel --height 13"
-
 launchRofi :: X ()
 launchRofi =
   spawn "rofi -modi drun,ssh,window -show drun -show-icons"
@@ -43,7 +39,6 @@ launchers =
   ]
 
 main = do
-  launchTrayer
   polybarConfig <- defaultPolybarConfig
   xmonad $ docks def
     { manageHook = manageDocks <+> manageHook def
