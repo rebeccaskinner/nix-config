@@ -13,11 +13,11 @@
 {-# LANGUAGE TypeOperators         #-}
 {-# LANGUAGE UndecidableInstances  #-}
 
-module Config.Polybar where
+module Polybar where
 
 import qualified Codec.Binary.UTF8.String as Utf8
-import           Config.Color.Type
-import qualified Config.Color.X11 as X11
+import           ColorType
+import qualified ColorX11 as X11
 import           Control.Monad.IO.Class
 import Data.Aeson
 import qualified Data.Text as Text

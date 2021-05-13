@@ -1,8 +1,8 @@
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE LambdaCase #-}
 {-# LANGUAGE DataKinds #-}
-module Config.Color.X11 where
-import Config.Color.Type
+module ColorX11 where
+import ColorType
 import GHC.Generics
 import Data.Aeson
 

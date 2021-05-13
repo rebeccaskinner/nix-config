@@ -15,7 +15,7 @@
 {-# LANGUAGE TypeOperators         #-}
 {-# LANGUAGE UndecidableInstances  #-}
 
-module Config.Color.Type
+module ColorType
   ( Color(..)
   , IsColor(..)
   , toHex

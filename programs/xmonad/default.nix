@@ -18,6 +18,11 @@ feh --bg-scale /home/rebecca/.config/wallpaper
         xmonad-contrib
       ];
       config = ./xmonad.hs;
+      libFiles = {
+        "Polybar.hs" = ./Polybar.hs;
+        "ColorType.hs" = ./ColorType.hs;
+        "ColorX11.hs" = ./ColorX11.hs;
+      };
     };
   };
 }
