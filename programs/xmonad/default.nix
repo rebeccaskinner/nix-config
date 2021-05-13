@@ -22,6 +22,7 @@ feh --bg-scale /home/rebecca/.config/wallpaper
         "Polybar.hs" = ./Polybar.hs;
         "ColorType.hs" = ./ColorType.hs;
         "ColorX11.hs" = ./ColorX11.hs;
+        "XmonadTheme.hs" = ./XmonadTheme.hs;
       };
     };
   };

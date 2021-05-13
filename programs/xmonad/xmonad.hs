@@ -20,6 +20,7 @@ import Control.Monad
 import Data.Function
 import qualified Data.Map.Strict as Map
 import Polybar
+import XmonadTheme
 
 -- general definitions
 terminalEmulator = "kitty"
@@ -40,7 +41,7 @@ launchers =
 
 main = do
   polybarConfig <- defaultPolybarConfig
-  xmonad $ docks def
+  xmonad . stylishConfig defaultXMonadScheme $ docks def
     { manageHook = manageDocks <+> manageHook def
     , layoutHook = smartBorders . avoidStruts $ layoutHook def
     , logHook = fadeInactiveLogHook 0.9 <> polybarLogHook polybarConfig

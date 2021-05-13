@@ -32,6 +32,7 @@ let
     htop
     bat
     silver-searcher
+    pulsemixer
   ];
 
   polybarFonts = with pkgs; [
