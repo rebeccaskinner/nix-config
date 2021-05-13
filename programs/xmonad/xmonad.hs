@@ -19,7 +19,7 @@ import System.IO
 import Control.Monad
 import Data.Function
 import qualified Data.Map.Strict as Map
-import Config.Polybar
+import Polybar
 
 -- general definitions
 terminalEmulator = "kitty"
