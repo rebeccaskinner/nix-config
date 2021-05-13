@@ -13,11 +13,13 @@ import XMonad.Layout.WindowNavigation
 import XMonad.Layout.NoBorders (smartBorders)
 import XMonad.Util.CustomKeys
 import XMonad.StackSet as W
+import XMonad.Hooks.FadeInactive
 import Data.List (find)
 import System.IO
 import Control.Monad
 import Data.Function
 import qualified Data.Map.Strict as Map
+import Config.Polybar
 
 -- general definitions
 terminalEmulator = "kitty"
@@ -41,15 +43,12 @@ launchers =
   ]
 
 main = do
-  xmproc <- spawnPipe "xmobar"
   launchTrayer
+  polybarConfig <- defaultPolybarConfig
   xmonad $ docks def
-    { manageHook = manageDocks <+> manageHook defaultConfig
-    , layoutHook = smartBorders . avoidStruts $ layoutHook defaultConfig
-    , logHook = dynamicLogWithPP xmobarPP
-      { ppOutput = hPutStrLn xmproc
-      , ppTitle = xmobarColor "#D2B6FA" "" . shorten 50
-      }
+    { manageHook = manageDocks <+> manageHook def
+    , layoutHook = smartBorders . avoidStruts $ layoutHook def
+    , logHook = fadeInactiveLogHook 0.9 <> polybarLogHook polybarConfig
     , modMask = mod4Mask
     , borderWidth = 2
     , terminal = terminalEmulator

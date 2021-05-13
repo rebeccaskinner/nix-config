@@ -31,52 +31,52 @@ import qualified Data.Map.Strict as Map
 
 type PolybarTheme
   =   "focused_workspace_text"            :||: DefaultText1
-  :.: "focused_workspace_background"      :||: DefaultText1
+  :.: "focused_workspace_background"      :||: DefaultBG1
   :.: "visible_workspace_text"            :||: DefaultText2
-  :.: "visible_workspace_background"      :||: DefaultText2
+  :.: "visible_workspace_background"      :||: DefaultBG1
   :.: "hidden_workspace_text"             :||: DefaultText2
-  :.: "hidden_workspace_background"       :||: DefaultText2
+  :.: "hidden_workspace_background"       :||: DefaultBG1
   :.: "empty_hidden_workspace_text"       :||: DefaultText2
-  :.: "empty_hidden_workspace_background" :||: DefaultText2
+  :.: "empty_hidden_workspace_background" :||: DefaultBG1
   :.: "urgent_workspace_text"             :||: DefaultText1
-  :.: "urgent_workspace_background"       :||: DefaultText1
+  :.: "urgent_workspace_background"       :||: DefaultBG1
   :.: "section_separator"                 :||: DefaultFG1
   :.: "workspace_separator"               :||: DefaultFG2
   :.: DefaultTheme
 
 data PolybarScheme = PolybarScheme
-  { _themeFocusedWorkspaceText           :: Color
-  , _themeFocusedWorkspaceBackground     :: Color
-  , _themeVisibleWorkspaceText           :: Color
-  , _themeVisibleWorkspaceBackground     :: Color
-  , _themeHiddenWorkspaceText            :: Color
-  , _themeHiddenWorkspaceBackground      :: Color
-  , _themeEmptyHiddenWorkspaceText       :: Color
-  , _themeEmptyHiddenWorkspaceBackground :: Color
-  , _themeUrgentWorkspaceText            :: Color
-  , _themeUrgentWorkspaceBackground      :: Color
-  , _themeSectionSeparator               :: Color
-  , _themeWorkspaceSeparator             :: Color
+  { _themeFocusedWorkspaceText           :: String
+  , _themeFocusedWorkspaceBackground     :: String
+  , _themeVisibleWorkspaceText           :: String
+  , _themeVisibleWorkspaceBackground     :: String
+  , _themeHiddenWorkspaceText            :: String
+  , _themeHiddenWorkspaceBackground      :: String
+  , _themeEmptyHiddenWorkspaceText       :: String
+  , _themeEmptyHiddenWorkspaceBackground :: String
+  , _themeUrgentWorkspaceText            :: String
+  , _themeUrgentWorkspaceBackground      :: String
+  , _themeSectionSeparator               :: String
+  , _themeWorkspaceSeparator             :: String
   }
 
 polybarScheme :: ColorScheme PolybarTheme -> PolybarScheme
 polybarScheme colorScheme = PolybarScheme
-  { _themeFocusedWorkspaceText            = getColor @"focused_workspace_text" colorScheme
-  , _themeFocusedWorkspaceBackground      = getColor @"focused_workspace_background" colorScheme
-  , _themeVisibleWorkspaceText            = getColor @"visible_workspace_text" colorScheme
-  , _themeVisibleWorkspaceBackground      = getColor @"visible_workspace_background" colorScheme
-  , _themeHiddenWorkspaceText             = getColor @"hidden_workspace_text" colorScheme
-  , _themeHiddenWorkspaceBackground       = getColor @"hidden_workspace_background" colorScheme
-  , _themeEmptyHiddenWorkspaceText        = getColor @"empty_hidden_workspace_text" colorScheme
-  , _themeEmptyHiddenWorkspaceBackground  = getColor @"empty_hidden_workspace_background" colorScheme
-  , _themeUrgentWorkspaceText             = getColor @"urgent_workspace_text" colorScheme
-  , _themeUrgentWorkspaceBackground       = getColor @"urgent_workspace_background" colorScheme
-  , _themeSectionSeparator                = getColor @"section_separator" colorScheme
-  , _themeWorkspaceSeparator              = getColor @"workspace_separator" colorScheme
+  { _themeFocusedWorkspaceText            = toHex $ getColor @"focused_workspace_text" colorScheme
+  , _themeFocusedWorkspaceBackground      = toHex $ getColor @"focused_workspace_background" colorScheme
+  , _themeVisibleWorkspaceText            = toHex $ getColor @"visible_workspace_text" colorScheme
+  , _themeVisibleWorkspaceBackground      = toHex $ getColor @"visible_workspace_background" colorScheme
+  , _themeHiddenWorkspaceText             = toHex $ getColor @"hidden_workspace_text" colorScheme
+  , _themeHiddenWorkspaceBackground       = toHex $ getColor @"hidden_workspace_background" colorScheme
+  , _themeEmptyHiddenWorkspaceText        = toHex $ getColor @"empty_hidden_workspace_text" colorScheme
+  , _themeEmptyHiddenWorkspaceBackground  = toHex $ getColor @"empty_hidden_workspace_background" colorScheme
+  , _themeUrgentWorkspaceText             = toHex $ getColor @"urgent_workspace_text" colorScheme
+  , _themeUrgentWorkspaceBackground       = toHex $ getColor @"urgent_workspace_background" colorScheme
+  , _themeSectionSeparator                = toHex $ getColor @"section_separator" colorScheme
+  , _themeWorkspaceSeparator              = toHex $ getColor @"workspace_separator" colorScheme
   }
 
 defaultColorScheme :: ColorScheme PolybarTheme
-defaultColorScheme = unsafeVerifyColorScheme . Map.fromList $
+defaultColorScheme = unsafeVerifyColorScheme @PolybarTheme . Map.fromList $
   [ "focused_workspace_text"            .== X11.Plum
   , "focused_workspace_background"      .== X11.RebeccaPurple
   , "visible_workspace_text"            .== X11.Plum
@@ -86,7 +86,7 @@ defaultColorScheme = unsafeVerifyColorScheme . Map.fromList $
   , "empty_hidden_workspace_text"       .== X11.WebPurple
   , "empty_hidden_workspace_background" .== X11.RebeccaPurple
   , "urgent_workspace_text"             .== X11.Magenta
---  , "urgent_workspace_background"       .== X11.RebeccaPurple
+  , "urgent_workspace_background"       .== X11.RebeccaPurple
   , "section_separator"                 .== X11.MediumOrchid
   , "workspace_separator"               .== X11.MediumOrchid
   , "default_background_1"              .== RGBColor 26 26 26
@@ -99,13 +99,32 @@ defaultColorScheme = unsafeVerifyColorScheme . Map.fromList $
   , "default_text_2"                    .== X11.Magenta
   ]
 
+themedPP :: PolybarConfig -> PP
+themedPP config =
+  let
+    PolybarScheme{..} = theme config
+    fmt color =
+      let
+        wrapperFront = "%{F"<>color<>"}"
+      in \s -> wrapperFront <> s <> "%{F-}"
+  in def
+     { ppOutput           = dbusOutput config
+     , ppCurrent          = fmt _themeFocusedWorkspaceText
+     , ppVisible          = fmt _themeVisibleWorkspaceText
+     , ppHidden           = fmt _themeHiddenWorkspaceText
+     , ppHiddenNoWindows  = fmt _themeEmptyHiddenWorkspaceText
+     , ppUrgent           = fmt _themeUrgentWorkspaceText
+     , ppTitle            = fmt _themeFocusedWorkspaceText
+     , ppLayout           = fmt _themeFocusedWorkspaceText
+     }
+
 data PolybarConfig = PolybarConfig
-  { client :: D.Client
+  { dbusClient :: D.Client
   , theme  :: PolybarScheme
   }
 
-dbusClient :: IO D.Client
-dbusClient =  do
+mkDbusClient :: IO D.Client
+mkDbusClient =  do
   dbus <- D.connectSession
   D.requestName dbus xmonadBusName xmonadRequestNameFlags
   pure dbus
@@ -130,3 +149,10 @@ dbusOutput cfg msg =
     signal = D.signal objPath ifaceName memberName
     body = pure . D.toVariant . Utf8.decodeString $ msg
   in D.emit dbus $ signal { D.signalBody = body }
+
+defaultPolybarConfig :: IO PolybarConfig
+defaultPolybarConfig = do
+  client <- mkDbusClient
+  pure $ PolybarConfig { dbusClient = client, theme = polybarScheme defaultColorScheme }
+
+polybarLogHook = dynamicLogWithPP . themedPP

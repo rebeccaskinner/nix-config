@@ -1,3 +1,4 @@
+{-# LANGUAGE ConstraintKinds #-}
 {-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE GADTs   #-}
 {-# LANGUAGE AllowAmbiguousTypes   #-}
@@ -93,37 +94,31 @@ instance HasColor goal (goal :||: defaultTheme :.: rest) where
 instance {-# OVERLAPPABLE #-} (HasColor goal rest) => HasColor goal (color :||: defaultTheme :.: rest) where
 
 class VerifyColorScheme a where
-  unifyColorScheme :: Map.Map BS.ByteString SomeColor -> Maybe (ColorScheme a)
+  verifyColorScheme :: Map.Map BS.ByteString SomeColor -> Maybe (ColorScheme a)
 
 instance VerifyColorScheme EmptyTheme where
-  unifyColorScheme = const . Just . ColorScheme $ Map.empty
+  verifyColorScheme = const . Just . ColorScheme $ Map.empty
 
 instance
   ( KnownSymbol color
   , KnownSymbol fallbackName
   , VerifyColorScheme colors
   , fallbackName ~ DefaultThemeSymbol fallback) => VerifyColorScheme ((color :||: fallback) :.: colors) where
-  unifyColorScheme m = do
+  verifyColorScheme m = do
     let
       colorName = symBS @color
       fallbackName = symBS @fallbackName
     color <- Map.lookup colorName m <|> Map.lookup fallbackName m
-    ColorScheme theme <- unifyColorScheme @colors m
+    ColorScheme theme <- verifyColorScheme @colors m
     pure . ColorScheme $ Map.insert colorName (SomeColor color) theme
 
 unsafeVerifyColorScheme :: (VerifyColorScheme theme) => Map.Map BS.ByteString SomeColor -> ColorScheme theme
 unsafeVerifyColorScheme =
-  fromJust . unifyColorScheme
+  fromJust . verifyColorScheme
 
-class IsTheme a
-instance IsTheme Theme
-
-class SatisfiesTheme (availableTheme :: Theme) (requiredTheme :: Theme)
-
-instance SatisfiesTheme anyTheme EmptyTheme
-instance (HasColor targetColor availableTheme
-         , SatisfiesTheme availableTheme rest
-         ) => SatisfiesTheme avilableTheme (targetColor :||: targetDefault :.: rest)
+class SatisfiesTheme theme toSatisfy
+instance SatisfiesTheme theme EmptyTheme
+instance (HasColor color theme, SatisfiesTheme theme rest) => SatisfiesTheme theme (color :||: def :.: rest)
 
 data DefaultThemeType
   = DefaultBG1
@@ -177,5 +172,5 @@ testColors
   VerifyColorScheme theme
   => Map.Map BS.ByteString SomeColor -> (ColorScheme theme -> retVal) -> Maybe retVal
 testColors m f =
-  let scheme = unifyColorScheme @theme m
+  let scheme = verifyColorScheme @theme m
   in f <$> scheme
