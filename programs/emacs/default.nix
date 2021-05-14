@@ -36,6 +36,7 @@
       use-package
       pdf-tools
       goto-last-change
+      rebecca-theme
     ];
   };
   home.file.".emacs.d" = {

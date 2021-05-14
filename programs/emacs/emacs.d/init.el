@@ -3,8 +3,6 @@
 ;;; Commentary:
 
 ;;; Code:
-
-
 ;; Disable the splash screen
 (setq inhibit-splash-screen t)
 
@@ -94,12 +92,30 @@
  ;; Your init file should contain only one such instance.
  ;; If there is more than one, they won't work right.
  '(default ((t (:family "Fira Code Nerd" :foundry "ADBO" :slant normal :weight semi-bold :heightf 140 :width normal :height 102))))
- '(go-test--error-face ((t (:foreground "dark red"))))
- '(go-test--ok-face ((t (:foreground "dark green"))))
- '(go-test--pointer-face ((t (:foreground "dark blue"))))
- '(go-test--standard-face ((t (:foreground "black"))))
- '(go-test--warning-face ((t (:foreground "dark yellow")))))
+ )
 
+
+(defun configure-look-and-feel ()
+  "Run some stuff after init, like setting a theme and disabling scrollbars."
+  ;; Setup theme
+  (load-theme 'rebecca t)
+
+  ;; disable the menu bar
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (toggle-scroll-bar -1)
+  )
+
+(defun deamon-look-and-feel (frame)
+  "Wrapper to run look-and-feel per-frame with emacsclient."
+  (select-frame frame)
+  (configure-look-and-feel)
+  )
+
+(if (daemonp)
+    (add-hook 'after-make-frame-functions #'deamon-look-and-feel)
+    (configure-look-and-feel)
+  )
 
 
 ;; Rainbow Delimiters
@@ -533,7 +549,7 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
 
 ;; Cc Mode
 ;; Set the indentation to 4 spaces
-(setq-default c-basic-offset 4
+(setq-default c-basic-offset 2
               c-default-style "bsd")
 
 ;; Enable 80-column fill indicator for C files
@@ -546,29 +562,5 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
 (add-hook 'cc-mode-hook 'extra-cc-keybindings)
 
 (pdf-loader-install)
-
-
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(custom-safe-themes
-   '("bffa9739ce0752a37d9b1eee78fc00ba159748f50dc328af4be661484848e476" default)))
-
-;; Setup theme
-(defun configure-theme()
- (load-theme 'spacemacs-dark)
-; (load-theme 'leuven)
-; (load-theme 'dark)
-; (load-theme 'rebecca)
-;  (load-theme 'idea-darkula-theme)
-  )
-(configure-theme)
-
-;; disable the menu bar
-(menu-bar-mode -1)
-(tool-bar-mode -1)
-(toggle-scroll-bar -1)
 
 ;;; init.el ends here

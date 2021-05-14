@@ -1,33 +1,33 @@
 {-# LANGUAGE NoMonomorphismRestriction #-}
 module Main where
-import XMonad
-import XMonad.Operations
-import XMonad.Hooks.DynamicLog
-import XMonad.Hooks.ManageDocks
-import XMonad.Util.Run(spawnPipe)
-import XMonad.Util.EZConfig
-import XMonad.Layout.Named
-import XMonad.Layout.Reflect
-import XMonad.Layout.ResizableTile
-import XMonad.Layout.WindowNavigation
-import XMonad.Layout.NoBorders (smartBorders)
-import XMonad.Util.CustomKeys
-import XMonad.StackSet as W
-import XMonad.Hooks.FadeInactive
-import Data.List (find)
-import System.IO
-import Control.Monad
-import Data.Function
-import qualified Data.Map.Strict as Map
-import Polybar
-import XmonadTheme
+import           Control.Monad
+import           Data.Function
+import           Data.List                      (find)
+import qualified Data.Map.Strict                as Map
+import           Polybar
+import           System.IO
+import           XMonad
+import           XMonad.Hooks.DynamicLog
+import           XMonad.Hooks.FadeInactive
+import           XMonad.Hooks.ManageDocks
+import           XMonad.Layout.Named
+import           XMonad.Layout.NoBorders        (smartBorders)
+import           XMonad.Layout.Reflect
+import           XMonad.Layout.ResizableTile
+import           XMonad.Layout.WindowNavigation
+import           XMonad.Operations
+import           XMonad.StackSet                as W
+import           XMonad.Util.CustomKeys
+import           XMonad.Util.EZConfig
+import           XMonad.Util.Run                (spawnPipe)
+import           XmonadTheme
 
 -- general definitions
 terminalEmulator = "kitty"
 
-launchRofi :: X ()
-launchRofi =
-  spawn "rofi -modi drun,ssh,window -show drun -show-icons"
+launchRofi :: String -> X ()
+launchRofi cmd =
+  spawn $ "rofi -modi drun,ssh,window,file-browser -show-icons -show " <> cmd
 
 launchEmacsClient :: X ()
 launchEmacsClient =
@@ -35,8 +35,9 @@ launchEmacsClient =
 
 launchers :: [((ButtonMask, KeySym),X ())]
 launchers =
-  [((mod4Mask, xK_e), launchEmacsClient)
-  ,((mod4Mask, xK_p), launchRofi)
+  [ ((mod4Mask, xK_e), launchEmacsClient)
+  , ((mod4Mask, xK_p), launchRofi "drun")
+  , ((mod4Mask, xK_slash), launchRofi "file-browser")
   ]
 
 main = do

@@ -33,6 +33,10 @@ let
     bat
     silver-searcher
     pulsemixer
+    curl
+    jq
+    httpie
+    tmux
   ];
 
   polybarFonts = with pkgs; [
@@ -59,6 +63,22 @@ let
   productivity = with pkgs; [
     slack
     thunderbird
+    gimp
+    drawio
+  ];
+
+  wallpapers = with pkgs.nixos-artwork.wallpapers; [
+    dracula
+    gnome-dark
+    mosaic-blue
+    nineish
+    nineish-dark-gray
+    simple-dark-gray
+  ];
+
+  games = with pkgs; [
+    dwarf-fortress
+    nethack
   ];
 
 in
@@ -82,6 +102,8 @@ in
     ++ writingTools
     ++ xserverTools
     ++ polybarFonts
+    ++ wallpapers
+    ++ games
     ++ productivity;
 
   home.keyboard.options = ["ctrl:nocaps"];

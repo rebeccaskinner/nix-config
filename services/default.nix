@@ -1,3 +1,6 @@
 [
   ./polybar
+  ./dunst
+  ./picom
+  ./udiskie
 ]
