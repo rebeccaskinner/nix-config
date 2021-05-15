@@ -10,9 +10,10 @@
       gitk = "gitk --all &";
       qiv = "qiv -t -I";
       emacs = "emacsclient -nw";
+      icat = "kitty +kitten icat";
     };
     initExtra = ''
-      export PS1="\n\033[0;35m\]\u@\h:\w λ \[\033[0m\]"
+      export PS1="\[\e[0;35m\]\u@\h:\w λ \[\e[0m\]"
     '';
   };
 }
