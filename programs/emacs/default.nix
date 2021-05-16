@@ -10,8 +10,8 @@
         src = pkgs.fetchFromGitHub {
           owner = "rebeccaskinner";
           repo = "darkplum-theme";
-          rev = "03ceef524e99750b530096121c4d2ffacbab97eb";
-          sha256 = "1495dbz2p4p1hwgfbkjhmzxbwlvxi1wzr71p84jkmc8177jp4q52";
+          rev = "d5f2867513fd59ecc5e7b1df3c971e6b733960db";
+          sha256 = "0xhrjblxrdr0r51xjn0cpshy1l2dg7bwwdlilhdkxm2l3pz8rz07";
         };
         buildInputs = [];
         recipe = pkgs.writeText "recipe" ''
