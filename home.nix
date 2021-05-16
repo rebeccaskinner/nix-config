@@ -47,6 +47,7 @@ let
 
   writingTools = with pkgs; [
     pandoc
+    evince
   ];
 
   xserverTools = with pkgs; [
@@ -81,6 +82,10 @@ let
     nethack
   ];
 
+  nixTools = with pkgs; [
+    nix-prefetch-scripts
+  ];
+
 in
 {
   nixpkgs.config.allowUnfree = true;
@@ -104,6 +109,7 @@ in
     ++ polybarFonts
     ++ wallpapers
     ++ games
+    ++ nixTools
     ++ productivity;
 
   home.keyboard.options = ["ctrl:nocaps"];
@@ -127,6 +133,13 @@ in
     ".config/gtk-4.0/settings.ini" = {
       source = ./gtk-4.0-settings.ini;
       recursive = false;
+    };
+  };
+
+  xdg.mimeApps = {
+    enable = true;
+    defaultApplications = {
+      "application/pdf" = "org.gnome.Evince.desktop";
     };
   };
 

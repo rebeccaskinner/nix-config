@@ -98,7 +98,7 @@
 (defun configure-look-and-feel ()
   "Run some stuff after init, like setting a theme and disabling scrollbars."
   ;; Setup theme
-  (load-theme 'rebecca t)
+  (load-theme 'darkplum t)
 
   ;; disable the menu bar
   (menu-bar-mode -1)

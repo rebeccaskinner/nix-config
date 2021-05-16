@@ -13,7 +13,7 @@
       icat = "kitty +kitten icat";
     };
     initExtra = ''
-      export PS1="\[\e[0;35m\]\u@\h:\w λ \[\e[0m\]"
+      export PS1="\n\[\e[0;35m\]\[\e]0;\u@\h:\w\a\]\u@\h:\w λ \[\e[0m\]"
     '';
   };
 }
