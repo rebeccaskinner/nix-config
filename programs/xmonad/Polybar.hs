@@ -110,6 +110,10 @@ themedPP config =
 
     underline s = "%{U}"<>s<>"%{U-}"
 
+    truncateTo n s
+      | length s <= (n - 3) = s
+      | otherwise = take (n - 3) s <> "..."
+
   in def
      { ppOutput           = dbusOutput config
      , ppCurrent          = \s -> fmt _themeFocusedWorkspaceText $ "["<>s<>"]"
@@ -121,7 +125,7 @@ themedPP config =
      , ppTitle            = \title ->
                               case title of
                                 "" -> fmt _themeFocusedWorkspaceText "<Desktop>"
-                                title' -> fmt _themeFocusedWorkspaceText title'
+                                title' -> fmt _themeFocusedWorkspaceText $ truncateTo (maxTitleLength config) title'
      , ppLayout           = fmt _themeFocusedWorkspaceText
      , ppSep              = fmt _themeSectionSeparator " · "
      }
@@ -129,6 +133,7 @@ themedPP config =
 data PolybarConfig = PolybarConfig
   { dbusClient :: D.Client
   , theme  :: PolybarScheme
+  , maxTitleLength :: Int
   }
 
 mkDbusClient :: IO D.Client
@@ -150,7 +155,11 @@ mkDbusClient =  do
 dbusOutput :: PolybarConfig -> String -> IO ()
 dbusOutput cfg msg =
   let
-    PolybarConfig dbus PolybarScheme{..} = cfg
+    PolybarConfig
+      { dbusClient = dbus
+      , theme =  PolybarScheme{..}
+      , maxTitleLength = _
+      }= cfg
     objPath = D.objectPath_ "/org/xmonad/Log"
     ifaceName = D.interfaceName_ "org.xmonad.Log"
     memberName = D.memberName_ "Update"
@@ -161,6 +170,9 @@ dbusOutput cfg msg =
 defaultPolybarConfig :: IO PolybarConfig
 defaultPolybarConfig = do
   client <- mkDbusClient
-  pure $ PolybarConfig { dbusClient = client, theme = polybarScheme defaultColorScheme }
+  pure $ PolybarConfig { dbusClient = client
+                       , theme = polybarScheme defaultColorScheme
+                       , maxTitleLength = 25
+                       }
 
 polybarLogHook = dynamicLogWithPP . themedPP
