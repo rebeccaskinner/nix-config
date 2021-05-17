@@ -62,7 +62,7 @@
       pdf-tools
       goto-last-change
       darkplum-theme
-      rebecca-theme
+      vterm
     ];
   };
   home.file.".emacs.d" = {
