@@ -9,11 +9,10 @@
     opacityRule = [ "100:name *= 'rofi'" ];
     shadow = true;
     shadowOpacity = "0.75";
-
-    # Workaround emacs issues
-    vSync = true;
     extraOptions = ''
-    glx-copy-from-front = true;
+      glx-no-stencil = true;
+      xrender-sync-fence = true;
     '';
+
   };
 }
