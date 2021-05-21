@@ -109,7 +109,6 @@
 (defun deamon-look-and-feel (frame)
   "Wrapper to run look-and-feel per-frame with emacsclient."
   (select-frame frame)
-  (set-frame-parameter frame 'inhibit-double-buffering 1)
   (configure-look-and-feel)
   )
 
