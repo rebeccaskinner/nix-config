@@ -447,6 +447,11 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
       )
     )
   (global-set-key (kbd "C-<tab>") 'hsfmt)
+  (set-face-attribute 'default nil
+                      :family "Hasklig"
+                      :weight 'normal
+                      :width 'normal)
+  (hasklig-mode)
   )
 
 ;; Haskell Mode

@@ -45,6 +45,10 @@ let
     material-design-icons
   ];
 
+  emacsFonts = with pkgs; [
+    hasklig
+  ];
+
   writingTools = with pkgs; [
     pandoc
     evince
@@ -107,6 +111,7 @@ in
     ++ writingTools
     ++ xserverTools
     ++ polybarFonts
+    ++ emacsFonts
     ++ wallpapers
     ++ games
     ++ nixTools
