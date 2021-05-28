@@ -10,8 +10,8 @@
         src = pkgs.fetchFromGitHub {
           owner = "rebeccaskinner";
           repo = "darkplum-theme";
-          rev = "524865effa82b64ccd5c791f9a9e851434531401";
-          sha256 = "0fffzkwvjkijqrywy3m0m32jb4xhfgvj079ydwklc110z6zbxax2";
+          rev = "c4a3d472775f1d534ce4e23a226a3b2b462f624d";
+          sha256 = "0wlv86dfsv6vl3ik6xygdaxd9j1iy5kwibsy5csr7isry26w8kbj";
         };
         buildInputs = [];
         recipe = pkgs.writeText "recipe" ''
@@ -27,6 +27,7 @@
         license = pkgs.lib.licenses.gpl3Plus.spdxId;
       };
     };
+
     extraPackages = epkgs: with epkgs; [
       ace-window
       flycheck
@@ -37,7 +38,6 @@
       pdf-tools
       dhall-mode
       proof-general
-      rebecca-theme
       nix-mode
       magit
       ox-gfm
@@ -45,7 +45,6 @@
       nix-sandbox
       restclient
       protobuf-mode
-      darcula-theme
       format-sql
       paredit
       ox-pandoc
@@ -57,14 +56,14 @@
       cargo
       rainbow-delimiters
       sql-indent
-      spacemacs-theme
       use-package
       pdf-tools
       goto-last-change
       darkplum-theme
-      vterm
+      hasklig-mode
     ];
   };
+
   home.file.".emacs.d" = {
     source = ./emacs.d;
     recursive = true;
