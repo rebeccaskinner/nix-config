@@ -37,6 +37,7 @@ let
     jq
     httpie
     tmux
+    file
   ];
 
   polybarFonts = with pkgs; [
