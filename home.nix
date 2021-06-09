@@ -53,6 +53,7 @@ let
   writingTools = with pkgs; [
     pandoc
     evince
+    ispell
   ];
 
   xserverTools = with pkgs; [
@@ -71,6 +72,7 @@ let
     thunderbird
     gimp
     drawio
+    element-desktop
   ];
 
   wallpapers = with pkgs.nixos-artwork.wallpapers; [
