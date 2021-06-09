@@ -32,6 +32,8 @@
   (global-set-key (kbd "C-'") 'goto-last-change)
   (global-set-key (kbd "C-M-s") 'isearch-forward-regexp)
   (global-set-key (kbd "C-M-r") 'isearch-backward-regexp)
+  (global-set-key (kbd "C-\"") "“")
+  (global-set-key (kbd "M-\"") "”")
   )
 
 (setup-global-keybindings)
@@ -232,12 +234,77 @@
       )
     )
 
-  (global-set-key (kbd "C-\"") "“")
-  (global-set-key (kbd "M-\"") "”")
-  (global-set-key (kbd "C-c t") 'make-tag)
-  (global-set-key (kbd "C-c b") 'add-code-block)
-  (global-set-key (kbd "C-c m") 'add-objc-method)
+  (local-set-key (kbd "C-c t") 'make-tag)
+  (local-set-key (kbd "C-c b") 'add-code-block)
+  (local-set-key (kbd "C-c m") 'add-objc-method)
   )
+
+(defun markdown-mode-tools()
+  "The markdown-mode-tools enable some extra functions to make it nicer to edit code-focused blog posts in Markdown."
+
+  (defvar tag-contents-history '())
+  (defvar tag-name-history '())
+  (defvar code-block-history '())
+  (defvar inline-code-history '())
+  (interactive)
+
+  (defun insert-tag-with-value(tag val)
+    (insert (format "<%s>%s</%s>" tag val tag))
+    )
+
+  (defun make-tag()
+    (interactive)
+    "The make-tag function gets a tag name and value and inserts the tag."
+    (let ((tag (read-string "tag: " nil 'tag-name-history )))
+      (add-to-history 'tag-name-history tag)
+      (let ((contents (read-string "contents: " nil 'tag-contents-history )))
+        (add-to-history 'tag-contents-history contents)
+        (insert-tag-with-value tag contents)
+        )
+      )
+    )
+
+  (defun add-inline-code()
+    (interactive)
+    "The add-inline-code function gets some code and inserts it."
+    (let ((code (read-string "code: " nil 'tag-name-history )))
+      (add-to-history 'inline-code-history code)
+      (insert (format "`%s`" code))
+      )
+    )
+
+  (defun insert-code-block-without-contents(lang)
+    (insert (format "```%s" lang))
+    (newline-and-indent)
+    (insert "```")
+    (previous-line)
+    (end-of-line)
+    (newline-and-indent)
+    )
+
+  (defun insert-code-block-with-contents(lang contents)
+    (insert-code-block-without-contents lang)
+    (insert contents)
+    (next-line)
+    (end-of-line)
+    (newline-and-indent)
+    )
+
+  (defun add-code-block ()
+    "Add a code block without spawning a mini-window."
+    (interactive)
+    (let ((lang (read-string "language: " nil 'code-block-history)))
+      (add-to-history 'code-block-history lang)
+      (insert-code-block-without-contents lang)
+      )
+    )
+
+  (local-set-key (kbd "C-c t") 'make-tag)
+  (local-set-key (kbd "C-c b") 'add-code-block)
+  (local-set-key (kbd "C-c m") 'add-inline-code)
+  )
+
+(add-hook 'markdown-mode-hook 'markdown-mode-tools)
 
 ;; emacs lisp mode configuration
 (defun elisp-config ()
@@ -364,9 +431,9 @@
       (go-mode-new-subtest desc))
     )
 
-  (global-set-key (kbd "C-c t") 'new-test)
-  (global-set-key (kbd "C-c r") 'new-sub-test)
-  (global-set-key (kbd "C-c e") 'go-if-err)
+  (local-set-key (kbd "C-c t") 'new-test)
+  (local-set-key (kbd "C-c r") 'new-sub-test)
+  (local-set-key (kbd "C-c e") 'go-if-err)
   )
 
 (add-hook 'go-mode-hook 'my-go-mode-hook)
@@ -446,7 +513,7 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
       (hsfmt)
       )
     )
-  (global-set-key (kbd "C-<tab>") 'hsfmt)
+  (local-set-key (kbd "C-<tab>") 'hsfmt)
   (set-face-attribute 'default nil
                       :family "Hasklig"
                       :weight 'normal
@@ -480,7 +547,7 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
       (hsfmt)
       )
     )
-  (global-set-key (kbd "C-<tab>") 'hsfmt)
+  (local-set-key (kbd "C-<tab>") 'hsfmt)
   )
 (add-hook 'haskell-cabal-mode-hook 'my-haskell-cabal-mode)
 
@@ -528,7 +595,7 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
   (let ((name (read-string "Frame Title: ")))
     (beamer-new-frame name))
   )
-(global-set-key (kbd "C-c f") 'new-slide)
+(local-set-key (kbd "C-c f") 'new-slide)
 
 (defun simplified-block()
   (interactive)
@@ -541,7 +608,7 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
   (end-of-line)
   (newline-and-indent)
   )
-(global-set-key (kbd "C-c s") 'simplified-block)
+(local-set-key (kbd "C-c s") 'simplified-block)
 )
 
 ;; AUCTeX-mode
@@ -549,7 +616,7 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
 (setq TeX-auto-save t); Enable parse on save
 
 (defun extra-cc-keybindings()
-  (global-set-key (kbd "C-?") (kbd "M-x manual-entry RET"))
+  (local-set-key (kbd "C-?") (kbd "M-x manual-entry RET"))
   )
 
 ;; Cc Mode
