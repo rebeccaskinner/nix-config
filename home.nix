@@ -1,13 +1,17 @@
 { config, pkgs, ... }:
 
 let
+
+  fourmoluOverlay = import ./overlays/fourmolu;
+
   gtkDarkTheme = { gtk-application-prefer-dark-theme = true; };
+  aspellPkgs = pkgs.aspellWithDicts(dicts: with dicts; [ en en-computers en-science ]);
 
   haskellDevEnvironment = pkgs.haskellPackages.ghcWithPackages(hsPkgs: with hsPkgs; [
     ## Haskell Tooling
     cabal-install
     cabal2nix
-    stylish-haskell
+    fourmolu
     ghcide
     hoogle
     threadscope
@@ -38,6 +42,7 @@ let
     httpie
     tmux
     file
+    aspellPkgs
   ];
 
   polybarFonts = with pkgs; [
@@ -72,7 +77,6 @@ let
     thunderbird
     gimp
     drawio
-    element-desktop
   ];
 
   wallpapers = with pkgs.nixos-artwork.wallpapers; [
@@ -93,8 +97,13 @@ let
     nix-prefetch-scripts
   ];
 
+  multimedia = with pkgs; [
+    vlc
+  ];
+
 in
 {
+  nixpkgs.overlays = [ fourmoluOverlay ];
   nixpkgs.config.allowUnfree = true;
 
   # Let Home Manager install and manage itself.
@@ -118,7 +127,8 @@ in
     ++ wallpapers
     ++ games
     ++ nixTools
-    ++ productivity;
+    ++ productivity
+    ++ multimedia;
 
   home.keyboard.options = ["ctrl:nocaps"];
 
@@ -144,10 +154,18 @@ in
     };
   };
 
-  xdg.mimeApps = {
-    enable = true;
-    defaultApplications = {
-      "application/pdf" = "org.gnome.Evince.desktop";
+  xdg = {
+    mimeApps = {
+      enable = true;
+      defaultApplications = {
+        "application/pdf" = "org.gnome.Evince.desktop";
+      };
+    };
+    configFile = {
+      "fourmolu.yaml" = {
+        source = ./fourmolu.yaml;
+        recursive = false;
+      };
     };
   };
 

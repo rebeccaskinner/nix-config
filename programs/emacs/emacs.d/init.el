@@ -505,7 +505,7 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
     "Apply stylish-haskell to the current buffer."
     (interactive)
     (defvar-local p (point))
-    (shell-command-on-region (point-min) (point-max)  "stylish-haskell" nil t)
+    (shell-command-on-region (point-min) (point-max)  "fourmolu" nil t)
     (goto-char p)
     )
   (defun hs-save-hook()

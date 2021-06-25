@@ -61,6 +61,7 @@
       goto-last-change
       darkplum-theme
       hasklig-mode
+      yaml-mode
     ];
   };
 
