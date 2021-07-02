@@ -20,6 +20,7 @@ import           XMonad.StackSet                as W
 import           XMonad.Util.CustomKeys
 import           XMonad.Util.EZConfig
 import           XMonad.Util.Run                (spawnPipe)
+import XMonad.Hooks.EwmhDesktops
 import           XmonadTheme
 
 -- general definitions
@@ -42,7 +43,7 @@ launchers =
 
 main = do
   polybarConfig <- defaultPolybarConfig
-  xmonad . stylishConfig defaultXMonadScheme $ docks def
+  xmonad . ewmh . stylishConfig defaultXMonadScheme $ docks def
     { manageHook = manageDocks <+> manageHook def
     , layoutHook = smartBorders . avoidStruts $ layoutHook def
     , logHook = fadeInactiveLogHook 0.9 <> polybarLogHook polybarConfig
