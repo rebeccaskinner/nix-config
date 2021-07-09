@@ -3,6 +3,7 @@
 let
 
   fourmoluOverlay = import ./overlays/fourmolu;
+  dungeondraft = import ./programs/dungeondraft { inherit pkgs; };
 
   gtkDarkTheme = { gtk-application-prefer-dark-theme = true; };
   aspellPkgs = pkgs.aspellWithDicts(dicts: with dicts; [ en en-computers en-science ]);
@@ -43,6 +44,7 @@ let
     tmux
     file
     aspellPkgs
+    s3cmd
   ];
 
   polybarFonts = with pkgs; [
@@ -91,6 +93,8 @@ let
   games = with pkgs; [
     dwarf-fortress
     nethack
+    minecraft
+    dungeondraft
   ];
 
   nixTools = with pkgs; [
