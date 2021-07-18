@@ -6,19 +6,32 @@
       darkplum-theme = self.melpaBuild rec {
         name = "darkplum-theme";
         pname = "darkplum-theme";
-        version = "1.0.0";
+        version = "0.0.2";
         src = pkgs.fetchFromGitHub {
           owner = "rebeccaskinner";
           repo = "darkplum-theme";
           rev = "c4a3d472775f1d534ce4e23a226a3b2b462f624d";
           sha256 = "0wlv86dfsv6vl3ik6xygdaxd9j1iy5kwibsy5csr7isry26w8kbj";
+          # rev = "a15b576f7c3886962dc0f05a6607377969545ae4";
+          # sha256 = "0jx57cx7n2k2a8ysbqlamc8m70vg9crajc25axbd75cn34ccdr4i";
         };
-        buildInputs = [];
         recipe = pkgs.writeText "recipe" ''
           (darkplum-theme
           :repo "rebeccaskinner/darkplum-theme"
-          :fetcher github
-          :files ("darkplum-theme.el"))
+          :fetcher github)
+        '';
+        installPhase = ''
+          runHook preInstall
+          archive="$NIX_BUILD_TOP/source/$ename.el"
+          if [ ! -f "$archive" ]; then
+              echo "archive not found ($archive)"
+              archive="$NIX_BUILD_TOP/packages/$ename-$version.tar"
+          fi
+          emacs --batch -Q \
+              -l "$elpa2nix" \
+              -f elpa2nix-install-package \
+              "$archive" "$out/share/emacs/site-lisp/elpa"
+          runHook postInstall
         '';
         meta = {
           description = "A dark purple theme for emacs";
