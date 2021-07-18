@@ -13,6 +13,7 @@ import           XMonad.Hooks.ManageDocks
 import           XMonad.Layout.Named
 import           XMonad.Layout.NoBorders        (smartBorders)
 import           XMonad.Layout.Reflect
+import           XMonad.Layout.ThreeColumns
 import           XMonad.Layout.ResizableTile
 import           XMonad.Layout.WindowNavigation
 import           XMonad.Operations
@@ -41,11 +42,28 @@ launchers =
   , ((mod4Mask, xK_slash), launchRofi "file-browser")
   ]
 
+customLayoutHook =
+  let
+    layouts' =
+      threeColumn ||| reverseTall ||| tall ||| mirrorTall ||| full
+    mkLayout f =
+      f mainWindowCount incrementRatio mainWindowRatio
+    incrementRatio  = (3/100)
+    mainWindowRatio = (1/2)
+    mainWindowCount = 1
+    threeColumn     = mkLayout ThreeColMid
+    tall            = mkLayout Tall
+    full            = Full
+    reverseTall     = Mirror tall
+    mirrorTall      = reflectHoriz tall
+  in smartBorders . avoidStruts $ layouts'
+
+
 main = do
   polybarConfig <- defaultPolybarConfig
   xmonad . ewmh . stylishConfig defaultXMonadScheme $ docks def
     { manageHook = manageDocks <+> manageHook def
-    , layoutHook = smartBorders . avoidStruts $ layoutHook def
+    , layoutHook = smartBorders . avoidStruts $ customLayoutHook -- layoutHook def
     , logHook = fadeInactiveLogHook 0.9 <> polybarLogHook polybarConfig
     , modMask = mod4Mask
     , borderWidth = 2
