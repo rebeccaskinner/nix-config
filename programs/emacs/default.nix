@@ -10,10 +10,8 @@
         src = pkgs.fetchFromGitHub {
           owner = "rebeccaskinner";
           repo = "darkplum-theme";
-          rev = "c4a3d472775f1d534ce4e23a226a3b2b462f624d";
-          sha256 = "0wlv86dfsv6vl3ik6xygdaxd9j1iy5kwibsy5csr7isry26w8kbj";
-          # rev = "a15b576f7c3886962dc0f05a6607377969545ae4";
-          # sha256 = "0jx57cx7n2k2a8ysbqlamc8m70vg9crajc25axbd75cn34ccdr4i";
+          rev = "829a242f8b2de75d764fcbd00c781711ccbb1330";
+          sha256 = "0xf1sgs9b9cj9q5fjhbva0mry31f3hjw0vkbza9pz0v4w0g9awgh";
         };
         recipe = pkgs.writeText "recipe" ''
           (darkplum-theme
@@ -75,6 +73,28 @@
       darkplum-theme
       hasklig-mode
       yaml-mode
+      counsel
+      counsel-org-clock
+      counsel-tramp
+      counsel-etags
+      counsel-jq
+      swiper
+
+      # lsp-mode things
+
+      lsp-mode
+      lsp-haskell
+      treemacs
+      lsp-treemacs
+      lsp-ui
+      company # popups
+      helm
+      helm-lsp
+      ivy
+      lsp-ivy
+      dap-mode
+      which-key
+
     ];
   };
 

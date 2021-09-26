@@ -6,8 +6,9 @@
     userName = "rebecca skinner";
     aliases = {
       co = "checkout";
-      br = "branch";
+      br = "!git --no-pager branch";
       ff = "merge --ff-only";
+      what-changed = "!git --no-pager diff --name-only";
       st = "status";
     };
     extraConfig = {

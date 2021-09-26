@@ -13,6 +13,7 @@
 
 ;; global custom commands
 (require 'calendar)
+
 (defun timestamp ()
  "Insert a timestamp."
    (interactive)
@@ -50,6 +51,15 @@
 
 (setq-default indent-tabs-mode nil)
 
+(defun configure-ivy-mode ()
+  (ivy-mode)
+  (setq ivy-use-virtual-buffers t)
+  (setq enable-recursive-minibuffers t)
+  (global-set-key (kbd "C-s") 'swiper-isearch)
+  )
+
+(configure-ivy-mode)
+
 ;; Turn on visual line-wrapping mode
 (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
 (add-hook 'tex-mode-hook 'turn-on-visual-line-mode)
@@ -78,6 +88,12 @@
   (setq org-reveal-root (make-home-path "projects/reveal.js"))
   )
 
+(defun disable-org-auto-indent()
+  "Disable automatic indentation of sections in org mode."
+  (setq org-adapt-indentation nil)
+  )
+
+(add-hook 'org-mode-hook 'disable-org-auto-indent)
 (add-hook 'org-mode-hook 'enable-org-reveal)
 (add-hook 'org-mode-hook 'turn-on-visual-line-mode)
 (add-hook 'org-mode-hook 'enable-orgmode-graphiz-execution)
@@ -225,6 +241,22 @@
       )
     )
 
+  (defun add-inline-code ()
+    "Add an ic tag."
+    (interactive)
+    (let ((method (read-string "code: " nil 'method-name-history)))
+      (insert-tag-with-value "ic" method)
+      )
+    )
+
+  (defun add-backtick-code ()
+    "Add some inline code using backticks"
+    (interactive)
+    (let ((code (read-string "code: " nil 'method-name-history)))
+      (insert (format "`%s`" code))
+      )
+    )
+
   (defun add-code-block ()
     "Add a code block without spawning a mini-window."
     (interactive)
@@ -234,9 +266,18 @@
       )
     )
 
+  (defun insert-lambda ()
+    "insert a literal lambda character"
+    (interactive)
+    (insert "λ")
+    )
+
+  (local-set-key (kbd "C-c l") 'insert-lambda)
+  (local-set-key (kbd "C-c c") 'add-backtick-code)
   (local-set-key (kbd "C-c t") 'make-tag)
   (local-set-key (kbd "C-c b") 'add-code-block)
-  (local-set-key (kbd "C-c m") 'add-objc-method)
+  (local-set-key (kbd "C-c m") 'add-backtick-code)
+  (local-set-key (kbd "C-c i") 'add-inline-code)
   )
 
 (defun markdown-mode-tools()
@@ -500,14 +541,46 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
    )
   )
 
+(use-package lsp-mode
+  :init
+  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
+  (setq lsp-keymap-prefix "C-c l")
+  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
+         ;; if you want which-key integration
+         (lsp-mode . lsp-enable-which-key-integration)
+         )
+  :commands lsp)
+
+;; optionally
+(use-package lsp-ui
+  :commands lsp-ui-mode
+  )
+
+;; if you are ivy user
+(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
+
+;; optionally if you want to use debugger
+(use-package dap-mode)
+;; (use-package dap-LANGUAGE) to load the dap adapter for your language
+
+;; optional if you want which-key integration
+(use-package which-key
+    :config
+    (which-key-mode))
+
+(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
+
 (defun my-haskell-mode-hooks()
+  "Create some custom haskell-mode hooks."
+
   (defun hsfmt()
     "Apply stylish-haskell to the current buffer."
     (interactive)
     (defvar-local p (point))
-    (shell-command-on-region (point-min) (point-max)  "fourmolu" nil t)
+    (shell-command-on-region (point-min) (point-max)  "stylish-haskell" nil t)
     (goto-char p)
     )
+
   (defun hs-save-hook()
     (when (eq major-mode 'haskell-mode)
       (hsfmt)
@@ -521,17 +594,10 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
   (hasklig-mode)
   )
 
-;; Haskell Mode
-(use-package dante
-  :ensure t
-  :after haskell-mode
-  :commands 'dante-mode
-  :init
-  (add-hook 'haskell-mode-hook 'flycheck-mode)
-  (add-hook 'haskell-mode-hook 'dante-mode)
-  )
-
+(add-hook 'haskell-mode-hook #'lsp)
 (add-hook 'haskell-mode-hook 'my-haskell-mode-hooks)
+
+(defalias 'list-buffers 'ibuffer)
 
 ;; Setup haskell-cabal-mode
 (defun my-haskell-cabal-mode()
@@ -574,41 +640,60 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
 
 ;; TeX Mode
 (defun beamer-utils()
+  (interactive)
   (defun beamer-new-frame(name)
-  (insert "\\begin{frame}")
-  (reindent-then-newline-and-indent)
-  (insert "\\frametitle{")
-  (insert name)
-  (insert "}")
-  (reindent-then-newline-and-indent)
-  (insert "\\end{frame}")
-  (reindent-then-newline-and-indent)
-  (previous-line)
-  (previous-line)
-  (end-of-line)
-  (newline-and-indent)
+    (insert "\\begin{frame}")
+    (reindent-then-newline-and-indent)
+    (insert "\\frametitle{")
+    (insert name)
+    (insert "}")
+    (reindent-then-newline-and-indent)
+    (insert "\\end{frame}")
+    (reindent-then-newline-and-indent)
+    (previous-line)
+    (previous-line)
+    (end-of-line)
+    (newline-and-indent)
   )
 
-(defun new-slide()
-  "Get a slide NAME and insert it."
-  (interactive)
-  (let ((name (read-string "Frame Title: ")))
-    (beamer-new-frame name))
-  )
-(local-set-key (kbd "C-c f") 'new-slide)
+  (defun new-slide()
+    "Get a slide NAME and insert it."
+    (interactive)
+    (let ((name (read-string "Frame Title: ")))
+      (beamer-new-frame name))
+    )
 
-(defun simplified-block()
-  (interactive)
-  (insert "\\begin{exampleblock}{In Plain English}")
-  (reindent-then-newline-and-indent)
-  (insert "\\end{exampleblock}")
-  (reindent-then-newline-and-indent)
-  (previous-line)
-  (previous-line)
-  (end-of-line)
-  (newline-and-indent)
+  (local-set-key (kbd "C-c f") 'new-slide)
+
+  (defun simplified-block()
+    (interactive)
+    (insert "\\begin{exampleblock}{In Plain English}")
+    (reindent-then-newline-and-indent)
+    (insert "\\end{exampleblock}")
+    (reindent-then-newline-and-indent)
+    (previous-line)
+    (previous-line)
+    (end-of-line)
+    (newline-and-indent)
   )
-(local-set-key (kbd "C-c s") 'simplified-block)
+
+  (setq org-latex-listings 'minted)
+  (setq org-latex-custom-lang-environments
+        '(
+          (emacs-lisp "common-lispcode")
+          )
+        )
+  (setq org-latex-minted-options
+        '(("frame" "lines")
+          ("fontsize" "\\scriptsize")
+          ("linenos" "false")))
+
+  (setq org-latex-to-pdf-process
+        '("pdflatex --shell-escape -interaction nonstopmode -output-directory %o %f"
+          "pdflatex --shell-escape -interaction nonstopmode -output-directory %o %f"
+          "pdflatex --shell-escape -interaction nonstopmode -output-directory %o %f"))
+
+  (local-set-key (kbd "C-c s") 'simplified-block)
 )
 
 ;; AUCTeX-mode
@@ -634,5 +719,6 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
 (add-hook 'cc-mode-hook 'extra-cc-keybindings)
 
 (pdf-loader-install)
+
 
 ;;; init.el ends here

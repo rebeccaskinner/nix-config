@@ -1,8 +1,13 @@
+{ config, pkgs, ...}:
 {
   xsession = {
     enable = true;
+    pointerCursor = {
+      package = pkgs.vanilla-dmz;
+      defaultCursor = "left_ptr";
+      name = "Vanilla-DMZ";
+    };
     initExtra = ''
-xsetroot -cursor_name left_ptr
 xrandr --dpi 90
 xrandr --output eDP-1-1 --brightness 0.2
 xrandr --output eDP-1-1 --off

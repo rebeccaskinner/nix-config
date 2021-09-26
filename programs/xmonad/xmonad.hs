@@ -29,7 +29,7 @@ terminalEmulator = "kitty"
 
 launchRofi :: String -> X ()
 launchRofi cmd =
-  spawn $ "rofi -modi drun,ssh,window,file-browser -show-icons -show " <> cmd
+  spawn $ "rofi -modi drun,ssh,window,filebrowser -show-icons -show " <> cmd
 
 launchEmacsClient :: X ()
 launchEmacsClient =
@@ -39,7 +39,7 @@ launchers :: [((ButtonMask, KeySym),X ())]
 launchers =
   [ ((mod4Mask, xK_e), launchEmacsClient)
   , ((mod4Mask, xK_p), launchRofi "drun")
-  , ((mod4Mask, xK_slash), launchRofi "file-browser")
+  , ((mod4Mask, xK_slash), launchRofi "filebrowser")
   ]
 
 customLayoutHook =
