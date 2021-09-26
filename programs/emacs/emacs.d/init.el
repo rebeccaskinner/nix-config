@@ -622,7 +622,7 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
       )
     )
 
-  (rainbow-delimiters)
+  (rainbow-delimiters-mode)
   (local-set-key (kbd "C-)") 'forward-sexp)
   (local-set-key (kbd "C-(") 'backward-sexp)
   (local-set-key (kbd "C-<tab>") 'hsfmt)
