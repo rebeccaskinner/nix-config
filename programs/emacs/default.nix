@@ -10,8 +10,8 @@
         src = pkgs.fetchFromGitHub {
           owner = "rebeccaskinner";
           repo = "darkplum-theme";
-          rev = "829a242f8b2de75d764fcbd00c781711ccbb1330";
-          sha256 = "0xf1sgs9b9cj9q5fjhbva0mry31f3hjw0vkbza9pz0v4w0g9awgh";
+          rev = "7a93038ede49c1c30e540d510d54ef83e00c2bce";
+          sha256 = "0rsfvx8nsq9sbkdzs4mjqfwsqdwg5zz9y4wyqq05pamdhchmy2al";
         };
         recipe = pkgs.writeText "recipe" ''
           (darkplum-theme
@@ -80,8 +80,10 @@
       counsel-jq
       swiper
 
-      # lsp-mode things
+      # better unicode font support
+      unicode-fonts
 
+      # lsp-mode things
       lsp-mode
       lsp-haskell
       treemacs
@@ -94,7 +96,6 @@
       lsp-ivy
       dap-mode
       which-key
-
     ];
   };
 

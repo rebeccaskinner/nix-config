@@ -6,6 +6,41 @@
 ;; Disable the splash screen
 (setq inhibit-splash-screen t)
 
+;; (use-package unicode-fonts
+;;   :ensure t
+;;   :config (unicode-fonts-setup))
+
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(default ((t (:family "Fira Code Nerd" :foundry "ADBO" :slant normal :weight semi-bold :heightf 140 :width normal :height 102))))
+ '(mode-line ((t (:family "Fira Code Nerd" :foundry "ADBO" :slant normal :weight semi-bold :heightf 140 :width normal :height 102))))
+ )
+
+(defun configure-look-and-feel ()
+  "Run some stuff after init, like setting a theme and disabling scrollbars."
+  ;; Setup theme
+  (load-theme 'darkplum t)
+
+  ;; disable the menu bar
+  (menu-bar-mode -1)
+  (tool-bar-mode -1)
+  (toggle-scroll-bar -1)
+  )
+
+(defun deamon-look-and-feel (frame)
+  "Wrapper to run look-and-feel per FRAME with emacsclient."
+  (select-frame frame)
+  (configure-look-and-feel)
+  )
+
+(if (daemonp)
+    (add-hook 'after-make-frame-functions #'deamon-look-and-feel)
+  (configure-look-and-feel)
+  )
+
 
 ;; Set the default browser to firefox
 (setq browse-url-browser-function 'browse-url-firefox)
@@ -15,9 +50,9 @@
 (require 'calendar)
 
 (defun timestamp ()
- "Insert a timestamp."
-   (interactive)
-   (insert (format-time-string "%Y-%m-%dT%H:%M:%S")))
+  "Insert a timestamp."
+  (interactive)
+  (insert (format-time-string "%Y-%m-%dT%H:%M:%S")))
 
 ;; Show the current time in the modeline
 (display-time-mode 1)
@@ -40,7 +75,7 @@
 (setup-global-keybindings)
 
 (defun configure-temp-files()
-  "Set the auto-save and backup files to /tmp/"
+  "Set the auto-save and backup files to /tmp/."
   (setq backup-directory-alist
         `((".*" . ,temporary-file-directory)))
   (setq auto-save-file-name-transforms
@@ -52,6 +87,7 @@
 (setq-default indent-tabs-mode nil)
 
 (defun configure-ivy-mode ()
+  "Configure ivy-mode and set up a few keybindings."
   (ivy-mode)
   (setq ivy-use-virtual-buffers t)
   (setq enable-recursive-minibuffers t)
@@ -75,17 +111,13 @@
   )
 
 (defun enable-orgmode-inline-preview()
+  "Turn on inline preview in orgmode."
   (setq org-start-with-inline-images t)
   )
 
 (defun enable-orgmode-ruby-execution()
   "Enable ruby rendering and execution with org-bable."
   (require 'ob-ruby)
-  )
-
-(defun enable-org-reveal()
-  (require 'ox-reveal)
-  (setq org-reveal-root (make-home-path "projects/reveal.js"))
   )
 
 (defun disable-org-auto-indent()
@@ -104,38 +136,6 @@
 ;; flycheck
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:family "Fira Code Nerd" :foundry "ADBO" :slant normal :weight semi-bold :heightf 140 :width normal :height 102))))
- )
-
-
-(defun configure-look-and-feel ()
-  "Run some stuff after init, like setting a theme and disabling scrollbars."
-  ;; Setup theme
-  (load-theme 'darkplum t)
-
-  ;; disable the menu bar
-  (menu-bar-mode -1)
-  (tool-bar-mode -1)
-  (toggle-scroll-bar -1)
-  )
-
-(defun deamon-look-and-feel (frame)
-  "Wrapper to run look-and-feel per-frame with emacsclient."
-  (select-frame frame)
-  (configure-look-and-feel)
-  )
-
-(if (daemonp)
-    (add-hook 'after-make-frame-functions #'deamon-look-and-feel)
-    (configure-look-and-feel)
-  )
-
-
 ;; Rainbow Delimiters
 (require 'rainbow-delimiters)
 
@@ -148,6 +148,48 @@
 
 ;; Turn on fci mode by default
 (add-hook 'after-init-hook 'fci-mode)
+
+(defun line-number-config()
+  "Configure line numbers."
+  (defun absolute-line-numbers()
+    (interactive)
+    (setq display-line-numbers-type t)
+    (display-line-numbers-mode)
+    )
+
+  (defun relative-line-numbers()
+    (interactive)
+    (setq display-line-numbers-type 'relative)
+    (display-line-numbers-mode)
+    )
+
+  (defun visual-line-numbers()
+    (interactive)
+    (setq display-line-numbers-type 'visual)
+    (display-line-numbers-mode)
+    )
+
+  (defun turn-off-line-numbers()
+    (interactive)
+    (setq display-line-numbers nil)
+    )
+
+  (defun turn-on-line-numbers()
+    (interactive)
+    (display-line-numbers-mode)
+    )
+
+  (defun toggle-line-numbers()
+    (interactive)
+    (if (eq display-line-numbers nil)
+        (turn-on-line-numbers)
+      (turn-off-line-numbers)
+      )
+    )
+  (global-set-key (kbd "C-c n") 'toggle-line-numbers)
+  )
+
+(line-number-config)
 
 (defun soft-wrap-config (&optional width)
   "Configure soft-wrap to WIDTH columns of text, and set a visual fill column at the boundry."
@@ -163,20 +205,19 @@
   (require 'expand-region)
   (global-set-key (kbd "C-=") 'er/expand-region))
 
+(enable-expand-region)
+
 ;; mode specific configs
 (defun default-programming-config ()
   "Configure some sane defaults shared across various programming-related major modes."
   (auto-fill-mode 1)
   (auto-complete-mode 1)
   (rainbow-delimiters-mode 1)
-  (fci-mode 1)
-  (set-fill-column 80)
-  (enable-expand-region)
-;  (line-nums)
   (add-hook 'before-save-hook 'whitespace-cleanup)
   (setq tab-width 2)
-  (global-set-key (kbd "C-)") 'forward-sexp)
-  (global-set-key (kbd "C-(") 'backward-sexp)
+  (local-set-key (kbd "C-)") 'forward-sexp)
+  (local-set-key (kbd "C-(") 'backward-sexp)
+  (turn-on-line-numbers)
   )
 
 (defun my-dhall-mode-config ()
@@ -362,11 +403,6 @@
   (window-margin-mode)
   )
 
-;; Configure go for eshell
-;; Set GOPATH in the emacs environment
-(setenv "GOPATH" (concat (getenv "HOME") "/go"))
-(setenv "GOROOT" "/usr/local/go")
-
 (defun my-javascript-mode-hook ()
   "Configuration for javascript."
   (default-programming-config)
@@ -376,7 +412,6 @@
 (add-hook 'javascript-mode-hook 'my-javascript-mode-hook)
 
 ;; Python Mode
-
 (defun my-python-mode-hook ()
   "Configure settings for python."
   (default-programming-config)
@@ -392,7 +427,7 @@
   (default-programming-config)
   (soft-wrap-config)
 
-  ; Call Gofmt before saving
+                                        ; Call Gofmt before saving
   (add-hook 'before-save-hook 'gofmt-before-save)
 
   (local-set-key (kbd "C-<tab>") 'gofmt-before-save)
@@ -410,13 +445,13 @@
   ;; Set the tab-width to something reasonable
   (setq tab-width 2)
 
-  ; Use goimports instead of go-fmt
+                                        ; Use goimports instead of go-fmt
   (setq gofmt-command "goimports")
 
-  ; Use C-<return> to go-run the current file outside of go-playground files
+                                        ; Use C-<return> to go-run the current file outside of go-playground files
   (local-set-key (kbd "C-<return>") 'go-run)
 
-  ; Use 'C-Shift-<return>' to run tests on the current file
+                                        ; Use 'C-Shift-<return>' to run tests on the current file
   (local-set-key (kbd "C-S-<return>") 'go-test-current-file)
 
   (defun go-if-err()
@@ -565,14 +600,14 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
 
 ;; optional if you want which-key integration
 (use-package which-key
-    :config
-    (which-key-mode))
+  :config
+  (which-key-mode))
 
 (use-package lsp-treemacs :commands lsp-treemacs-errors-list)
 
 (defun my-haskell-mode-hooks()
-  "Create some custom haskell-mode hooks."
 
+  "Create some custom haskell-mode hooks."
   (defun hsfmt()
     "Apply stylish-haskell to the current buffer."
     (interactive)
@@ -586,7 +621,12 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
       (hsfmt)
       )
     )
+
+  (rainbow-delimiters)
+  (local-set-key (kbd "C-)") 'forward-sexp)
+  (local-set-key (kbd "C-(") 'backward-sexp)
   (local-set-key (kbd "C-<tab>") 'hsfmt)
+  (turn-on-line-numbers)
   (set-face-attribute 'default nil
                       :family "Hasklig"
                       :weight 'normal
@@ -654,7 +694,7 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
     (previous-line)
     (end-of-line)
     (newline-and-indent)
-  )
+    )
 
   (defun new-slide()
     "Get a slide NAME and insert it."
@@ -675,7 +715,7 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
     (previous-line)
     (end-of-line)
     (newline-and-indent)
-  )
+    )
 
   (setq org-latex-listings 'minted)
   (setq org-latex-custom-lang-environments
@@ -694,7 +734,7 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
           "pdflatex --shell-escape -interaction nonstopmode -output-directory %o %f"))
 
   (local-set-key (kbd "C-c s") 'simplified-block)
-)
+  )
 
 ;; AUCTeX-mode
 (setq TeX-parse-self t); Enable automatic parsing
