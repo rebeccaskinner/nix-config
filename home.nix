@@ -49,14 +49,13 @@ let
     s3cmd
   ];
 
-  polybarFonts = with pkgs; [
+  fonts = with pkgs; [
     font-awesome-ttf
     siji
     material-design-icons
-  ];
-
-  emacsFonts = with pkgs; [
     hasklig
+    font-awesome
+    symbola
   ];
 
   writingTools = with pkgs; [
@@ -105,6 +104,7 @@ let
 
   nixTools = with pkgs; [
     nix-prefetch-scripts
+    rnix-lsp
   ];
 
   multimedia = with pkgs; [
@@ -132,8 +132,7 @@ in
     ++ commandLineTools
     ++ writingTools
     ++ xserverTools
-    ++ polybarFonts
-    ++ emacsFonts
+    ++ fonts
     ++ wallpapers
     ++ games
     ++ nixTools
