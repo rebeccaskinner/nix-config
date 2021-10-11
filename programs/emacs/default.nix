@@ -1,6 +1,7 @@
 {pkgs, ...}:
+
 {
-  programs.emacs = {
+ programs.emacs = {
     enable = true;
     overrides = self: super: rec {
       darkplum-theme = self.melpaBuild rec {
@@ -39,40 +40,35 @@
       };
     };
 
+    extraConfig = ''
+    (setq ccls-executable "${pkgs.ccls}/bin/ccls")
+    '';
+
     extraPackages = epkgs: with epkgs; [
       ace-window
       flycheck
       direnv
       fill-column-indicator
-      dante
       auto-complete
       pdf-tools
-      dhall-mode
       proof-general
-      nix-mode
       magit
       ox-gfm
       nix-buffer
       nix-sandbox
       restclient
-      protobuf-mode
       format-sql
       paredit
       ox-pandoc
-      json-mode
       graphviz-dot-mode
-      go-mode
       go-playground
       expand-region
-      cargo
       rainbow-delimiters
       sql-indent
       use-package
       pdf-tools
       goto-last-change
       darkplum-theme
-      hasklig-mode
-      yaml-mode
       counsel
       counsel-org-clock
       counsel-tramp
@@ -80,12 +76,29 @@
       counsel-jq
       swiper
 
+      # misc. programming language modes
+      dhall-mode
+      nix-mode
+      protobuf-mode
+      go-mode
+      json-mode
+      yaml-mode
+
+      # rust
+      rustic
+      cargo
+
+      # Haskell
+      dante
+      hasklig-mode
+
       # better unicode font support
       unicode-fonts
 
       # lsp-mode things
       lsp-mode
       lsp-haskell
+      ccls
       treemacs
       lsp-treemacs
       lsp-ui

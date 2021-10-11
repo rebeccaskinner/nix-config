@@ -18,6 +18,7 @@ let
     threadscope
     stylish-haskell
     haskell-language-server
+    hasktags
 
     ## Common Haskell Libraries
     stm
@@ -35,6 +36,25 @@ let
     conduit
   ]);
 
+  rustPackages = with pkgs; [
+    rustc
+    rustfmt
+    rust-analyzer
+    cargo
+    cargo-edit
+  ];
+
+  gccDevelopmentEnvironment = with pkgs; [
+    gcc
+    gnumake
+    valgrind
+    binutils
+    elfutils
+    gdb
+    ctags
+    ccls
+  ];
+
   commandLineTools = with pkgs; [
     htop
     bat
@@ -47,6 +67,9 @@ let
     file
     aspellPkgs
     s3cmd
+    alsa-utils
+    gifsicle
+    ffmpeg
   ];
 
   fonts = with pkgs; [
@@ -77,6 +100,12 @@ let
     networkmanagerapplet
     xmonad-log
     xorg.xcursorthemes
+    hicolor-icon-theme
+    kazam
+  ];
+
+  systemTools = with pkgs; [
+    baobab
   ];
 
   productivity = with pkgs; [
@@ -129,9 +158,12 @@ in
 
   home.packages =
     [haskellDevEnvironment]
+    ++ rustPackages
+    ++ gccDevelopmentEnvironment
     ++ commandLineTools
     ++ writingTools
     ++ xserverTools
+    ++ systemTools
     ++ fonts
     ++ wallpapers
     ++ games
@@ -154,6 +186,10 @@ in
   gtk = {
     enable = true;
     gtk3.extraConfig = gtkDarkTheme;
+    iconTheme = {
+      package = pkgs.beauty-line-icon-theme;
+      name = "elementary";
+    };
   };
 
   home.file = {

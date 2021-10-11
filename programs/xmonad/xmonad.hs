@@ -8,28 +8,40 @@ import           Polybar
 import           System.IO
 import           XMonad
 import           XMonad.Hooks.DynamicLog
+import           XMonad.Hooks.EwmhDesktops
 import           XMonad.Hooks.FadeInactive
 import           XMonad.Hooks.ManageDocks
 import           XMonad.Layout.Named
 import           XMonad.Layout.NoBorders        (smartBorders)
 import           XMonad.Layout.Reflect
-import           XMonad.Layout.ThreeColumns
 import           XMonad.Layout.ResizableTile
+import           XMonad.Layout.ThreeColumns
 import           XMonad.Layout.WindowNavigation
 import           XMonad.Operations
 import           XMonad.StackSet                as W
 import           XMonad.Util.CustomKeys
 import           XMonad.Util.EZConfig
 import           XMonad.Util.Run                (spawnPipe)
-import XMonad.Hooks.EwmhDesktops
 import           XmonadTheme
 
 -- general definitions
 terminalEmulator = "kitty"
 
-launchRofi :: String -> X ()
-launchRofi cmd =
-  spawn $ "rofi -modi drun,ssh,window,filebrowser -show-icons -show " <> cmd
+launchRofi :: String -> String -> X ()
+launchRofi combiModi cmd =
+  spawn $ "rofi -modi drun,ssh,window,filebrowser,combi -combi-modi " <> combiModi <> " -show-icons -show " <> cmd
+
+defaultCombiModi :: String
+defaultCombiModi = "window,drun,filebrowser,ssh"
+
+rofiCalc :: X ()
+rofiCalc = spawn "rofi -modi calc -show calc -no-show-match -no-sort"
+
+pickEmoji :: X ()
+pickEmoji = spawn "rofi -modi emoji -show  emoji"
+
+rofiHoogle :: X ()
+rofiHoogle = spawn "rofi -modi hoogle -show hoogle -no-sort"
 
 launchEmacsClient :: X ()
 launchEmacsClient =
@@ -37,9 +49,13 @@ launchEmacsClient =
 
 launchers :: [((ButtonMask, KeySym),X ())]
 launchers =
-  [ ((mod4Mask, xK_e), launchEmacsClient)
-  , ((mod4Mask, xK_p), launchRofi "drun")
-  , ((mod4Mask, xK_slash), launchRofi "filebrowser")
+  [ ((mod4Mask, xK_e),     launchEmacsClient)
+  , ((mod4Mask, xK_p),     launchRofi defaultCombiModi "combi")
+  , ((mod4Mask, xK_Up),    launchRofi "window" "window")
+  , ((mod4Mask, xK_equal),  rofiCalc)
+  , ((mod4Mask, xK_slash), launchRofi "filebrowser,ssh" "filebrowser")
+  , ((mod4Mask, xK_semicolon), pickEmoji)
+  , ((mod4Mask, xK_o), rofiHoogle)
   ]
 
 customLayoutHook =

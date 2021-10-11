@@ -210,6 +210,7 @@
 ;; mode specific configs
 (defun default-programming-config ()
   "Configure some sane defaults shared across various programming-related major modes."
+  (set-fill-column 80)
   (auto-fill-mode 1)
   (auto-complete-mode 1)
   (rainbow-delimiters-mode 1)
@@ -218,6 +219,7 @@
   (local-set-key (kbd "C-)") 'forward-sexp)
   (local-set-key (kbd "C-(") 'backward-sexp)
   (turn-on-line-numbers)
+  (set-fill-column 80)
   )
 
 (defun my-dhall-mode-config ()
@@ -750,13 +752,14 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
               c-default-style "bsd")
 
 ;; Enable 80-column fill indicator for C files
-(add-hook 'cc-mode-hook 'turn-on-auto-fill)
+(add-hook 'c-mode-hook 'turn-on-auto-fill)
 
 ;; set up auto-complete-mode for C files
-(add-hook 'cc-mode-hook 'auto-complete-mode)
-(add-hook 'cc-mode-hook 'etags-c-tags)
-(add-hook 'cc-mode-hook 'auto-complete-mode)
-(add-hook 'cc-mode-hook 'extra-cc-keybindings)
+(add-hook 'c-mode-hook 'auto-complete-mode)
+(add-hook 'c-mode-hook 'etags-c-tags)
+(add-hook 'c-mode-hook 'auto-complete-mode)
+(add-hook 'c-mode-hook 'extra-cc-keybindings)
+(add-hook 'c-mode-hook 'lsp)
 
 (pdf-loader-install)
 
