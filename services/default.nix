@@ -3,4 +3,5 @@
   ./dunst
   ./picom
   ./udiskie
+  ./kdeconnect
 ]

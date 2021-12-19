@@ -3,8 +3,8 @@ let
   rofi-hoogle-src = pkgs.fetchFromGitHub {
     owner = "rebeccaskinner";
     repo = "rofi-hoogle";
-    rev = "27c273ff67add68578052a13f560a08c12fa5767";
-    sha256 = "09vx9bc8s53c575haalcqkdwy44ys1j8v9k2aaly7lndr19spp8f";
+    rev = "1694dba8de5af19e703357492d036568e715a449";
+    sha256 = "12fzyaaf176mvpj7cmaxvzq2a3krd4wr26r7vl59zsyrlrj2y810";
   };
   rofi-hoogle = import "${rofi-hoogle-src}/release.nix";
 in

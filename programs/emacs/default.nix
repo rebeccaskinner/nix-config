@@ -76,6 +76,10 @@
       counsel-jq
       swiper
 
+      # Git / Github integration
+      forge
+      github-review
+
       # misc. programming language modes
       dhall-mode
       nix-mode

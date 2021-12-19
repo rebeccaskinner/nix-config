@@ -15,6 +15,9 @@
       init = {
         defaultBranch = "main";
       };
+      github = {
+        user = "rebeccaskinner";
+      };
     };
   };
 }

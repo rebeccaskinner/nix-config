@@ -11,6 +11,9 @@
 xrandr --dpi 90
 xrandr --output eDP-1-1 --brightness 0.2
 xrandr --output eDP-1-1 --off
+xrandr --output DP-5 --left-of HDMI-0
+# xrandr --output HDMI-0 --auto
+# xrandr --output HDMI-0 --right-of DP-5
 feh --bg-scale /home/rebecca/.config/wallpaper
 '';
     windowManager.xmonad = {

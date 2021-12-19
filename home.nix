@@ -70,6 +70,7 @@ let
     alsa-utils
     gifsicle
     ffmpeg
+    gitg
   ];
 
   fonts = with pkgs; [
@@ -101,17 +102,23 @@ let
     xmonad-log
     xorg.xcursorthemes
     hicolor-icon-theme
-    kazam
+    kazam # screen recording tool
   ];
 
   systemTools = with pkgs; [
-    baobab
+    baobab # Disk usage tool
+    gotop  # command line system monitor
+    dnsutils
+    bitwarden
+    bitwarden-cli
+    wireshark
   ];
 
   productivity = with pkgs; [
     slack
     thunderbird
     gimp
+    krita
     drawio
   ];
 

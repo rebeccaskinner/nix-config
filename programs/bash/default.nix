@@ -11,6 +11,7 @@
       qiv = "qiv -t -I";
       emacs = "emacsclient -nw";
       icat = "kitty +kitten icat";
+      ssh = "kitty +kitten ssh";
     };
     initExtra = ''
       function get_github_url() {
