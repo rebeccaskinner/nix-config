@@ -13,5 +13,6 @@ let
     gotop
     dnsutils
     bitwarden-cli
+    neofetch
   ];
 in utils.makeCollection commandLineTools

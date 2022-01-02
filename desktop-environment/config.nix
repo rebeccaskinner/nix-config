@@ -1,7 +1,9 @@
-{ desktopEnvironment, ...}:
+{ utils, desktopEnvironment, ...}:
 let
   configs =
     { kde = import ./kde;
       xmonad = import ./xmonad;
     };
-in configs."${desktopEnvironment}"
+  desktopEnvConfig = configs."${desktopEnvironment}";
+  xserverTools = import ./xserverTools.nix;
+in utils.cons xserverTools desktopEnvConfig

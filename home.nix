@@ -14,42 +14,17 @@ let
 
   utils = import ./homeutils.nix { inherit config pkgs; };
 
-  fonts = with pkgs; [
-    font-awesome-ttf
-    siji
-    material-design-icons
-    hasklig
-    font-awesome
-    symbola
-  ];
-
-  xserverTools = with pkgs; [
-#    scrot
-#    trayer
-    neofetch
-    qiv
-#    pcmanfm
-#    networkmanagerapplet
-#    xmonad-log
-    xorg.xcursorthemes
-    hicolor-icon-theme
-    kazam # screen recording tool
-    breeze-gtk
-  ];
-
   systemTools = with pkgs; [
     baobab # Disk usage tool
     bitwarden
     wireshark
+    kazam
+    qiv
   ];
 
   productivity = with pkgs; [
     slack
     thunderbird
-    gimp
-    krita
-    drawio
-    blender
   ];
 
   games = with pkgs; [
@@ -68,14 +43,16 @@ let
     vlc
   ];
 
-  desktopEnv = import ./desktop-environment/config.nix { inherit desktopEnvironment; };
-
   devEnv = import ./collections/development-environment.nix { inherit utils config pkgs; };
 
-  writingEnv = import ./collections/writing-tools.nix { inherit utils config pkgs;
-                                                        includeLatex = true;
-                                                        includeGraphicalTools = true;
-                                                      };
+  desktopEnv = import ./desktop-environment/config.nix
+    { inherit desktopEnvironment utils; };
+
+  writingEnv = import ./collections/writing-tools.nix
+    { inherit utils config pkgs;
+      includeLatex = true;
+      includeGraphicalTools = true;
+    };
 
   commandLineEnv = import ./collections/command-line-env.nix { inherit utils config pkgs; };
 in
@@ -93,15 +70,15 @@ in
 
   imports = (import ./programs)
             ++ (import ./services)
+            ++ (import ./collections/fonts)
+            ++ (import ./collections/graphics)
             ++ devEnv
             ++ commandLineEnv
             ++ writingEnv
             ++ desktopEnv;
 
   home.packages =
-    xserverTools
-    ++ systemTools
-    ++ fonts
+    systemTools
     ++ games
     ++ nixTools
     ++ productivity
