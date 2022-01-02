@@ -2,76 +2,17 @@
 
 let
 
-  fourmoluOverlay = import ./overlays/fourmolu;
+  # should be one of "kde" or "xmonad";
+  desktopEnvironment = "kde";
+  # desktopEnvironment = "xmonad";
+
   dungeondraft = import ./programs/dungeondraft { inherit pkgs; };
 
-  gtkDarkTheme = { gtk-application-prefer-dark-theme = true; };
-  aspellPkgs = pkgs.aspellWithDicts(dicts: with dicts; [ en en-computers en-science ]);
+  gtkDarkTheme =
+    { gtk-application-prefer-dark-theme = true;
+    };
 
-  haskellDevEnvironment = pkgs.haskellPackages.ghcWithPackages(hsPkgs: with hsPkgs; [
-    ## Haskell Tooling
-    cabal-install
-    cabal2nix
-    fourmolu
-    ghcide
-    hoogle
-    threadscope
-    stylish-haskell
-    haskell-language-server
-    hasktags
-
-    ## Common Haskell Libraries
-    stm
-    bytestring
-    text
-    containers
-    vector
-    time
-    unix
-    mtl
-    transformers
-    aeson
-    aeson-pretty
-    lens
-    conduit
-  ]);
-
-  rustPackages = with pkgs; [
-    rustc
-    rustfmt
-    rust-analyzer
-    cargo
-    cargo-edit
-  ];
-
-  gccDevelopmentEnvironment = with pkgs; [
-    gcc
-    gnumake
-    valgrind
-    binutils
-    elfutils
-    gdb
-    ctags
-    ccls
-  ];
-
-  commandLineTools = with pkgs; [
-    htop
-    bat
-    silver-searcher
-    pulsemixer
-    curl
-    jq
-    httpie
-    tmux
-    file
-    aspellPkgs
-    s3cmd
-    alsa-utils
-    gifsicle
-    ffmpeg
-    gitg
-  ];
+  utils = import ./homeutils.nix { inherit config pkgs; };
 
   fonts = with pkgs; [
     font-awesome-ttf
@@ -82,35 +23,23 @@ let
     symbola
   ];
 
-  writingTools = with pkgs; [
-    pandoc
-    evince
-    okular
-    ispell
-    texlive.combined.scheme-full
-    pythonPackages.pygments
-  ];
-
   xserverTools = with pkgs; [
-    xmobar
-    scrot
-    trayer
+#    scrot
+#    trayer
     neofetch
     qiv
-    pcmanfm
-    networkmanagerapplet
-    xmonad-log
+#    pcmanfm
+#    networkmanagerapplet
+#    xmonad-log
     xorg.xcursorthemes
     hicolor-icon-theme
     kazam # screen recording tool
+    breeze-gtk
   ];
 
   systemTools = with pkgs; [
     baobab # Disk usage tool
-    gotop  # command line system monitor
-    dnsutils
     bitwarden
-    bitwarden-cli
     wireshark
   ];
 
@@ -120,15 +49,7 @@ let
     gimp
     krita
     drawio
-  ];
-
-  wallpapers = with pkgs.nixos-artwork.wallpapers; [
-    dracula
-    gnome-dark
-    mosaic-blue
-    nineish
-    nineish-dark-gray
-    simple-dark-gray
+    blender
   ];
 
   games = with pkgs; [
@@ -147,9 +68,19 @@ let
     vlc
   ];
 
+  desktopEnv = import ./desktop-environment/config.nix { inherit desktopEnvironment; };
+
+  devEnv = import ./collections/development-environment.nix { inherit utils config pkgs; };
+
+  writingEnv = import ./collections/writing-tools.nix { inherit utils config pkgs;
+                                                        includeLatex = true;
+                                                        includeGraphicalTools = true;
+                                                      };
+
+  commandLineEnv = import ./collections/command-line-env.nix { inherit utils config pkgs; };
 in
 {
-  nixpkgs.overlays = [ fourmoluOverlay ];
+  nixpkgs.overlays = [ ];
   nixpkgs.config.allowUnfree = true;
 
   # Let Home Manager install and manage itself.
@@ -161,18 +92,16 @@ in
   home.homeDirectory = "/home/rebecca";
 
   imports = (import ./programs)
-         ++ (import ./services);
+            ++ (import ./services)
+            ++ devEnv
+            ++ commandLineEnv
+            ++ writingEnv
+            ++ desktopEnv;
 
   home.packages =
-    [haskellDevEnvironment]
-    ++ rustPackages
-    ++ gccDevelopmentEnvironment
-    ++ commandLineTools
-    ++ writingTools
-    ++ xserverTools
+    xserverTools
     ++ systemTools
     ++ fonts
-    ++ wallpapers
     ++ games
     ++ nixTools
     ++ productivity
@@ -192,6 +121,7 @@ in
 
   gtk = {
     enable = true;
+    gtk4.extraConfig = gtkDarkTheme;
     gtk3.extraConfig = gtkDarkTheme;
     iconTheme = {
       package = pkgs.beauty-line-icon-theme;
@@ -199,31 +129,8 @@ in
     };
   };
 
-  home.file = {
-    ".config/gtk-4.0/settings.ini" = {
-      source = ./gtk-4.0-settings.ini;
-      recursive = false;
-    };
-  };
 
   xdg = {
-    mimeApps = {
-      enable = true;
-      defaultApplications = {
-        "application/pdf" = "org.gnome.Evince.desktop";
-        "x-scheme-handler/http" = "firefox.desktop";
-        "x-scheme-handler/https" = "firefox.desktop";
-        "x-scheme-handler/chrome" = "firefox.desktop";
-        "text/html" = "firefox.desktop";
-        "application/x-extension-htm" = "firefox.desktop";
-        "application/x-extension-html" = "firefox.desktop";
-        "application/x-extension-shtml" = "firefox.desktop";
-        "application/xhtml+xml" = "firefox.desktop";
-        "application/x-extension-xhtml" = "firefox.desktop";
-        "application/x-extension-xht" = "firefox.desktop";
-      };
-    };
-
     configFile = {
       "fourmolu.yaml" = {
         source = ./fourmolu.yaml;
