@@ -1,4 +1,3 @@
-{config, pkgs, ...}:
 let
   consOptional = shouldCons: val: lst:
     if shouldCons then [val] ++ lst else lst;
@@ -10,17 +9,13 @@ let
 
 in
 {
-  addPackageCollection = collectionPath: collectionOpts:
+  addPackageCollection = collectionPath: args:
     let
-      result = import collectionPath
-        { inherit config pkgs collectionOpts;
-        };
-
+      result = import collectionPath args;
       collectionPackages =
         if builtins.isList result
         then result
         else [result];
-
     in { home.packages = collectionPackages; };
 
   includeOptionalPackage = {shouldInclude, optionalPackage}: pkgList:

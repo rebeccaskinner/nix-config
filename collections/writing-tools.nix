@@ -35,4 +35,4 @@ let
   optionalPkgs = utils.cons optionalLatex optionalViewers;
   collection = utils.includeOptionalPackages optionalPkgs defaultPkgs;
 
-in utils.makeCollection collection
+in utils. collection

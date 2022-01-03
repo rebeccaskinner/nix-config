@@ -1,6 +1,5 @@
 {utils, pkgs, ...}:
-let
-  commandLineTools = with pkgs; [
+utils.newCollection (with pkgs; [
     htop
     bat
     silver-searcher
@@ -14,5 +13,4 @@ let
     dnsutils
     bitwarden-cli
     neofetch
-  ];
-in utils.makeCollection commandLineTools
+])

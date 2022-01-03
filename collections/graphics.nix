@@ -1,3 +1,4 @@
+{utils, pkgs, ...}:
 let
   graphicsTools = {pkgs, ...}: {
     home.packages =
@@ -8,4 +9,10 @@ let
         blender
       ];
   };
-in [graphicsTools]
+in utils.newCollection(
+  with pkgs;
+  [ gimp
+    krita
+    drawio
+    blender
+  ])

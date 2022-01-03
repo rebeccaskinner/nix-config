@@ -1,15 +1,14 @@
-{ config, pkgs, ... }:
+{ config
+, pkgs
+, desktopEnvironment
+, packageCollections ? []
+, extraImports  ? []
+, extraPackages ? []
+, extraOverlays ? []
+}:
 
 let
-
-  # Utilities
   utils = import ./homeutils.nix { inherit config pkgs; };
-  collections = import ./utils/collection.nix;
-
-  # should be one of "kde" or "xmonad";
-  desktopEnvironment = "kde";
-
-  dungeondraft = import ./programs/dungeondraft { inherit pkgs; };
 
   gtkDarkTheme =
     { gtk-application-prefer-dark-theme = true;

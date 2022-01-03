@@ -1,5 +1,4 @@
-{ config
-, pkgs
+{ pkgs
 , extraLibs ? []
 , ...}:
 
@@ -34,5 +33,4 @@ let
 
     in builtins.concatLists [buildTools devTools basicLibraries extraLibs]
   );
-
-in haskellDevEnvironment
+in [haskellDevEnvironment]
