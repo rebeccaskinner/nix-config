@@ -4,7 +4,6 @@ let
   load     = f: import f { inherit pkgs utils; };
   utils    = import ./utils;
   games    = load ./collections/games;
-
 in
 import ./generic.nix
   { desktopEnvironment = "kde";

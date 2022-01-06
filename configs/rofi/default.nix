@@ -1,4 +1,4 @@
-{ pkgs, ... }:
+{ pkgs, utils, ... }:
 let
   rofi-hoogle-src = pkgs.fetchFromGitHub {
     owner = "rebeccaskinner";
@@ -8,7 +8,7 @@ let
   };
   rofi-hoogle = import "${rofi-hoogle-src}/release.nix";
 in
-{
+utils.env.importOnlyEnvironment ({
   programs.rofi = {
     enable = true;
     terminal = "${pkgs.kitty}/bin/kitty";
@@ -19,4 +19,4 @@ in
       rofi-hoogle.rofi-hoogle
     ];
   };
-}
+})

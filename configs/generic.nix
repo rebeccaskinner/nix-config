@@ -20,4 +20,6 @@ let
               ];
 
   generalImports = mkImport ./gtk.nix;
-in utils.env.concatEnvironments [ generalConfigs generalImports ]
+
+  rofi = import ./rofi { inherit pkgs utils; };
+in utils.env.concatEnvironments [ generalConfigs generalImports rofi ]
