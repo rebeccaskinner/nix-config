@@ -4,10 +4,10 @@
 }:
 let
   cfg = p: utils.env.configOnlyEnvironment (import p);
-  mkConfigs = cfgPaths: utils.concatEnvironments (builtins.map cfg cfgPaths);
+  mkConfigs = cfgPaths: utils.env.concatEnvironments (builtins.map cfg cfgPaths);
 
   mkImport = p: utils.env.importOnlyEnvironment (import p);
-  mkImports = importPaths: utils.concatEnvironments (builtins.map mkImport importPaths);
+  mkImports = importPaths: utils.env.concatEnvironments (builtins.map mkImport importPaths);
 
   xmonadGeneralEnv =
     mkConfigs [ ./feh.nix
