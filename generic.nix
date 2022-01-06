@@ -6,7 +6,7 @@
 , extraPackages ? []
 , extraEnvironments ? []
 , overlays ? []
-, collectionArgs ? {}
+, developmentEnvironmentArgs ? {}
 }:
 
 let
@@ -15,7 +15,7 @@ let
     let
       usrEnvs = utils.env.concatEnvironments extraEnvironments;
       envPackages = import ./collections/system-defaults.nix {inherit pkgs utils platform; };
-      devEnvironment = import ./development-environment { inherit pkgs utils; };
+      devEnvironment = import ./development-environment ({ inherit pkgs utils; } // developmentEnvironmentArgs);
       de = import ./desktop-environment/config.nix { inherit pkgs utils desktopEnvironment; };
       defaultEnvironment = import ./configs/generic.nix { inherit pkgs utils; };
       e = utils.env.concatEnvironments [ devEnvironment de defaultEnvironment envPackages ];
