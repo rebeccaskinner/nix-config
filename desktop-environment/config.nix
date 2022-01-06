@@ -1,9 +1,9 @@
-{ utils, desktopEnvironment, ...}:
+{ pkgs, utils, desktopEnvironment, ...}:
 let
   configs =
-    { kde = import ./kde;
-      xmonad = import ./xmonad;
+    { kde = import ./kde { inherit pkgs utils; };
+      xmonad = import ./xmonad { inherit pkgs utils; };
     };
   desktopEnvConfig = configs."${desktopEnvironment}";
-  xserverTools = import ./xserverTools.nix;
-in utils.cons xserverTools desktopEnvConfig
+  xserverTools = import ./xserverTools.nix { inherit pkgs utils; };
+in utils.env.concatEnvironments [xserverTools desktopEnvConfig]

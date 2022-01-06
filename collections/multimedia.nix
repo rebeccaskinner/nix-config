@@ -1,2 +1,2 @@
 {utils, pkgs, ...}:
-utils.newCollection [pkgs.vlc]
+utils.env.packagesEnvironment [pkgs.vlc]

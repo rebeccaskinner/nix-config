@@ -1,119 +1,54 @@
 { config
 , pkgs
-, desktopEnvironment
-, packageCollections ? []
+, desktopEnvironment # should be one of "kde" or "xmonad"
+, platform # should be one of "x86-64" or "arm64"
 , extraImports  ? []
 , extraPackages ? []
-, extraOverlays ? []
+, extraEnvironments ? []
+, overlays ? []
+, collectionArgs ? {}
 }:
 
 let
-  utils = import ./homeutils.nix { inherit config pkgs; };
+  utils = import ./utils;
+  environment =
+    let
+      usrEnvs = utils.env.concatEnvironments extraEnvironments;
+      envPackages = import ./collections/system-defaults.nix {inherit pkgs utils platform; };
+      devEnvironment = import ./development-environment { inherit pkgs utils; };
+      de = import ./desktop-environment/config.nix { inherit pkgs utils desktopEnvironment; };
+      defaultEnvironment = import ./configs/generic.nix { inherit pkgs utils; };
+      e = utils.env.concatEnvironments [ devEnvironment de defaultEnvironment envPackages ];
+      emacsEnvironment = import ./emacs { inherit pkgs utils;
+                                          extraPackages = e.emacsExtraPackages;
+                                          extraConfigs = [e.emacsExtraConfig];
+                                        };
+    in utils.env.concatEnvironments [e emacsEnvironment usrEnvs];
 
-  gtkDarkTheme =
-    { gtk-application-prefer-dark-theme = true;
+  homeConfig =
+    {
+      # Let Home Manager install and manage itself.
+      programs.home-manager.enable = true;
+
+      nixpkgs.config.allowUnfree = true;
+      nixpkgs.overlays = overlays;
+
+      # Home Manager needs a bit of information about you and the
+      # paths it should manage.
+      home.username = "rebecca";
+      home.homeDirectory = "/home/rebecca";
+      imports = environment.imports ++ extraImports;
+      home.packages = environment.packages ++ extraPackages;
+      home.keyboard.options = ["ctrl:nocaps"];
+
+      # This value determines the Home Manager release that your
+      # configuration is compatible with. This helps avoid breakage
+      # when a new Home Manager release introduces backwards
+      # incompatible changes.
+      #
+      # You can update Home Manager without changing this value. See
+      # the Home Manager release notes for a list of state version
+      # changes in each release.
+      home.stateVersion = "21.03";
     };
-
-  games = with pkgs; [
-    dwarf-fortress
-    nethack
-    minecraft
-    dungeondraft
-  ];
-
-  nixTools = with pkgs; [
-    nix-prefetch-scripts
-    rnix-lsp
-  ];
-
-  multimedia = with pkgs; [
-    vlc
-  ];
-
-  devEnv = import ./collections/development-environment.nix { inherit utils config pkgs; };
-
-  desktopEnv = import ./desktop-environment/config.nix
-    { inherit desktopEnvironment utils; };
-
-  writingEnv = import ./collections/writing-tools.nix
-    { inherit utils config pkgs;
-      includeLatex = true;
-      includeGraphicalTools = true;
-    };
-
-  commandLineEnv = import ./collections/command-line-env.nix { inherit utils config pkgs; };
-  productivityTools = import ./collections/productivity { inherit utils pkgs; };
-  systemTools = import ./collections/systemTools { inherit utils pkgs; };
-
-in
-{
-  nixpkgs.overlays = [ ];
-  nixpkgs.config.allowUnfree = true;
-
-  # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
-
-  # Home Manager needs a bit of information about you and the
-  # paths it should manage.
-  home.username = "rebecca";
-  home.homeDirectory = "/home/rebecca";
-
-  imports = (import ./programs)
-            ++ (import ./services)
-            ++ (import ./collections/fonts)
-            ++ (import ./collections/graphics)
-            ++ devEnv
-            ++ commandLineEnv
-            ++ writingEnv
-            ++ desktopEnv
-            ++ productivityTools
-            ++ systemTools;
-
-
-  home.packages =
-    games
-    ++ nixTools
-    ++ multimedia;
-
-  home.keyboard.options = ["ctrl:nocaps"];
-
-  services.gpg-agent = {
-    enable = true;
-    enableSshSupport = true;
-  };
-
-  services.emacs.enable = true;
-  services.emacs.client.enable = true;
-  services.blueman-applet.enable = true;
-  services.network-manager-applet.enable = true;
-
-  gtk = {
-    enable = true;
-    gtk4.extraConfig = gtkDarkTheme;
-    gtk3.extraConfig = gtkDarkTheme;
-    iconTheme = {
-      package = pkgs.beauty-line-icon-theme;
-      name = "elementary";
-    };
-  };
-
-
-  xdg = {
-    configFile = {
-      "fourmolu.yaml" = {
-        source = ./fourmolu.yaml;
-        recursive = false;
-      };
-    };
-  };
-
-  # This value determines the Home Manager release that your
-  # configuration is compatible with. This helps avoid breakage
-  # when a new Home Manager release introduces backwards
-  # incompatible changes.
-  #
-  # You can update Home Manager without changing this value. See
-  # the Home Manager release notes for a list of state version
-  # changes in each release.
-  home.stateVersion = "21.03";
-}
+in homeConfig

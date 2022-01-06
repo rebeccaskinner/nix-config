@@ -1,4 +1,4 @@
-{pkgs, ...}:
+{pkgs, utils, ...}:
 let
   dungeondraft = import ./dungeondraft { inherit pkgs; };
-in  [dungeondraft]
+in  utils.env.packagesEnvironment [dungeondraft]

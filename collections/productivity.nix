@@ -1,5 +1,5 @@
 {utils, pkgs, ...}:
-utils.newCollection(with pkgs; [
+utils.env.packagesEnvironment (with pkgs; [
     slack
     thunderbird
     todoist

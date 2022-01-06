@@ -1,5 +1,0 @@
-[ ./polybar
-  ./dunst
-  ./picom
-  ./udiskie
-]

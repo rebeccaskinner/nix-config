@@ -1,7 +1,7 @@
-{utils, pkgs, ...}:
+{ pkgs, utils, ...}:
 rec {
-  terminalGames =  utils.callCollection ./terminal.nix { inherit pkgs; };
-  graphicalGames = utils.callCollection ./graphical.nix { inherit pkgs; };
-  dndTools = utils.callCollection ./DnD.nix { inherit pkgs; };
-  allGames = utils.concatCollections [terminalGames graphicalGames dndTools];
+  terminalGames =  import ./terminal.nix { inherit pkgs utils; };
+  graphicalGames = import ./graphical.nix { inherit pkgs utils; };
+  dndTools = import ./DnD.nix { inherit pkgs utils; };
+  allGames = utils.env.concatEnvironments [terminalGames graphicalGames dndTools];
 }

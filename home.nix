@@ -1,120 +1,18 @@
 { config, pkgs, ... }:
 
 let
-
-  # Utilities
-  utils = import ./homeutils.nix { inherit config pkgs; };
-  collections = import ./utils/collection.nix;
-
-  # should be one of "kde" or "xmonad";
-  desktopEnvironment = "kde";
-
-  dungeondraft = import ./programs/dungeondraft { inherit pkgs; };
-
-  gtkDarkTheme =
-    { gtk-application-prefer-dark-theme = true;
-    };
-
-  games = with pkgs; [
-    dwarf-fortress
-    nethack
-    minecraft
-    dungeondraft
-  ];
-
-  nixTools = with pkgs; [
-    nix-prefetch-scripts
-    rnix-lsp
-  ];
-
-  multimedia = with pkgs; [
-    vlc
-  ];
-
-  devEnv = import ./collections/development-environment.nix { inherit utils config pkgs; };
-
-  desktopEnv = import ./desktop-environment/config.nix
-    { inherit desktopEnvironment utils; };
-
-  writingEnv = import ./collections/writing-tools.nix
-    { inherit utils config pkgs;
-      includeLatex = true;
-      includeGraphicalTools = true;
-    };
-
-  commandLineEnv = import ./collections/command-line-env.nix { inherit utils config pkgs; };
-  productivityTools = import ./collections/productivity { inherit utils pkgs; };
-  systemTools = import ./collections/systemTools { inherit utils pkgs; };
+  load     = f: import f { inherit pkgs utils; };
+  defaults = import ./collections/defaults/system-defaults.nix;
+  configs  = import ./configs/defaults/system-defaults.nix;
+  utils    = import ./utils;
+  games    = load ./collections/games;
 
 in
-{
-  nixpkgs.overlays = [ ];
-  nixpkgs.config.allowUnfree = true;
-
-  # Let Home Manager install and manage itself.
-  programs.home-manager.enable = true;
-
-  # Home Manager needs a bit of information about you and the
-  # paths it should manage.
-  home.username = "rebecca";
-  home.homeDirectory = "/home/rebecca";
-
-  imports = (import ./programs)
-            ++ (import ./services)
-            ++ (import ./collections/fonts)
-            ++ (import ./collections/graphics)
-            ++ devEnv
-            ++ commandLineEnv
-            ++ writingEnv
-            ++ desktopEnv
-            ++ productivityTools
-            ++ systemTools;
-
-
-  home.packages =
-    games
-    ++ nixTools
-    ++ multimedia;
-
-  home.keyboard.options = ["ctrl:nocaps"];
-
-  services.gpg-agent = {
-    enable = true;
-    enableSshSupport = true;
-  };
-
-  services.emacs.enable = true;
-  services.emacs.client.enable = true;
-  services.blueman-applet.enable = true;
-  services.network-manager-applet.enable = true;
-
-  gtk = {
-    enable = true;
-    gtk4.extraConfig = gtkDarkTheme;
-    gtk3.extraConfig = gtkDarkTheme;
-    iconTheme = {
-      package = pkgs.beauty-line-icon-theme;
-      name = "elementary";
-    };
-  };
-
-
-  xdg = {
-    configFile = {
-      "fourmolu.yaml" = {
-        source = ./fourmolu.yaml;
-        recursive = false;
-      };
-    };
-  };
-
-  # This value determines the Home Manager release that your
-  # configuration is compatible with. This helps avoid breakage
-  # when a new Home Manager release introduces backwards
-  # incompatible changes.
-  #
-  # You can update Home Manager without changing this value. See
-  # the Home Manager release notes for a list of state version
-  # changes in each release.
-  home.stateVersion = "21.03";
-}
+import ./generic.nix
+  { desktopEnvironment = "kde";
+    platform = "x86-64";
+    extraEnvironments = [ (load ./configs/kitty.nix)
+                          games.allGames
+                        ];
+    inherit config pkgs;
+  }

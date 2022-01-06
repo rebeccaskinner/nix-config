@@ -1,15 +1,6 @@
 {utils, pkgs, ...}:
-let
-  graphicsTools = {pkgs, ...}: {
-    home.packages =
-      with pkgs; [
-        gimp
-        krita
-        drawio
-        blender
-      ];
-  };
-in utils.newCollection(
+
+utils.env.packagesEnvironment (
   with pkgs;
   [ gimp
     krita

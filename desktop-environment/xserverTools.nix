@@ -1,11 +1,10 @@
-{pkgs
-,...
+{ pkgs
+, utils
+, ...
 }:
-
-let
-  xtools = with pkgs; [
+utils.env.packagesEnvironment(
+  with pkgs; [
     xorg.xcursorthemes
     hicolor-icon-theme
     breeze-gtk
-  ];
-in { home.packages = xtools; }
+  ])
