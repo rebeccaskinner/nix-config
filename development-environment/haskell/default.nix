@@ -51,9 +51,9 @@ in
   imports = [ fmt.config ];
   emacsExtraPackages = epkgs:
     with epkgs; [
-      dante
       hasklig-mode
-      lsp-haskell
+      haskell-mode
+      nix-haskell-mode
     ];
   emacsExtraConfig =
     emacsFormatterFunction + emacsConfig;
