@@ -6,4 +6,5 @@ utils.env.packagesEnvironment (with pkgs; [
   todoist
   todoist-electron
   libreoffice
+  signal-desktop
 ])

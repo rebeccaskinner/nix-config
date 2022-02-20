@@ -1,14 +1,21 @@
 { pkgs
 , utils
-, formatter ? ./formatter/stylish-haskell.nix
 , extraLibs ? []
+, haskellVersion ? null
+, formatter ? null
 , ...}:
 
 let
-  fmt =
-    import formatter { haskellPackages = pkgs.haskellPackages; };
+  haskell = if builtins.isNull haskellVersion
+            then pkgs.haskellPackages
+            else
+              let versionStr = builtins.toString haskellVersion;
+              in pkgs.haskell.packages."ghc${versionStr}";
 
-  haskellDevEnvironment = pkgs.haskellPackages.ghcWithPackages(hsPkgs:
+
+  ghciConfig = import ./settings/ghci;
+
+  devPackages = haskell.ghcWithPackages(hsPkgs:
     let
       buildTools =
         with hsPkgs;
@@ -16,11 +23,10 @@ let
           cabal2nix ];
       devTools =
         with hsPkgs;
-        [ fmt.package
-          hoogle
-          threadscope
+        [ hoogle
           hasktags
-          haskell-language-server ];
+          hlint
+        ];
       basicLibraries =
         with hsPkgs;
         [ bytestring
@@ -39,22 +45,37 @@ let
           aeson ];
     in builtins.concatLists [buildTools devTools basicLibraries extraLibs]
   );
-  emacsFormatterFunction = ''
-(defun haskell-formatter-path ()
-  "Return the path to the binary that should be called for format programs."
-  "${fmt.exec}"
-  );
-'';
-  emacsConfig = builtins.readFile ./emacs-haskell-config.el;
-in
-{ packages = [fmt.package haskellDevEnvironment];
-  imports = [ fmt.config ];
-  emacsExtraPackages = epkgs:
-    with epkgs; [
-      hasklig-mode
-      haskell-mode
-      nix-haskell-mode
-    ];
-  emacsExtraConfig =
-    emacsFormatterFunction + emacsConfig;
-}
+
+  formatterEnvironment =
+    let
+      formatterPackage = import formatter { haskellPackages = haskell; };
+      emacsFormatter = ''
+        (defun haskell-formatter-path ()
+          "Return the path to the binary that should be called for format programs."
+          "${formatterPackage.exec}"
+        );
+      '';
+    in
+      { packages = [ formatterPackage.package ];
+        imports = [ formatterPackage.config ];
+        emacsFormatterFunction = emacsFormatter;
+        emacsExtraConfig = emacsFormatter;
+      };
+
+  devEnvironment =
+    { packages = [ devPackages ];
+      imports = [ ghciConfig ];
+      emacsExtraPackages = epkgs:
+        with epkgs; [
+          hasklig-mode
+          haskell-mode
+          nix-haskell-mode
+        ];
+    };
+
+  pkg =
+    if builtins.isNull formatter
+    then devEnvironment
+    else utils.env.mergeEnvironments devEnvironment formatterEnvironment;
+
+in pkg

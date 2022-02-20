@@ -81,10 +81,16 @@ utils.env.importOnlyEnvironment ({
             counsel-etags
             counsel-jq
             swiper
+            fzf
 
             # Git / Github integration
             forge
             github-review
+
+            # tree-sitter
+            tree-sitter
+            tree-sitter-indent
+            tree-sitter-langs
 
             # misc. programming language modes
             dhall-mode
@@ -110,7 +116,6 @@ utils.env.importOnlyEnvironment ({
             which-key ];
         extras = extraPackages epkgs;
       in defaults ++ extras;
-
   };
 
   home.file.".emacs.d" = {

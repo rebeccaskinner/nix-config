@@ -91,7 +91,7 @@
   (ivy-mode)
   (setq ivy-use-virtual-buffers t)
   (setq enable-recursive-minibuffers t)
-  (global-set-key (kbd "C-s") 'swiper-isearch)
+;  (global-set-key (kbd "C-s") 'swiper-isearch)
   )
 
 (configure-ivy-mode)
@@ -686,20 +686,6 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
 
 (pdf-loader-install)
 
-
-;;; init.el ends here
-
-
-;;;;;
-;;; emacs-haskell-config.el --- A customized haskell editing config
-
-;;; Commentary:
-;; This package provides a custom haskell environment setup in the form of a
-;; package that can be easily added to any other Emacs config.
-
-
-;;; Code:
-
 (use-package nix-haskell-mode
   :hook (haskell-mode . nix-haskell-mode))
 
@@ -818,3 +804,5 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
 (add-hook 'haskell-cabal-mode-hook 'haskell-config-setup-cabal-mode)
 
 (add-hook 'before-save-hook 'haskell-config-save-hook)
+
+;;; init.el ends here

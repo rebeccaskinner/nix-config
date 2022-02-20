@@ -2,4 +2,4 @@
 , utils
 , ...
 }:
-utils.env.emptyEnvironment
+utils.env.packagesEnvironment [pkgs.latte-dock]

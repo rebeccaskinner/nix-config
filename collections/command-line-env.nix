@@ -13,4 +13,6 @@ utils.env.packagesEnvironment (with pkgs; [
     dnsutils
     bitwarden-cli
     neofetch
+    fzf
+    ripgrep
 ])

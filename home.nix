@@ -7,6 +7,7 @@ let
 in
 import ./generic.nix
   { desktopEnvironment = "kde";
+    haskellVersion = 902;
     platform = "x86-64";
     extraEnvironments = [ (load ./configs/kitty.nix)
                           games.allGames

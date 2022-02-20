@@ -2,6 +2,7 @@
 , pkgs
 , desktopEnvironment # should be one of "kde" or "xmonad"
 , platform # should be one of "x86-64" or "arm64"
+, haskellVersion ? null
 , extraImports  ? []
 , extraPackages ? []
 , extraEnvironments ? []
@@ -15,7 +16,7 @@ let
     let
       usrEnvs = utils.env.concatEnvironments extraEnvironments;
       envPackages = import ./collections/system-defaults.nix {inherit pkgs utils platform; };
-      devEnvironment = import ./development-environment { inherit pkgs utils; };
+      devEnvironment = import ./development-environment { inherit pkgs utils haskellVersion; };
       de = import ./desktop-environment/config.nix { inherit pkgs utils desktopEnvironment; };
       defaultEnvironment = import ./configs/generic.nix { inherit pkgs utils; };
       e = utils.env.concatEnvironments [ devEnvironment de defaultEnvironment envPackages ];

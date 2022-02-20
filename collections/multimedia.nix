@@ -1,2 +1,2 @@
 {utils, pkgs, ...}:
-utils.env.packagesEnvironment [pkgs.vlc]
+utils.env.packagesEnvironment (with pkgs; [vlc kazam])

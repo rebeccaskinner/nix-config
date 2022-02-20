@@ -1,13 +1,19 @@
 rec {
-  mergeEnvironments = a: b:
-    { packages = a.packages ++ b.packages;
-      imports = a.imports ++ b.imports;
-      emacsExtraPackages = epkgs: (a.emacsExtraPackages epkgs) ++ (b.emacsExtraPackages epkgs);
-      emacsExtraConfig = a.emacsExtraConfig + b.emacsExtraConfig;
-    };
+  mergeEnvironments = aPartial: bPartial:
+    let
+      a = unpartialEnvironment aPartial;
+      b = unpartialEnvironment bPartial;
+    in { packages = a.packages ++ b.packages;
+         imports = a.imports ++ b.imports;
+         emacsExtraPackages = epkgs: (a.emacsExtraPackages epkgs) ++ (b.emacsExtraPackages epkgs);
+         emacsExtraConfig = a.emacsExtraConfig + b.emacsExtraConfig;
+       };
 
   emptyEnvironment =
     { packages = []; imports = []; emacsExtraPackages = {...}: []; emacsExtraConfig = ""; };
+
+  unpartialEnvironment = partialEnvironment:
+    emptyEnvironment // partialEnvironment;
 
   concatEnvironments =
     builtins.foldl' mergeEnvironments emptyEnvironment;
