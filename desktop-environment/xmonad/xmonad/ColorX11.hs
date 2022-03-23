@@ -1,10 +1,12 @@
+{-# LANGUAGE DataKinds #-}
 {-# LANGUAGE DeriveGeneric #-}
 {-# LANGUAGE LambdaCase #-}
-{-# LANGUAGE DataKinds #-}
+
 module ColorX11 where
+
 import ColorType
-import GHC.Generics
 import Data.Aeson
+import GHC.Generics
 
 data X11Color
   = AliceBlue
@@ -160,7 +162,7 @@ instance FromJSON X11Color where
   parseJSON = genericParseJSON defaultOptions
 
 instance IsColor X11Color where
-  toColor =  \case
+  toColor = \case
     AliceBlue -> RGBColor 0xF0 0xF8 0xFF
     AntiqueWhite -> RGBColor 0xFA 0xEB 0xD7
     Aqua -> RGBColor 0x00 0xFF 0xFF

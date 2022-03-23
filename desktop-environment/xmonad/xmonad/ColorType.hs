@@ -1,49 +1,49 @@
+{-# LANGUAGE AllowAmbiguousTypes #-}
 {-# LANGUAGE ConstraintKinds #-}
+{-# LANGUAGE DataKinds #-}
+{-# LANGUAGE FlexibleContexts #-}
+{-# LANGUAGE FlexibleInstances #-}
 {-# LANGUAGE FunctionalDependencies #-}
-{-# LANGUAGE GADTs   #-}
-{-# LANGUAGE AllowAmbiguousTypes   #-}
-{-# LANGUAGE DataKinds             #-}
-{-# LANGUAGE FlexibleContexts      #-}
-{-# LANGUAGE FlexibleInstances     #-}
+{-# LANGUAGE GADTs #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
-{-# LANGUAGE OverloadedStrings     #-}
-{-# LANGUAGE PolyKinds             #-}
-{-# LANGUAGE RecordWildCards       #-}
-{-# LANGUAGE ScopedTypeVariables   #-}
-{-# LANGUAGE TypeApplications      #-}
-{-# LANGUAGE TypeFamilies          #-}
-{-# LANGUAGE TypeOperators         #-}
-{-# LANGUAGE UndecidableInstances  #-}
+{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE PolyKinds #-}
+{-# LANGUAGE RecordWildCards #-}
+{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE TypeApplications #-}
+{-# LANGUAGE TypeFamilies #-}
+{-# LANGUAGE TypeOperators #-}
+{-# LANGUAGE UndecidableInstances #-}
 
-module ColorType
-  ( Color(..)
-  , IsColor(..)
-  , toHex
-  , ColorScheme(..)
-  , (:|:)
-  , (:||:)
-  , (.==)
-  , Theme'(..)
-  , Theme
-  , DefaultTheme
-  , DefaultThemeType(..)
-  , VerifyColorScheme (..)
-  , unsafeVerifyColorScheme
-  , getColor
-  ) where
+module ColorType (
+  Color (..),
+  IsColor (..),
+  toHex,
+  ColorScheme (..),
+  (:|:),
+  (:||:),
+  (.==),
+  Theme' (..),
+  Theme,
+  DefaultTheme,
+  DefaultThemeType (..),
+  VerifyColorScheme (..),
+  unsafeVerifyColorScheme,
+  getColor,
+) where
 
-import           Control.Applicative
-import           Control.Monad.Reader
+import Control.Applicative
+import Control.Monad.Reader
 import qualified Data.ByteString.Char8 as BS
-import           Data.Kind
-import qualified Data.Map.Strict       as Map
-import           Data.Proxy
-import           Data.Void
-import           Data.Word
-import           GHC.TypeLits
-import           Text.Printf
-import qualified Data.Text as Text
+import Data.Kind
+import qualified Data.Map.Strict as Map
 import Data.Maybe (fromJust)
+import Data.Proxy
+import qualified Data.Text as Text
+import Data.Void
+import Data.Word
+import GHC.TypeLits
+import Text.Printf
 
 infixr 6 :|:
 infixr 6 :||:
@@ -59,8 +59,7 @@ name .== color = (name, SomeColor color)
 class IsColor a where
   toColor :: a -> Color
 
-data Color
-  = RGBColor { red :: !Word8, green :: !Word8, blue :: !Word8 }
+data Color = RGBColor {red :: !Word8, green :: !Word8, blue :: !Word8}
   deriving (Eq, Show)
 
 instance IsColor Color where
@@ -80,18 +79,17 @@ data SomeColor = forall a. IsColor a => SomeColor a
 instance IsColor SomeColor where
   toColor (SomeColor a) = toColor a
 
-data ColorScheme theme =
-  ColorScheme { getColorScheme :: Map.Map BS.ByteString SomeColor }
+data ColorScheme theme = ColorScheme {getColorScheme :: Map.Map BS.ByteString SomeColor}
 
 showScheme :: VerifyColorScheme theme => ColorScheme theme -> [(BS.ByteString, Color)]
-showScheme (ColorScheme m) = map (\(name,col) -> (name, toColor col)) . Map.toList $ m
+showScheme (ColorScheme m) = map (\(name, col) -> (name, toColor col)) . Map.toList $ m
 
 data Theme' a = EmptyTheme | a :.: (Theme' a)
 type Theme = Theme' (Symbol :|: DefaultThemeType)
 
-class HasColor goal (a :: Theme) where
-instance HasColor goal (goal :||: defaultTheme :.: rest) where
-instance {-# OVERLAPPABLE #-} (HasColor goal rest) => HasColor goal (color :||: defaultTheme :.: rest) where
+class HasColor goal (a :: Theme)
+instance HasColor goal (goal :||: defaultTheme :.: rest)
+instance {-# OVERLAPPABLE #-} (HasColor goal rest) => HasColor goal (color :||: defaultTheme :.: rest)
 
 class VerifyColorScheme a where
   verifyColorScheme :: Map.Map BS.ByteString SomeColor -> Maybe (ColorScheme a)
@@ -103,11 +101,13 @@ instance
   ( KnownSymbol color
   , KnownSymbol fallbackName
   , VerifyColorScheme colors
-  , fallbackName ~ DefaultThemeSymbol fallback) => VerifyColorScheme ((color :||: fallback) :.: colors) where
+  , fallbackName ~ DefaultThemeSymbol fallback
+  ) =>
+  VerifyColorScheme ((color :||: fallback) :.: colors)
+  where
   verifyColorScheme m = do
-    let
-      colorName = symBS @color
-      fallbackName = symBS @fallbackName
+    let colorName = symBS @color
+        fallbackName = symBS @fallbackName
     color <- Map.lookup colorName m <|> Map.lookup fallbackName m
     ColorScheme theme <- verifyColorScheme @colors m
     pure . ColorScheme $ Map.insert colorName (SomeColor color) theme
@@ -131,16 +131,16 @@ data DefaultThemeType
   | DefaultText2
   deriving (Eq, Show)
 
-type DefaultTheme
-  =   "default_background_1" :||: DefaultBG1
-  :.: "default_background_2" :||: DefaultBG2
-  :.: "default_background_3" :||: DefaultBG3
-  :.: "default_foreground_1" :||: DefaultFG1
-  :.: "default_foreground_2" :||: DefaultFG2
-  :.: "default_foreground_3" :||: DefaultFG3
-  :.: "default_text_1"       :||: DefaultText1
-  :.: "default_text_2"       :||: DefaultText2
-  :.: EmptyTheme
+type DefaultTheme =
+  "default_background_1" :||: DefaultBG1
+    :.: "default_background_2" :||: DefaultBG2
+    :.: "default_background_3" :||: DefaultBG3
+    :.: "default_foreground_1" :||: DefaultFG1
+    :.: "default_foreground_2" :||: DefaultFG2
+    :.: "default_foreground_3" :||: DefaultFG3
+    :.: "default_text_1" :||: DefaultText1
+    :.: "default_text_2" :||: DefaultText2
+    :.: EmptyTheme
 
 type family JoinTheme themeA themeB where
   JoinTheme themeA EmptyTheme = themeA
@@ -167,10 +167,12 @@ getColor :: forall element theme. (KnownSymbol element, HasColor element theme) 
 getColor (ColorScheme scheme) =
   toColor $ scheme Map.! (symBS @element)
 
-testColors
-  :: forall theme retVal.
-  VerifyColorScheme theme
-  => Map.Map BS.ByteString SomeColor -> (ColorScheme theme -> retVal) -> Maybe retVal
+testColors ::
+  forall theme retVal.
+  VerifyColorScheme theme =>
+  Map.Map BS.ByteString SomeColor ->
+  (ColorScheme theme -> retVal) ->
+  Maybe retVal
 testColors m f =
   let scheme = verifyColorScheme @theme m
-  in f <$> scheme
+   in f <$> scheme
