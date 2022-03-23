@@ -6,11 +6,14 @@ let
   games    = load ./collections/games;
 in
 import ./generic.nix
-  { desktopEnvironment = "kde";
-    haskellVersion = 902;
+  { desktopEnvironment = "xmonad";
+    haskellVersion = 921;
     platform = "x86-64";
     extraEnvironments = [ (load ./configs/kitty.nix)
                           games.allGames
                         ];
+    developmentEnvironmentArgs = {
+      haskell-formatter-package = ./development-environment/haskell/formatter/fourmolu.nix;
+    };
     inherit config pkgs;
   }

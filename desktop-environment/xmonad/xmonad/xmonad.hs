@@ -1,5 +1,3 @@
-{-# LANGUAGE NoMonomorphismRestriction #-}
-
 module Main where
 
 import Control.Monad
@@ -66,7 +64,6 @@ launchers =
   , ((mod4Mask, xK_semicolon), pickEmoji)
   , ((mod4Mask, xK_o), rofiHoogle)
   , ((mod4Mask .|. shiftMask, xK_space), shiftNextScreen)
-  --  , ((mod4Mask, xK_e),     launchEmacsClient)
   ]
 
 customLayoutHook =

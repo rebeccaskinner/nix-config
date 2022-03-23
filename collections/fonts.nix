@@ -1,7 +1,6 @@
 {utils, pkgs, ...}:
 utils.env.packagesEnvironment (with pkgs;
-  [ font-awesome-ttf
-    siji
+  [ siji
     material-design-icons
     hasklig
     font-awesome

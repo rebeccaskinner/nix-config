@@ -3,7 +3,6 @@
 {-# LANGUAGE DataKinds #-}
 {-# LANGUAGE FlexibleContexts #-}
 {-# LANGUAGE FlexibleInstances #-}
-{-# LANGUAGE FunctionalDependencies #-}
 {-# LANGUAGE GADTs #-}
 {-# LANGUAGE MultiParamTypeClasses #-}
 {-# LANGUAGE OverloadedStrings #-}
@@ -33,14 +32,10 @@ module ColorType (
 ) where
 
 import Control.Applicative
-import Control.Monad.Reader
 import qualified Data.ByteString.Char8 as BS
-import Data.Kind
 import qualified Data.Map.Strict as Map
 import Data.Maybe (fromJust)
 import Data.Proxy
-import qualified Data.Text as Text
-import Data.Void
 import Data.Word
 import GHC.TypeLits
 import Text.Printf
@@ -79,22 +74,19 @@ data SomeColor = forall a. IsColor a => SomeColor a
 instance IsColor SomeColor where
   toColor (SomeColor a) = toColor a
 
-data ColorScheme theme = ColorScheme {getColorScheme :: Map.Map BS.ByteString SomeColor}
-
-showScheme :: VerifyColorScheme theme => ColorScheme theme -> [(BS.ByteString, Color)]
-showScheme (ColorScheme m) = map (\(name, col) -> (name, toColor col)) . Map.toList $ m
+newtype ColorScheme theme = ColorScheme {getColorScheme :: Map.Map BS.ByteString SomeColor}
 
 data Theme' a = EmptyTheme | a :.: (Theme' a)
 type Theme = Theme' (Symbol :|: DefaultThemeType)
 
 class HasColor goal (a :: Theme)
-instance HasColor goal (goal :||: defaultTheme :.: rest)
-instance {-# OVERLAPPABLE #-} (HasColor goal rest) => HasColor goal (color :||: defaultTheme :.: rest)
+instance HasColor goal (goal :||: defaultTheme ':.: rest)
+instance {-# OVERLAPPABLE #-} (HasColor goal rest) => HasColor goal (color :||: defaultTheme ':.: rest)
 
 class VerifyColorScheme a where
   verifyColorScheme :: Map.Map BS.ByteString SomeColor -> Maybe (ColorScheme a)
 
-instance VerifyColorScheme EmptyTheme where
+instance VerifyColorScheme 'EmptyTheme where
   verifyColorScheme = const . Just . ColorScheme $ Map.empty
 
 instance
@@ -103,7 +95,7 @@ instance
   , VerifyColorScheme colors
   , fallbackName ~ DefaultThemeSymbol fallback
   ) =>
-  VerifyColorScheme ((color :||: fallback) :.: colors)
+  VerifyColorScheme ((color :||: fallback) ':.: colors)
   where
   verifyColorScheme m = do
     let colorName = symBS @color
@@ -117,8 +109,8 @@ unsafeVerifyColorScheme =
   fromJust . verifyColorScheme
 
 class SatisfiesTheme theme toSatisfy
-instance SatisfiesTheme theme EmptyTheme
-instance (HasColor color theme, SatisfiesTheme theme rest) => SatisfiesTheme theme (color :||: def :.: rest)
+instance SatisfiesTheme theme 'EmptyTheme
+instance (HasColor color theme, SatisfiesTheme theme rest) => SatisfiesTheme theme (color :||: def ':.: rest)
 
 data DefaultThemeType
   = DefaultBG1
@@ -132,47 +124,26 @@ data DefaultThemeType
   deriving (Eq, Show)
 
 type DefaultTheme =
-  "default_background_1" :||: DefaultBG1
-    :.: "default_background_2" :||: DefaultBG2
-    :.: "default_background_3" :||: DefaultBG3
-    :.: "default_foreground_1" :||: DefaultFG1
-    :.: "default_foreground_2" :||: DefaultFG2
-    :.: "default_foreground_3" :||: DefaultFG3
-    :.: "default_text_1" :||: DefaultText1
-    :.: "default_text_2" :||: DefaultText2
-    :.: EmptyTheme
-
-type family JoinTheme themeA themeB where
-  JoinTheme themeA EmptyTheme = themeA
-  JoinTheme themeA (c :||: d :.: rest) = c :||: d :.: rest
-
-type family ExtractTheme scheme where
-  ExtractTheme (ColorScheme theme) = theme
-
-mergeColorSchemes :: ColorScheme themeA -> ColorScheme themeB -> ColorScheme (JoinTheme themeA themeB)
-mergeColorSchemes (ColorScheme a) (ColorScheme b) =
-  ColorScheme $ a <> b
+  "default_background_1" :||: 'DefaultBG1
+    ':.: "default_background_2" :||: 'DefaultBG2
+    ':.: "default_background_3" :||: 'DefaultBG3
+    ':.: "default_foreground_1" :||: 'DefaultFG1
+    ':.: "default_foreground_2" :||: 'DefaultFG2
+    ':.: "default_foreground_3" :||: 'DefaultFG3
+    ':.: "default_text_1" :||: 'DefaultText1
+    ':.: "default_text_2" :||: 'DefaultText2
+    ':.: 'EmptyTheme
 
 type family DefaultThemeSymbol (defaultField :: DefaultThemeType) :: Symbol where
-  DefaultThemeSymbol DefaultBG1 = "default_background_1"
-  DefaultThemeSymbol DefaultBG2 = "default_background_2"
-  DefaultThemeSymbol DefaultBG3 = "default_background_3"
-  DefaultThemeSymbol DefaultFG1 = "default_foreground_1"
-  DefaultThemeSymbol DefaultFG2 = "default_foreground_2"
-  DefaultThemeSymbol DefaultFG3 = "default_foreground_3"
-  DefaultThemeSymbol DefaultText1 = "default_text_1"
-  DefaultThemeSymbol DefaultText2 = "default_text_2"
+  DefaultThemeSymbol 'DefaultBG1 = "default_background_1"
+  DefaultThemeSymbol 'DefaultBG2 = "default_background_2"
+  DefaultThemeSymbol 'DefaultBG3 = "default_background_3"
+  DefaultThemeSymbol 'DefaultFG1 = "default_foreground_1"
+  DefaultThemeSymbol 'DefaultFG2 = "default_foreground_2"
+  DefaultThemeSymbol 'DefaultFG3 = "default_foreground_3"
+  DefaultThemeSymbol 'DefaultText1 = "default_text_1"
+  DefaultThemeSymbol 'DefaultText2 = "default_text_2"
 
 getColor :: forall element theme. (KnownSymbol element, HasColor element theme) => ColorScheme theme -> Color
 getColor (ColorScheme scheme) =
   toColor $ scheme Map.! (symBS @element)
-
-testColors ::
-  forall theme retVal.
-  VerifyColorScheme theme =>
-  Map.Map BS.ByteString SomeColor ->
-  (ColorScheme theme -> retVal) ->
-  Maybe retVal
-testColors m f =
-  let scheme = verifyColorScheme @theme m
-   in f <$> scheme
