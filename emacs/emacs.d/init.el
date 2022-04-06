@@ -132,10 +132,10 @@
                                "~/org/book-tasks.org"
                                "~/org/blog-tasks.org"
                                ))
-  (local-set-key (kbd "C-c a") 'org-agenda)
+  (global-set-key (kbd "C-c a") 'org-agenda)
   )
 
-(add-hook 'org-mode-hook 'configure-org-agenda)
+(configure-org-agenda)
 (add-hook 'org-mode-hook 'disable-org-auto-indent)
 (add-hook 'org-mode-hook 'enable-org-reveal)
 (add-hook 'org-mode-hook 'turn-on-visual-line-mode)
