@@ -7,7 +7,7 @@ let
 in
 import ./generic.nix
   { desktopEnvironment = "xmonad";
-    haskellVersion = 921;
+    haskellVersion = 922;
     platform = "x86-64";
     extraEnvironments = [ (load ./configs/kitty.nix)
                           games.allGames

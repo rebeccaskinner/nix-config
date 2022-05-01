@@ -99,9 +99,6 @@ utils.env.importOnlyEnvironment ({
             json-mode
             yaml-mode
 
-            # better unicode font support
-            unicode-fonts
-
             # lsp-mode things
             lsp-mode
             treemacs

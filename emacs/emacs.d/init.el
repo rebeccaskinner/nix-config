@@ -6,18 +6,7 @@
 ;; Disable the splash screen
 (setq inhibit-splash-screen t)
 
-;; (use-package unicode-fonts
-;;   :ensure t
-;;   :config (unicode-fonts-setup))
 
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(default ((t (:family "Fira Code Nerd" :foundry "ADBO" :slant normal :weight semi-bold :heightf 140 :width normal :height 102))))
- '(mode-line ((t (:family "Fira Code Nerd" :foundry "ADBO" :slant normal :weight semi-bold :heightf 140 :width normal :height 102))))
- )
 
 (defun configure-look-and-feel ()
   "Run some stuff after init, like setting a theme and disabling scrollbars."
@@ -28,6 +17,8 @@
   (menu-bar-mode -1)
   (tool-bar-mode -1)
   (toggle-scroll-bar -1)
+
+
   )
 
 (defun deamon-look-and-feel (frame)
@@ -56,6 +47,7 @@
 
 ;; Show the current time in the modeline
 (display-time-mode 1)
+
 
 (use-package direnv
   :config
@@ -686,9 +678,6 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
 
 (pdf-loader-install)
 
-(use-package nix-haskell-mode
-  :hook (haskell-mode . nix-haskell-mode))
-
 (defcustom haskell-pretty-printer nil
   "Program used to reformat haskell source code."
   :group 'haskell-config
@@ -767,7 +756,6 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
                       :width 'normal)
   (hasklig-mode)
 
-
   (local-set-key (kbd "C-)") 'forward-sexp)
   (local-set-key (kbd "C-(") 'backward-sexp)
   (local-set-key (kbd "C-<tab>") 'haskell-pretty-print-buffer)
@@ -793,6 +781,8 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
     (define-key haskell-cabal-mode-map (kbd "C-c c") 'haskell-process-cabal)))
 
   )
+
+;(add-hook 'haskell-mode-hook 'nix-haskell-mode)
 (add-hook 'haskell-mode-hook 'haskell-config-setup-haskell-mode)
 
 (defun haskell-config-setup-cabal-mode()
@@ -801,8 +791,15 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
   (local-set-key (kbd "C-(") 'backward-sexp)
   (local-set-key (kbd "C-<tab>") 'cabal-pretty-print-buffer)
   )
-(add-hook 'haskell-cabal-mode-hook 'haskell-config-setup-cabal-mode)
 
+(add-hook 'haskell-cabal-mode-hook 'haskell-config-setup-cabal-mode)
 (add-hook 'before-save-hook 'haskell-config-save-hook)
+
+
+ (custom-set-faces
+   '(default ((t (:family "Fira Code Nerd" :foundry "ADBO" :slant normal :weight semi-bold :heightf 140 :width normal :height 102))))
+   '(mode-line ((t (:family "Fira Code Nerd" :foundry "ADBO" :slant normal :weight semi-bold :heightf 140 :width normal :height 102))))
+   )
+
 
 ;;; init.el ends here
