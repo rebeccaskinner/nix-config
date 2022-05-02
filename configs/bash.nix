@@ -8,7 +8,7 @@
       ls = "ls --color=tty --classify";
       gitk = "gitk --all &";
       qiv = "qiv -t -I";
-      emacs = "emacsclient -nw";
+#      emacs = "emacsclient -nw";
       icat = "kitty +kitten icat";
       ssh = "kitty +kitten ssh";
     };

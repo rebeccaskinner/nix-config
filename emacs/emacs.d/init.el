@@ -6,8 +6,6 @@
 ;; Disable the splash screen
 (setq inhibit-splash-screen t)
 
-
-
 (defun configure-look-and-feel ()
   "Run some stuff after init, like setting a theme and disabling scrollbars."
   ;; Setup theme
@@ -17,8 +15,6 @@
   (menu-bar-mode -1)
   (tool-bar-mode -1)
   (toggle-scroll-bar -1)
-
-
   )
 
 (defun deamon-look-and-feel (frame)
@@ -32,10 +28,11 @@
   (configure-look-and-feel)
   )
 
+;; Set the face for the current frame
+(set-face-attribute 'default nil :family "FiraCode" :foundry "ADBO" :height 130)
 
 ;; Set the default browser to firefox
 (setq browse-url-browser-function 'browse-url-firefox)
-
 
 ;; global custom commands
 (require 'calendar)
@@ -408,99 +405,7 @@
 
 (add-hook 'python-mode-hook 'my-python-mode-hook)
 
-;; Go Mode
-(defun my-go-mode-hook ()
-  "Use goimports instead of go-fmt."
-  (default-programming-config)
-  (soft-wrap-config)
 
-                                        ; Call Gofmt before saving
-  (add-hook 'before-save-hook 'gofmt-before-save)
-
-  (local-set-key (kbd "C-<tab>") 'gofmt-before-save)
-
-  ;; Add $GOPATH/bin/ to the search path for executable binaries
-  (add-to-paths (make-home-path "go/bin"))
-
-  (local-set-key (kbd "M-.") 'godef-jump)
-
-  ;; setup autocomplete for go
-  (require 'go-autocomplete)
-  (require 'auto-complete-config)
-  (ac-config-default)
-
-  ;; Set the tab-width to something reasonable
-  (setq tab-width 2)
-
-                                        ; Use goimports instead of go-fmt
-  (setq gofmt-command "goimports")
-
-                                        ; Use C-<return> to go-run the current file outside of go-playground files
-  (local-set-key (kbd "C-<return>") 'go-run)
-
-                                        ; Use 'C-Shift-<return>' to run tests on the current file
-  (local-set-key (kbd "C-S-<return>") 'go-test-current-file)
-
-  (defun go-if-err()
-    "Insert golang error handling boilerplate."
-    (interactive)
-    (insert "if err != nil { return nil, err }")
-    (reindent-then-newline-and-indent)
-    )
-
-  (defun go-mode-new-test(name)
-    "Create a new test called NAME."
-    (insert (format "// %s runs a test" name))
-    (reindent-then-newline-and-indent)
-    (insert (format "func %s (t *testing.T) {" name))
-    (reindent-then-newline-and-indent)
-    (insert "t.Parallel()")
-    (reindent-then-newline-and-indent)
-    (reindent-then-newline-and-indent)
-    (insert "}")
-    (reindent-then-newline-and-indent)
-    (previous-line)
-    (previous-line)
-    (end-of-line)
-    (newline-and-indent)
-    )
-
-  (defun go-mode-new-subtest(description)
-    "Use t.Run to create a new subtest with DESCRIPTION."
-    (insert (format "t.Run(\"%s\", func (t *testing.T) {" description))
-    (reindent-then-newline-and-indent)
-    (insert "t.Parallel()")
-    (reindent-then-newline-and-indent)
-    (reindent-then-newline-and-indent)
-    (insert "})")
-    (reindent-then-newline-and-indent)
-    (previous-line)
-    (previous-line)
-    (end-of-line)
-    (newline-and-indent)
-    )
-
-  (defun new-test()
-    "Get a test name and insert it."
-    (interactive)
-    (let ((name (read-string "Test Name: ")))
-      (go-mode-new-test name))
-    )
-
-  (defun new-sub-test()
-    "Get a subtest description and insert it."
-    (interactive)
-    (let ((desc (read-string "Description: ")))
-      (go-mode-new-subtest desc))
-    )
-
-  (local-set-key (kbd "C-c t") 'new-test)
-  (local-set-key (kbd "C-c r") 'new-sub-test)
-  (local-set-key (kbd "C-c e") 'go-if-err)
-  )
-
-(add-hook 'go-mode-hook 'my-go-mode-hook)
-(add-hook 'go-playground-mode 'my-go-mode-hook)
 (add-hook 'json-mode-hook 'json-mode-config)
 
 (defun my-markdown-mode-hook ()
@@ -562,36 +467,6 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
    (format "find %s -type f -name \"%s\" | etags -" (pwd) format)
    )
   )
-
-(use-package lsp-mode
-  :init
-  ;; set prefix for lsp-command-keymap (few alternatives - "C-l", "C-c l")
-  (setq lsp-keymap-prefix "C-c l")
-  :hook (;; replace XXX-mode with concrete major-mode(e. g. python-mode)
-         ;; if you want which-key integration
-         (lsp-mode . lsp-enable-which-key-integration)
-         )
-  :commands lsp)
-
-;; optionally
-(use-package lsp-ui
-  :commands lsp-ui-mode
-  )
-
-;; if you are ivy user
-(use-package lsp-ivy :commands lsp-ivy-workspace-symbol)
-
-;; optionally if you want to use debugger
-(use-package dap-mode)
-;; (use-package dap-LANGUAGE) to load the dap adapter for your language
-
-;; optional if you want which-key integration
-(use-package which-key
-  :config
-  (which-key-mode))
-
-(use-package lsp-treemacs :commands lsp-treemacs-errors-list)
-
 
 (defalias 'list-buffers 'ibuffer)
 
@@ -674,7 +549,6 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
 (add-hook 'c-mode-hook 'etags-c-tags)
 (add-hook 'c-mode-hook 'auto-complete-mode)
 (add-hook 'c-mode-hook 'extra-cc-keybindings)
-(add-hook 'c-mode-hook 'lsp)
 
 (pdf-loader-install)
 
@@ -702,14 +576,6 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
 
 (defcustom cabal-format-on-save nil
   "If enabled, format cabal buffer on safe."
-  :group 'haskell-config
-  :type '(boolean))
-
-;; HLS is still a little bit buggy on some codebases, so make it configurable
-;; whether you want to default to HLS when opening files, or enable it
-;; explicitly.
-(defcustom haskell-default-to-hls nil
-  "Default to using haskell-language-server with LSP mode instead of haskell-mode."
   :group 'haskell-config
   :type '(boolean))
 
@@ -750,12 +616,6 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
   (rainbow-delimiters-mode t)
   (turn-on-line-numbers)
 
-  (set-face-attribute 'default nil
-                      :family "Hasklig"
-                      :weight 'normal
-                      :width 'normal)
-  (hasklig-mode)
-
   (local-set-key (kbd "C-)") 'forward-sexp)
   (local-set-key (kbd "C-(") 'backward-sexp)
   (local-set-key (kbd "C-<tab>") 'haskell-pretty-print-buffer)
@@ -795,11 +655,6 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
 (add-hook 'haskell-cabal-mode-hook 'haskell-config-setup-cabal-mode)
 (add-hook 'before-save-hook 'haskell-config-save-hook)
 
-
- (custom-set-faces
-   '(default ((t (:family "Fira Code Nerd" :foundry "ADBO" :slant normal :weight semi-bold :heightf 140 :width normal :height 102))))
-   '(mode-line ((t (:family "Fira Code Nerd" :foundry "ADBO" :slant normal :weight semi-bold :heightf 140 :width normal :height 102))))
-   )
 
 
 ;;; init.el ends here

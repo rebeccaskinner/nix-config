@@ -5,9 +5,6 @@
 , ...}:
 
 utils.env.importOnlyEnvironment ({
-  services.emacs.enable = true;
-  services.emacs.client.enable = true;
-
   programs.emacs = {
     enable = true;
     overrides = self: super: rec {
@@ -54,6 +51,7 @@ utils.env.importOnlyEnvironment ({
       let
         defaults = with epkgs;
           [ ace-window
+            bug-hunter
             flycheck
             direnv
             fill-column-indicator
