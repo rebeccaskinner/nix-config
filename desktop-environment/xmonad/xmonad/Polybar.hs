@@ -126,7 +126,7 @@ themedPP config =
               "" -> fmt _themeFocusedWorkspaceText "<Desktop>"
               title' -> fmt _themeFocusedWorkspaceText $ truncateTo (maxTitleLength config) title'
         , ppLayout = fmt _themeFocusedWorkspaceText
-        , ppSep = fmt _themeSectionSeparator " · "
+        , ppSep = fmt _themeSectionSeparator " - "
         }
 
 data PolybarConfig = PolybarConfig
