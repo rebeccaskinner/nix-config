@@ -1,12 +1,14 @@
 { config, pkgs, ...}:
 {
+  home.pointerCursor = {
+    x11.enable = true;
+    x11.defaultCursor = "left_ptr";
+    package = pkgs.vanilla-dmz;
+    name = "Vanilla-DMZ";
+  };
   xsession = {
     enable = true;
-    pointerCursor = {
-      package = pkgs.vanilla-dmz;
-      defaultCursor = "left_ptr";
-      name = "Vanilla-DMZ";
-    };
+
     initExtra = ''
 xrandr --dpi 90
 xrandr --output eDP-1-1 --brightness 0.2

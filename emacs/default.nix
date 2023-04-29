@@ -73,6 +73,8 @@ utils.env.importOnlyEnvironment ({
             pdf-tools
             goto-last-change
             darkplum-theme
+            dracula-theme
+            inkpot-theme
             counsel
             counsel-org-clock
             counsel-tramp
@@ -80,6 +82,10 @@ utils.env.importOnlyEnvironment ({
             counsel-jq
             swiper
             fzf
+            vterm
+
+            # evil
+            evil
 
             # Git / Github integration
             forge
@@ -108,7 +114,8 @@ utils.env.importOnlyEnvironment ({
             ivy
             lsp-ivy
             dap-mode
-            which-key ];
+            which-key
+          ];
         extras = extraPackages epkgs;
       in defaults ++ extras;
   };

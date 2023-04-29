@@ -25,7 +25,6 @@ let
                                           extraConfigs = [e.emacsExtraConfig];
                                         };
     in utils.env.concatEnvironments [e emacsEnvironment usrEnvs];
-
   homeConfig =
     {
       # Let Home Manager install and manage itself.

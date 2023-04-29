@@ -15,7 +15,9 @@ let
                 ./mimeApps.nix
                 ./network-manager-applet.nix
                 ./picom.nix
-                ./udiskie.nix ];
+                ./udiskie.nix
+                ./screensaver.nix
+              ];
 
   xmonadImports = mkImports [ ./xmonad ./dunst.nix ./polybar ];
 

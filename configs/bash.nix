@@ -8,9 +8,10 @@
       ls = "ls --color=tty --classify";
       gitk = "gitk --all &";
       qiv = "qiv -t -I";
-#      emacs = "emacsclient -nw";
+      emacs-client = "emacsclient -nw";
       icat = "kitty +kitten icat";
-      ssh = "kitty +kitten ssh";
+      kitty-ssh = "kitty +kitten ssh";
+      vim = "nvim";
     };
     initExtra = ''
       function get_github_url() {
@@ -28,11 +29,8 @@
 
       function get_PS1() {
         case $TERM in
-          xterm-kitty)
+          tmux-256color | xterm-256color | xterm-kitty)
             echo "\n\[\e[0;35m\]\[\e]0;\u@\h:\w\a\]\u@\h:\w λ \[\e[0m\]"
-            ;;
-          eterm-color)
-            echo "\u@\h:\w λ "
             ;;
           *)
             echo "\u@\h:\w $ "

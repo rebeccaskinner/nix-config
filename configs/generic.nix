@@ -22,4 +22,5 @@ let
   generalImports = mkImport ./gtk.nix;
 
   rofi = import ./rofi { inherit pkgs utils; };
-in utils.env.concatEnvironments [ generalConfigs generalImports rofi ]
+  tmux = import ./tmux.nix { inherit pkgs utils; };
+in utils.env.concatEnvironments [generalConfigs generalImports rofi tmux]

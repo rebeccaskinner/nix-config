@@ -16,7 +16,7 @@ let
         ispell
         aspellPkgs
         texlive.combined.scheme-full
-        pythonPackages.pygments
+        python3Packages.pygments
       ]
   );
 

@@ -17,6 +17,8 @@
   (toggle-scroll-bar -1)
   )
 
+  (evil-mode 1)
+
 (defun deamon-look-and-feel (frame)
   "Wrapper to run look-and-feel per FRAME with emacsclient."
   (select-frame frame)
@@ -116,11 +118,7 @@
 
 (defun configure-org-agenda()
   "Configure org mode agenda with agenda files and keybindings."
-  (setq org-agenda-files (list "~/org/work-tasks.org"
-                               "~/org/home-tasks.org"
-                               "~/org/book-tasks.org"
-                               "~/org/blog-tasks.org"
-                               ))
+  (setq org-agenda-files (list "~/agenda.org"))
   (global-set-key (kbd "C-c a") 'org-agenda)
   )
 

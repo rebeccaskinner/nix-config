@@ -11,4 +11,5 @@ utils.env.concatEnvironments [
   (import ./global-dev-env {inherit pkgs utils;})
   (import ./nixdev {inherit pkgs utils;})
   (import ./vscode.nix {inherit pkgs utils;})
+  (import ./nvim {inherit pkgs utils;})
 ]

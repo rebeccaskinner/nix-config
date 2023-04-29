@@ -1,18 +1,22 @@
 {
   services.picom = {
     enable = true;
-    activeOpacity = "1.0";
-    inactiveOpacity = "0.8";
+    activeOpacity = 1.0;
+    inactiveOpacity = 0.8;
     backend = "glx";
     fade = true;
     fadeDelta = 3;
-    opacityRule = [ "100:name *= 'rofi'" ];
+    opacityRules = [ "100:name *= 'rofi'" ];
     shadow = true;
-    shadowOpacity = "0.75";
-    extraOptions = ''
-      glx-no-stencil = true;
-      xrender-sync-fence = true;
-    '';
-
+    shadowOpacity = 0.75;
+    settings = {
+      corner-radius = 10;
+      blur = {
+        background = true;
+        method = "gaussian";
+        size = 10;
+        deviation = 5.0;
+      };
+    };
   };
 }

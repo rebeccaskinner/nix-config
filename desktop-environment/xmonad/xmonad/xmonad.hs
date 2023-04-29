@@ -68,7 +68,7 @@ launchers =
 
 customLayoutHook =
   let layouts' =
-        threeColumn ||| reverseTall ||| tall ||| mirrorTall ||| full
+        tall ||| mirrorTall ||| threeColumn ||| reverseTall ||| full
       mkLayout f =
         f mainWindowCount incrementRatio mainWindowRatio
       incrementRatio = (3 / 100)
