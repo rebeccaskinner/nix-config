@@ -34,8 +34,11 @@ in {
     ./nginx.nix
     ./nextcloud.nix
     ./jellyfin.nix
-    # ./kiwix.nix
+    ./kiwix.nix
+    # ./audiobookshelf.nix
     ];
+
+  hardware.system76.enableAll = true;
 
 # Bootloader.
   boot.loader.systemd-boot.enable = true;
