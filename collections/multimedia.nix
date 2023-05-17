@@ -14,6 +14,7 @@ utils.env.packagesEnvironment ([vlc libbluray] ++ (with pkgs;
     kazam
     cozy
     rhythmbox
+    lollypop
     jellyfin-media-player
     yt-dlp
   ]))

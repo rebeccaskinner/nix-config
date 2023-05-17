@@ -30,6 +30,8 @@ let
       # Let Home Manager install and manage itself.
       programs.home-manager.enable = true;
 
+      home.sessionVariables = { GTK_THEME = "Adwaita:dark"; };
+
       nixpkgs.config.allowUnfree = true;
       nixpkgs.overlays = overlays;
 

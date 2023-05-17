@@ -26,7 +26,10 @@ in
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      (import "${home-manager}/nixos")
     ];
+
+  # home-manager.users.rebecca = import /home/rebecca/home-manager/oryx-work.nix { inherit config pkgs; };
 
   services.upower = {
     enable = true;
@@ -56,7 +59,6 @@ in
     ];
   };
 
-  home-manager.users.rebecca = import /home/rebecca/home-manager/oryx-work.nix { inherit config pkgs; };
 
   # Use the systemd-boot EFI boot loader.
   #  boot.loader.systemd-boot.enable = true;
