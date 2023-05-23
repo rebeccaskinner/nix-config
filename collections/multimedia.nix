@@ -17,4 +17,5 @@ utils.env.packagesEnvironment ([vlc libbluray] ++ (with pkgs;
     lollypop
     jellyfin-media-player
     yt-dlp
+    clementine
   ]))
