@@ -17,6 +17,7 @@ let
                 ./gpg-agent.nix
                 ./gpg.nix
                 ./kdeconnect.nix
+                ./fzf.nix
               ];
 
   generalImports = mkImport ./gtk.nix;
