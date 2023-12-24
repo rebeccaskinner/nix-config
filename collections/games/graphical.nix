@@ -9,4 +9,5 @@ utils.env.packagesEnvironment (with pkgs;
     bomber
     crack_attack
     kbounce
+    chiaki
   ])

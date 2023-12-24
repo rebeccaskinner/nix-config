@@ -31,6 +31,15 @@ in
   boot.loader.systemd-boot.consoleMode = "auto";
   boot.loader.efi.canTouchEfiVariables = true;
 
+  boot.zfs = {
+    enabled = true;
+  };
+
+  services.zfs = {
+    trim.enable = true;
+    autoScrub.enable = true;
+  };
+
   services = {
     upower.enable = true;
     avahi.enable = true;
@@ -77,10 +86,10 @@ in
   networking.hostName = "fillory";
   networking.networkmanager.enable = true;
 
-  fonts.fonts = with pkgs; [
+  fonts.packages = with pkgs; [
     nerdfonts
     source-code-pro
-    fira-code fira-code-symbols noto-fonts noto-fonts-cjk noto-fonts-emoji liberation_ttf dina-font proggyfonts symbola
+    fira-code fira-code-symbols noto-fonts noto-fonts-cjk noto-fonts-emoji liberation_ttf dina-font proggyfonts symbola aegyptus
   ];
 
   fonts.fontconfig = {
@@ -111,7 +120,7 @@ in
     layout = "us";
     xkbOptions = "ctrl:nocaps";
     libinput.enable = true;
-     windowManager.xmonad.enable = true;
+    windowManager.xmonad.enable = true;
     # desktopManager.plasma5 = { enable = true; useQtScaling = true; };
     # desktopManager.gnome.enable = true;
     # desktopManager.cinnamon.enable = true;
@@ -167,6 +176,8 @@ in
       ripgrep
       bottom
       smartmontools
+      zfstools
+      zfs
     ];
 
   documentation.dev.enable = true;

@@ -8,6 +8,7 @@ let
 in
 utils.env.packagesEnvironment ([vlc libbluray] ++ (with pkgs;
   [ makemkv
+    mkvtoolnix
     handbrake
     mplayer
     ffmpeg
@@ -18,4 +19,5 @@ utils.env.packagesEnvironment ([vlc libbluray] ++ (with pkgs;
     jellyfin-media-player
     yt-dlp
     clementine
+    mat2
   ]))

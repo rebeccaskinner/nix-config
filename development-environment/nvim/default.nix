@@ -50,7 +50,7 @@ utils.env.importOnlyEnvironment ({
       nvim-treesitter-textobjects
       nvim-ts-autotag
       nvim-ts-context-commentstring
-      nvim-ts-rainbow2
+      rainbow-delimiters-nvim
       orgmode
       pgsql-vim
       popup-nvim

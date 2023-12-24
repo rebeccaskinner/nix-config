@@ -5,6 +5,7 @@ utils.env.packagesEnvironment (
   [ gimp
     krita
     drawio
-#    blender
+    blender
+    inkscape
     scrot
   ])
