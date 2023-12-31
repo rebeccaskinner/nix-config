@@ -30,10 +30,9 @@ in
   boot.loader.systemd-boot.enable = true;
   boot.loader.systemd-boot.consoleMode = "auto";
   boot.loader.efi.canTouchEfiVariables = true;
+  boot.supportedFilesystems = ["zfs"];
 
-  boot.zfs = {
-    enabled = true;
-  };
+  boot.zfs.extraPools = [ "zfs-archive" ];
 
   services.zfs = {
     trim.enable = true;
@@ -52,6 +51,8 @@ in
   };
   # networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  
+  networking.hostId = "";
 
   fileSystems."/var/media/media01" = {
     device = "/dev/disk/by-label/media_01";
