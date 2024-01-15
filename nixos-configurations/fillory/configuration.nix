@@ -134,7 +134,7 @@ in
   # services.xserver.desktopManager.gnome.enable = true;
 
 
-  hardware.bluetooth = { enable = true; settings = { General = { Enable = "Source,Sink,Media,Socket"; }; }; };
+  hardware.bluetooth = { enable = true; package = pkgs.bluez; settings = { General = { Enable = "Source,Sink,Media,Socket"; }; }; };
 
 
   services.fstrim.enable = true;
@@ -157,7 +157,6 @@ in
       git
       firefox
       xorg.xrandr
-      bluez
       bluez-tools
       pavucontrol
       system76-firmware

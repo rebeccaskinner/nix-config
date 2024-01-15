@@ -22,4 +22,5 @@ utils.env.packagesEnvironment ([vlc libbluray] ++ (with pkgs;
     clementine
     mat2
     whisper-cpp
+    k3b
   ]))
