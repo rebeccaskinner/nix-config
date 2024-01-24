@@ -20,4 +20,6 @@ let
                 ../xmonad/screensaver.nix
               ];
 
-in utils.env.concatEnvironments [xmonadGeneralEnv]
+  xmonadPackages = utils.env.packagesEnvironment (with pkgs; [ pcmanfm ]);
+
+in utils.env.concatEnvironments [xmonadGeneralEnv xmonadPackages]
