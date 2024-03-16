@@ -23,4 +23,5 @@ utils.env.packagesEnvironment ([vlc libbluray] ++ (with pkgs;
     mat2
     whisper-cpp
     k3b
+    ccextractor
   ]))
