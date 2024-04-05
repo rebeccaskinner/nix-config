@@ -1,4 +1,4 @@
-{ pkgs ? import <nixpkgs> {} }:
+{ pkgs }:
 let
   fourmoluSrc = pkgs.haskellPackages.haskellSrc2nix {
     name = "fourmolu";

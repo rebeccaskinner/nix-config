@@ -2,11 +2,12 @@
 , pkgs
 , desktopEnvironment # should be one of "kde" or "xmonad"
 , platform # should be one of "x86-64" or "arm64"
+, inputs
+, system
 , haskellVersion ? null
 , extraImports  ? []
 , extraPackages ? []
 , extraEnvironments ? []
-, overlays ? []
 , developmentEnvironmentArgs ? {}
 }:
 
@@ -18,7 +19,7 @@ let
       envPackages = import ./collections/system-defaults.nix {inherit pkgs utils platform; };
       devEnvironment = import ./development-environment ({ inherit pkgs utils haskellVersion; } // developmentEnvironmentArgs);
       de = import ./desktop-environment/config.nix { inherit pkgs utils desktopEnvironment; };
-      defaultEnvironment = import ./configs/generic.nix { inherit pkgs utils; };
+      defaultEnvironment = import ./configs/generic.nix { inherit pkgs utils inputs system; };
       e = utils.env.concatEnvironments [ devEnvironment de defaultEnvironment envPackages ];
       emacsEnvironment = import ./emacs { inherit pkgs utils;
                                           extraPackages = e.emacsExtraPackages;
@@ -31,9 +32,6 @@ let
       programs.home-manager.enable = true;
 
       home.sessionVariables = { GTK_THEME = "Adwaita:dark"; };
-
-      nixpkgs.config.allowUnfree = true;
-      nixpkgs.overlays = overlays;
 
       # Home Manager needs a bit of information about you and the
       # paths it should manage.

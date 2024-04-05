@@ -1,4 +1,4 @@
-{ config, pkgs, ... }:
+{ config, pkgs, inputs, system, ... }:
 
 let
   load     = f: import f { inherit pkgs utils; };
@@ -15,5 +15,5 @@ import ./generic.nix
     developmentEnvironmentArgs = {
       haskell-formatter-package = ./development-environment/haskell/formatter/fourmolu.nix;
     };
-    inherit config pkgs;
+    inherit config pkgs inputs system;
   }

@@ -1,5 +1,7 @@
 { pkgs
 , utils
+, inputs
+, system
 , ...
 }:
 let
@@ -22,6 +24,10 @@ let
 
   generalImports = mkImport ./gtk.nix;
 
-  rofi = import ./rofi { inherit pkgs utils; };
+  rofi = import ./rofi
+    { rofi-hoogle-plugin = inputs.rofi-hoogle.outputs.packages.${system}.rofi-hoogle;
+      inherit pkgs utils;
+    };
+
   tmux = import ./tmux.nix { inherit pkgs utils; };
 in utils.env.concatEnvironments [generalConfigs generalImports rofi tmux]
