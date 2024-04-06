@@ -1,5 +1,5 @@
 { services.gpg-agent = {
-    enable = true;
+    enable = false;
     enableSshSupport = true;
   };
 }

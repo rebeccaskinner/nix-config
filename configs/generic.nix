@@ -16,7 +16,7 @@ let
                 ./dircolors.nix
                 ./direnv.nix
                 ./git.nix
-                ./gpg-agent.nix
+                ./ssh-agent.nix
                 ./gpg.nix
                 ./kdeconnect.nix
                 ./fzf.nix
