@@ -213,6 +213,7 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
 
   documentation.dev.enable = true;
   programs.steam.enable = true;
+  programs.ssh.startAgent = true;
 
 
   # Configure keymap in X11
