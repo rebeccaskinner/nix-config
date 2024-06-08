@@ -147,11 +147,11 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
   hardware.opengl.enable = true;
 
 
+  services.libinput.enable = true;
+  services.displayManager.sddm.enable = true;
   services.xserver = {
-    displayManager.sddm.enable = true;
     xkb.layout = "us";
     xkb.options = "ctrl:nocaps";
-    libinput.enable = true;
     windowManager.xmonad.enable = true;
     # desktopManager.plasma5 = { enable = true; useQtScaling = true; };
     # desktopManager.gnome.enable = true;
@@ -209,6 +209,10 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
       smartmontools
       zfstools
       zfs
+
+      # cuda
+      autoAddDriverRunpath
+      autoFixElfFiles
     ];
 
   documentation.dev.enable = true;
