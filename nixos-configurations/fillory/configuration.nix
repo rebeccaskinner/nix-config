@@ -144,7 +144,7 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
   # Enable the X11 windowing system.
   services.xserver.enable = true;
   services.xserver.videoDrivers = ["nvidia"];
-  hardware.opengl.enable = true;
+  hardware.graphics.enable = true;
 
 
   services.libinput.enable = true;
