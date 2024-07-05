@@ -14,5 +14,5 @@ import ./generic.nix
     developmentEnvironmentArgs = {
       haskell-formatter-package = ./development-environment/haskell/formatter/fourmolu.nix;
     };
-    inherit config pkgs;
+    inherit config pkgs inputs system;
   }
