@@ -42,7 +42,7 @@
 
             "julia" = mkSystem {
               systemArch = "x86_64-linux";
-              systemConfigPath = ./nixos-configurations/fillory/configuration.nix;
+              systemConfigPath = ./nixos-configurations/julia/configuration.nix;
               homeManagerPath = ./julia.nix;
             };
           };
