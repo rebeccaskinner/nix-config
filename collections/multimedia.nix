@@ -3,6 +3,7 @@ let
   libbluray = pkgs.libbluray.override {
     withAACS = true;
     withBDplus = true;
+    withJava = true;
   };
   vlc = pkgs.vlc.override { inherit libbluray; };
   whisper-cpp = pkgs.callPackage ./whisper-cpp { nvidia_x11 = pkgs.linuxPackages.nvidia_x11; gcc = pkgs.gcc11; };
@@ -14,7 +15,6 @@ utils.env.packagesEnvironment ([vlc libbluray] ++ (with pkgs;
     mplayer
     ffmpeg
     kazam
-    cozy
     rhythmbox
     lollypop
     jellyfin-media-player
@@ -24,4 +24,5 @@ utils.env.packagesEnvironment ([vlc libbluray] ++ (with pkgs;
     whisper-cpp
     k3b
     ccextractor
+    jdk17
   ]))

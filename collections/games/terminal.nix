@@ -1,2 +1,7 @@
 {pkgs, utils, ...}:
-utils.env.packagesEnvironment (with pkgs; [nethack])
+utils.env.packagesEnvironment (with pkgs;
+  [ nethack
+    bastet
+    nsnake
+    ninvaders
+  ])
