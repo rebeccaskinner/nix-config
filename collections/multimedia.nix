@@ -21,9 +21,8 @@ utils.env.packagesEnvironment ([vlc libbluray] ++ (with pkgs;
     yt-dlp
     clementine
     mat2
-    # whisper-cpp
+    whisper-cpp
     k3b
     ccextractor
     jdk17
-    kdenlive
   ]))
