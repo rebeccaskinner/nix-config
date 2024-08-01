@@ -8,4 +8,5 @@ utils.env.packagesEnvironment (with pkgs; [
   kiwix
   kiwix-tools
   nextcloud-client
+  super-productivity
 ])

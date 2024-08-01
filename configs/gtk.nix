@@ -11,8 +11,8 @@ in
     gtk4.extraConfig = gtkDarkTheme;
     gtk3.extraConfig = gtkDarkTheme;
     iconTheme = {
-      package = pkgs.beauty-line-icon-theme;
-      name = "elementary";
+      package = pkgs.candy-icons;
+      name = "candy-icons";
     };
   };
 }
