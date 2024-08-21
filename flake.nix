@@ -19,7 +19,7 @@
                 pkgs = import nixpkgs {
                   system = systemArch;
                   config.allowUnfree = true;
-                  config.cudaSupport = true;
+                  # config.cudaSupport = true;
                 };
               };
               modules = [
