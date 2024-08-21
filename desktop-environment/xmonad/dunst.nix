@@ -4,8 +4,8 @@
   services.dunst = {
     enable = true;
     iconTheme = {
-      name = "Adwaita";
-      package = pkgs.gnome3.adwaita-icon-theme;
+      name = "candy-icons";
+      package = pkgs.candy-icons;
       size = "16x16";
     };
     settings = {

@@ -12,4 +12,6 @@ utils.env.packagesEnvironment (with pkgs; [
     neofetch
     ripgrep
     unzip
+    renameutils
+    rename
 ])
