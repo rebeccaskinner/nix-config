@@ -131,8 +131,7 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
   hardware.graphics.enable = true;
 
   # services.displayManager.sddm.enable = true;
-
-  services.displayManager.gdm.enable = true;
+  services.xserver.displayManager.gdm.enable = true;
   services.libinput.enable = true;
   services.xserver = {
     xkb = {
