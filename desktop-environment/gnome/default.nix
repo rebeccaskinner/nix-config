@@ -7,4 +7,5 @@ let
     tray-icons-reloaded
     removable-drive-menu
   ];
-in utils.env.packagesEnvironment extensions
+  gnome-packages = with pkgs; [ vanilla-dmz ];
+in utils.env.packagesEnvironment (extensions ++ gnome-packages)
