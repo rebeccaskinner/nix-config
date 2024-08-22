@@ -130,7 +130,9 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
   services.xserver.videoDrivers = ["nvidia"];
   hardware.graphics.enable = true;
 
-  services.displayManager.sddm.enable = true;
+  # services.displayManager.sddm.enable = true;
+
+  services.displayManager.gdm.enable = true;
   services.libinput.enable = true;
   services.xserver = {
     xkb = {
@@ -138,8 +140,8 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
       options = "ctrl:nocaps";
     };
     # windowManager.xmonad.enable = true;
-    desktopManager.plasma5 = { enable = true; useQtScaling = true; };
-    # desktopManager.gnome.enable = true;
+    # desktopManager.plasma5 = { enable = true; useQtScaling = true; };
+    desktopManager.gnome.enable = true;
     # desktopManager.cinnamon.enable = true;
     # desktopManager.enlightenment.enable = true;
     # desktopManager.xfce.enable = true;

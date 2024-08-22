@@ -6,7 +6,7 @@ let
   games    = load ./collections/games;
 in
 import ./generic.nix
-  { desktopEnvironment = "kde";
+  { desktopEnvironment = "gnome";
     platform = "x86-64";
     extraEnvironments = [ (load ./configs/kitty.nix)
                           games.allGames
