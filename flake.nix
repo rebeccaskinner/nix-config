@@ -8,43 +8,29 @@
   };
 
   outputs = { self, nixpkgs, rofi-hoogle, home-manager, ... }@inputs:
-    {
-      nixosConfigurations =
-        let
-          mkSystem = { systemArch, systemConfigPath, homeManagerPath }:
-            nixpkgs.lib.nixosSystem {
-              system = systemArch;
-              specialArgs = {
-                inherit inputs;
-                pkgs = import nixpkgs {
-                  system = systemArch;
-                  config.allowUnfree = true;
-                  # config.cudaSupport = true;
-                };
-              };
-              modules = [
-                (import systemConfigPath { inherit inputs; })
-                home-manager.nixosModules.home-manager {
-                  home-manager.useGlobalPkgs = true;
-                  home-manager.useUserPackages = true;
-                  home-manager.users.rebecca = homeManagerPath;
-                  home-manager.extraSpecialArgs = { inherit inputs; system = systemArch; };
-                }
-              ];
-            };
-        in
-          {
-            "fillory" = mkSystem {
-              systemArch = "x86_64-linux";
-              systemConfigPath = ./nixos-configurations/fillory/configuration.nix;
-              homeManagerPath = ./fillory.nix;
-            };
-
-            "julia" = mkSystem {
-              systemArch = "x86_64-linux";
-              systemConfigPath = ./nixos-configurations/julia/configuration.nix;
-              homeManagerPath = ./julia.nix;
-            };
+  {
+    nixosConfigurations = {
+      "fillory" = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = {
+          inherit inputs;
+          pkgs = import nixpkgs {
+            system = "x86_64-linux";
+            config.allowUnfree = true;
+            config.cudaSupport = true;
           };
+        };
+
+        modules = [
+          (import ./nixos-configurations/fillory/configuration.nix { inherit inputs; })
+          home-manager.nixosModules.home-manager {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.rebecca = ./fillory.nix;
+            home-manager.extraSpecialArgs = { inherit inputs; system = "x86_64-linux"; };
+          }
+        ];
+      };
     };
+  };
 }
