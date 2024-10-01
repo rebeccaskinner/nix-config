@@ -3,7 +3,7 @@
 utils.env.packagesEnvironment (
   with pkgs;
   [ gimp
-    krita
+    # krita
     drawio
     # blender
     inkscape

@@ -6,7 +6,6 @@ utils.env.packagesEnvironment (with pkgs; [
     file
     alsa-utils
     gifsicle
-    ffmpeg
     dnsutils
     bitwarden-cli
     neofetch

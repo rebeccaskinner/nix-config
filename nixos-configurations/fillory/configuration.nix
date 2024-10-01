@@ -171,7 +171,16 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
   services.fstrim.enable = true;
   fileSystems."/".options = ["noatime" "nodiratime" "discard"];
 
-  hardware.pulseaudio = { enable = true; package = pkgs.pulseaudioFull; };
+  # hardware.pulseaudio = { enable = true; package = pkgs.pulseaudioFull; };
+  security.rtkit = {
+    enable = true;
+  };
+  services.pipewire = {
+    enable = true;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
+  };
   virtualisation.libvirtd.enable = true;
   programs.dconf.enable = true;
 

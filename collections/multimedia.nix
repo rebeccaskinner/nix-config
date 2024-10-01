@@ -12,14 +12,11 @@ utils.env.packagesEnvironment ([vlc libbluray] ++ (with pkgs;
   [ makemkv
     mkvtoolnix
     handbrake
-    mplayer
     ffmpeg
     kazam
     rhythmbox
-    lollypop
     jellyfin-media-player
     yt-dlp
-    clementine
     mat2
     whisper-cpp
     k3b
