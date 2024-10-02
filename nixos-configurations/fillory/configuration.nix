@@ -145,7 +145,15 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
   services.xserver.enable = true;
   services.xserver.videoDrivers = ["nvidia"];
   hardware.graphics.enable = true;
-  hardware.nvidia.open = false;
+  # hardware.nvidia.open = false;
+  hardware.nvidia = {
+    open = false;
+    modesetting.enable = true;
+    powerManagement.enable = false;
+    powerManagement.finegrained = false;
+    nvidiaSettings = true;
+
+  };
 
   services.libinput.enable = true;
   services.displayManager.sddm.enable = true;
