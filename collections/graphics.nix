@@ -8,4 +8,5 @@ utils.env.packagesEnvironment (
     # blender
     inkscape
     scrot
+    qiv
   ])
