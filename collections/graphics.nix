@@ -9,4 +9,5 @@ utils.env.packagesEnvironment (
     inkscape
     scrot
     qiv
+    graphicsmagick
   ])
