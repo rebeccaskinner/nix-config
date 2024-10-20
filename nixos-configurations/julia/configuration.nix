@@ -150,6 +150,7 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
   hardware.nvidia = {
     modesetting.enable = true;
     nvidiaSettings = true;
+    open = false;
     prime = {
       sync.enable = true;
       nvidiaBusId = "PCI:1:0:0";

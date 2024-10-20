@@ -11,6 +11,7 @@ import ./generic.nix
     extraEnvironments = [ (load ./configs/kitty.nix)
                           games.allGames
                         ];
+    extraPackages = [ pkgs.gparted ];
     developmentEnvironmentArgs = {
       haskell-formatter-package = ./development-environment/haskell/formatter/fourmolu.nix;
     };
