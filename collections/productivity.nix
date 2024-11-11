@@ -9,4 +9,5 @@ utils.env.packagesEnvironment (with pkgs; [
   kiwix-tools
   nextcloud-client
   super-productivity
+  simplex-chat-desktop
 ])

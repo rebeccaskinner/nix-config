@@ -121,7 +121,7 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
   fonts.packages = with pkgs; [
     nerdfonts
     source-code-pro
-    fira-code fira-code-symbols noto-fonts noto-fonts-cjk noto-fonts-emoji liberation_ttf dina-font proggyfonts symbola aegyptus
+    fira-code fira-code-symbols noto-fonts noto-fonts-cjk-sans noto-fonts-emoji liberation_ttf dina-font proggyfonts symbola aegyptus
   ];
 
   fonts.fontconfig = {

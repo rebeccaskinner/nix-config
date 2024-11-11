@@ -19,7 +19,7 @@ utils.env.packagesEnvironment ([vlc libbluray] ++ (with pkgs;
     yt-dlp
     mat2
     whisper-cpp
-    k3b
+#    k3b
     ccextractor
     jdk17
   ]))
