@@ -124,6 +124,7 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
     antialias = true;
   };
 
+  services.tailscale.enable = true;
   services.logind.lidSwitchExternalPower = "ignore";
 
   services.xserver.enable = true;
@@ -181,6 +182,14 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
               ];
   };
 
+  services.resolved = {
+    enable = true;
+    dnssec = "true";
+    domains = ["~."];
+    fallbackDns = ["192.168.50.1 # local network DNS"];
+  };
+
+
   # Enable sound.
   # sound.enable = true;
   hardware.pulseaudio = {
@@ -232,10 +241,19 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
     ripgrep
     bottom
     smartmontools
+
+    tailscale
+    exfatprogs
+
+    # cuda
+    autoAddDriverRunpath
+    autoFixElfFiles
+
   ];
 
   documentation.dev.enable = true;
   programs.steam.enable = true;
+  programs.ssh.startAgent = true;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
