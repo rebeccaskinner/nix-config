@@ -19,14 +19,18 @@ utils.env.packagesEnvironment ([vlc libbluray] ++ (with pkgs;
     yt-dlp
     mat2
     whisper-cpp
-    # k3b
     ccextractor
     jdk17
+
+    # audio cd ripping
+    cdparanoiaIII
+    whipper
+    abcde
 
     # ebook digitizing
     scantailor-advanced
     tesseract
     pdftk
     ghostscript
-    # calibre
+    calibre
   ]))
