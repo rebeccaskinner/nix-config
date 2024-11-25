@@ -1,4 +1,4 @@
-{ config, pkgs, inputs, system, ... }:
+{ config, pkgs, cudaPkgs, inputs, system, ... }:
 
 let
   load     = f: import f { inherit pkgs utils; };
@@ -7,7 +7,6 @@ let
 in
 import ./generic.nix
   { desktopEnvironment = "xmonad";
-    # haskellVersion = 922;
     platform = "x86-64";
     extraEnvironments = [ (load ./configs/kitty.nix)
                           games.allGames
@@ -15,5 +14,5 @@ import ./generic.nix
     developmentEnvironmentArgs = {
       haskell-formatter-package = ./development-environment/haskell/formatter/fourmolu.nix;
     };
-    inherit config pkgs inputs system;
+    inherit config pkgs cudaPkgs inputs system;
   }

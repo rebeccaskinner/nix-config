@@ -1,4 +1,4 @@
-{ platform, utils, pkgs, ...}:
+{ platform, utils, pkgs, cudaPkgs, ...}:
 let
   globalDefaults = utils.env.concatEnvironments [
     (import ./command-line-env.nix { inherit pkgs utils; })
@@ -9,7 +9,7 @@ let
   x86-64-pkgs = utils.env.concatEnvironments [
     (import ./graphics.nix { inherit utils pkgs; })
     (import ./productivity.nix { inherit utils pkgs; })
-    (import ./multimedia.nix { inherit utils pkgs; })
+    (import ./multimedia.nix { inherit utils cudaPkgs pkgs; })
     (import ./writing-tools.nix { inherit utils pkgs; })
   ];
 

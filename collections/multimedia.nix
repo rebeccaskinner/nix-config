@@ -1,4 +1,4 @@
-{utils, pkgs, ...}:
+{utils, pkgs, cudaPkgs, ...}:
 let
   libbluray = pkgs.libbluray.override {
     withAACS = true;
@@ -6,7 +6,7 @@ let
     withJava = true;
   };
   vlc = pkgs.vlc.override { inherit libbluray; };
-  whisper-cpp = pkgs.callPackage ./whisper-cpp { nvidia_x11 = pkgs.linuxPackages.nvidia_x11; gcc = pkgs.gcc11; };
+  whisper-cpp = cudaPkgs.callPackage ./whisper-cpp { nvidia_x11 = cudaPkgs.linuxPackages.nvidia_x11; gcc = cudaPkgs.gcc11; };
 in
 utils.env.packagesEnvironment ([vlc libbluray] ++ (with pkgs;
   [ makemkv
