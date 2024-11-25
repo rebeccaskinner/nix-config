@@ -189,6 +189,16 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
     alsa.support32Bit = true;
     pulse.enable = true;
   };
+
+  services.tailscale.enable = true;
+
+  services.resolved = {
+    enable = true;
+    dnssec = "true";
+    domains = ["~."];
+    fallbackDns = ["192.168.50.1 # local network DNS"];
+  };
+
   virtualisation.libvirtd.enable = true;
   programs.dconf.enable = true;
 
@@ -226,6 +236,8 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
       smartmontools
       zfstools
       zfs
+      tailscale
+      exfatprogs
 
       # cuda
       autoAddDriverRunpath
