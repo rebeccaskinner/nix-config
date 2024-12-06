@@ -118,11 +118,31 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
   networking.hostName = "fillory";
   networking.networkmanager.enable = true;
 
-  fonts.packages = with pkgs; [
-    nerdfonts
-    source-code-pro
-    fira-code fira-code-symbols noto-fonts noto-fonts-cjk-sans noto-fonts-emoji liberation_ttf dina-font proggyfonts symbola aegyptus
-  ];
+  fonts.packages = let
+    nerdfonts = with pkgs.nerd-fonts; [
+      ubuntu
+      ubuntu-sans
+      ubuntu-mono
+      terminess-ttf
+      symbols-only
+      roboto-mono
+      noto
+      liberation
+    ];
+    stdfonts = with pkgs; [
+      source-code-pro
+      fira-code
+      fira-code-symbols
+      noto-fonts
+      noto-fonts-cjk-sans
+      noto-fonts-emoji
+      liberation_ttf
+      dina-font
+      proggyfonts
+      symbola
+      aegyptus
+    ];
+  in nerdfonts ++ stdfonts;
 
   fonts.fontconfig = {
     enable = true;

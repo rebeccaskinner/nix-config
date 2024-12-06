@@ -16,7 +16,7 @@
         transparency = 10;
         padding = 16;
         horizontal_padding = 16;
-        font = "FiraCode Nerd Font 10";
+        font = "FiraCode 10";
         line_height = 4;
         format = ''<b>%s</b>\n%b'';
       };
