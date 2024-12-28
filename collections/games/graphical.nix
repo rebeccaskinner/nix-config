@@ -5,7 +5,6 @@ utils.env.packagesEnvironment (with pkgs;
     lbreakouthd
     kbounce
     bomber
-    crack_attack
     kbounce
     chiaki
   ])
