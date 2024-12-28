@@ -5,6 +5,7 @@
 , ...}:
 
 utils.env.importOnlyEnvironment ({
+  services.emacs.enable = true;
   programs.emacs = {
     enable = true;
     overrides = self: super: rec {
@@ -123,5 +124,11 @@ utils.env.importOnlyEnvironment ({
   home.file.".emacs.d" = {
     source = ./emacs.d;
     recursive = true;
+  };
+
+  home.file.".local/share/applications/emacsclient-frame.desktop" = {
+    source = ./emacsclient-frame.desktop;
+    recursive = false;
+    executable = true;
   };
 })
