@@ -1,12 +1,37 @@
 { pkgs
 , utils
-, extraPackages ? []
+, userDefinedPackages ? ({...}: [])
 , extraConfigs ? []
+, emacsPackage ? pkgs.emacs
+, createMacosSymlink ? false
 , ...}:
 
+let
+  emacsAppLink =
+    if createMacosSymlink
+    then
+      { "emacs.app" = {
+          source = "${emacsPackage}/Applications/Emacs.app";
+        };
+      }
+    else
+      {
+      };
+
+  emacsConfigDir = {
+    ".emacs.d" = {
+      source = ./emacs.d;
+      recursive = true;
+    };
+  };
+
+  emacsFiles = emacsConfigDir // emacsAppLink;
+in
 utils.env.importOnlyEnvironment ({
+  services.emacs.enable = true;
   programs.emacs = {
     enable = true;
+    package = emacsPackage;
     overrides = self: super: rec {
       darkplum-theme = self.melpaBuild rec {
         name = "darkplum-theme";
@@ -116,12 +141,9 @@ utils.env.importOnlyEnvironment ({
             dap-mode
             which-key
           ];
-        extras = extraPackages epkgs;
+        extras = userDefinedPackages epkgs;
       in defaults ++ extras;
   };
 
-  home.file.".emacs.d" = {
-    source = ./emacs.d;
-    recursive = true;
-  };
-})
+  home.file = emacsFiles;
+  })

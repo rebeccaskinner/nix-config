@@ -176,24 +176,32 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
   };
 
   services.libinput.enable = true;
-  services.displayManager.sddm.enable = true;
+  services.xserver.displayManager.gdm.enable = true;
+  # services.displayManager.sddm.enable = true;
   services.xserver = {
     xkb.layout = "us";
     xkb.options = "ctrl:nocaps";
-    windowManager.xmonad.enable = true;
+    # windowManager.xmonad.enable = true;
     # desktopManager.plasma5 = { enable = true; useQtScaling = true; };
-    # desktopManager.gnome.enable = true;
+    desktopManager.gnome.enable = true;
     # desktopManager.cinnamon.enable = true;
     # desktopManager.enlightenment.enable = true;
     # desktopManager.xfce.enable = true;
     # desktopManager.mate.enable = true;
   };
   # Enable the GNOME Desktop Environment.
-  # services.xserver.displayManager.gdm.enable = true;
   # services.xserver.desktopManager.gnome.enable = true;
 
 
-  hardware.bluetooth = { enable = true; package = pkgs.bluez; settings = { General = { Enable = "Source,Sink,Media,Socket"; }; }; };
+  hardware.bluetooth =
+    { enable = true;
+      package = pkgs.bluez;
+      settings =
+        { General =
+            { Enable = "Source,Sink,Media,Socket";
+            };
+        };
+    };
 
 
   services.fstrim.enable = true;
@@ -321,7 +329,10 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
 
   networking.firewall.enable = true;
 
+  networking.firewall.allowedTCPPorts = [ 41251 ];
+
   networking.firewall.extraCommands = ''
+  iptables -A nixos-fw -p tcp --source 192.168.50/24 --dport 22:22 -j nixos-fw-accept || true
   iptables -A nixos-fw -p tcp --source 192.168.50/24 --dport 22:22 -j nixos-fw-accept || true
 '';
 
@@ -330,8 +341,7 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
 '';
 
 
-  networking.firewall.allowedUDPPorts = [ 23253 # Baldurs Gate 3 local LAN multiplayer
-          ];
+  networking.firewall.allowedUDPPorts = [];
 
   # Open ports in the firewall.
   # networking.firewall.allowedTCPPorts = [ ... ];

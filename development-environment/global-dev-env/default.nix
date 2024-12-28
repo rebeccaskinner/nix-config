@@ -8,7 +8,7 @@ let
     };
 
   gitEnv =
-    { packages = with pkgs; [ gitg ];
+    { packages = with pkgs; [ ];
       imports = [ (utils.constImport ./git.nix) ];
       emacsExtraPackages = epkgs: [epkgs.magit];
       emacsExtraConfig = "";
