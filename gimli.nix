@@ -37,9 +37,38 @@ let
 
   kittyConfig = load ./configs/kitty.nix;
   tmuxConfig = load ./configs/tmux.nix;
+  bashConfig = utils.env.configOnlyEnvironment({
+    programs.bash = {
+      enable = true;
+      enableVteIntegration = true;
+      shellAliases = {
+        ll = "ls -alF";
+        la = "ls -A";
+        ls = "ls --color=tty --classify";
+        vim = "nvim";
+      };
+      bashrcExtra = ''
+        PATH=/opt/homebrew/bin:/opt/homebrew/sbin:''${PATH};
+        [ -z "''${MANPATH-}" ] || export MANPATH=":''${MANPATH#:}";
+        export INFOPATH="/opt/homebrew/share/info:''${INFOPATH:-}";
+      '';
+      initExtra = ''
+        function get_PS1() {
+          case $TERM in
+            tmux-256color | xterm-256color | xterm-kitty)
+              echo "\n\[\e[0;35m\]\[\e]0;\u@\h:\w\a\]\u@\h:\w λ \[\e[0m\]"
+              ;;
+            *)
+              echo "\u@\h:\w $ "
+              ;;
+          esac
+        }
+        export PS1="$(get_PS1)"
+      '';
+    };
+  });
 
   configs = mkConfigs [
-      ./configs/bash.nix
       ./configs/dircolors.nix
       ./configs/direnv.nix
       ./configs/git.nix
@@ -70,6 +99,7 @@ let
     rustDevelopmentEnv
     globalDevelopmentEnv
     nvimConfig
+    bashConfig
     tmuxConfig
   ];
 
