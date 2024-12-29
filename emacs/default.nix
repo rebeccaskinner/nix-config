@@ -127,6 +127,9 @@ utils.env.importOnlyEnvironment ({
             go-mode
             json-mode
             yaml-mode
+            nix-mode
+            nix-haskell-mode
+            nixfmt
 
             # lsp-mode things
             lsp-mode
@@ -144,6 +147,5 @@ utils.env.importOnlyEnvironment ({
         extras = userDefinedPackages epkgs;
       in defaults ++ extras;
   };
-
   home.file = emacsFiles;
-  })
+})

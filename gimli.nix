@@ -1,16 +1,18 @@
 { config, pkgs, inputs, system, ... }:
 
 let
-  load     = f: import f { inherit pkgs utils; };
-  utils    = import ./utils;
+  load = f: import f { inherit pkgs utils; };
+  utils = import ./utils;
 
   cfg = p: utils.env.configOnlyEnvironment (import p);
-  mkConfigs = cfgPaths: utils.env.concatEnvironments (builtins.map cfg cfgPaths);
+  mkConfigs = cfgPaths:
+    utils.env.concatEnvironments (builtins.map cfg cfgPaths);
 
   mkImport = p: utils.env.importOnlyEnvironment (import p);
-  mkImports = importPaths: utils.env.concatEnvironments (builtins.map mkImport importPaths);
+  mkImports = importPaths:
+    utils.env.concatEnvironments (builtins.map mkImport importPaths);
 
-  packages =  utils.env.packagesEnvironment (with pkgs; [
+  packages = utils.env.packagesEnvironment (with pkgs; [
     # common system tools
     coreutils
     htop
@@ -28,6 +30,7 @@ let
     shellcheck
     jq
     nix-prefetch-scripts
+    nixfmt
     # multimedia tools
     ffmpeg
     mat2
@@ -37,7 +40,7 @@ let
 
   kittyConfig = load ./configs/kitty.nix;
   tmuxConfig = load ./configs/tmux.nix;
-  bashConfig = utils.env.configOnlyEnvironment({
+  bashConfig = utils.env.configOnlyEnvironment ({
     programs.bash = {
       enable = true;
       enableVteIntegration = true;
@@ -69,11 +72,11 @@ let
   });
 
   configs = mkConfigs [
-      ./configs/dircolors.nix
-      ./configs/direnv.nix
-      ./configs/git.nix
-      ./configs/gpg.nix
-      ./configs/fzf.nix
+    ./configs/dircolors.nix
+    ./configs/direnv.nix
+    ./configs/git.nix
+    ./configs/gpg.nix
+    ./configs/fzf.nix
   ];
 
   haskellDevelopmentEnv = import ./development-environment/haskell {
@@ -82,17 +85,13 @@ let
     haskellVersion = 98;
   };
 
-  rustDevelopmentEnv = import ./development-environment/rust {
-    inherit pkgs utils;
-  };
+  rustDevelopmentEnv =
+    import ./development-environment/rust { inherit pkgs utils; };
 
-  globalDevelopmentEnv = import ./development-environment/global-dev-env {
-    inherit pkgs utils;
-  };
+  globalDevelopmentEnv =
+    import ./development-environment/global-dev-env { inherit pkgs utils; };
 
-  nvimConfig = import ./development-environment/nvim {
-    inherit pkgs utils;
-  };
+  nvimConfig = import ./development-environment/nvim { inherit pkgs utils; };
 
   devTools = utils.env.concatEnvironments [
     haskellDevelopmentEnv
@@ -104,29 +103,18 @@ let
   ];
 
   emacsConfig = import ./emacs {
-     inherit pkgs utils;
-     createMacosSymlink = true;
-     emacsPackage = pkgs.emacs-macport;
-     extraPackages = ePkgs: (with ePkgs; [
-       rustic
-       cargo
-       hasklig-mode
-       haskell-mode
-       nix-haskell-mode
-     ]);
-     extraConfigs = [
-       (builtins.readFile ./development-environment/rust/rust.el)
-     ];
+    inherit pkgs utils;
+    createMacosSymlink = true;
+    emacsPackage = pkgs.emacs-macport;
+    extraPackages = ePkgs:
+      (with ePkgs; [ rustic cargo hasklig-mode haskell-mode nix-haskell-mode ]);
+    extraConfigs =
+      [ (builtins.readFile ./development-environment/rust/rust.el) ];
   };
 
-  environment = utils.env.concatEnvironments
-    [ packages
-      configs
-      devTools
-      emacsConfig
-    ];
-in
-{
+  environment =
+    utils.env.concatEnvironments [ packages configs devTools emacsConfig ];
+in {
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;
 
