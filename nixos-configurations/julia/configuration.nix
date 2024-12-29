@@ -105,19 +105,32 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
   #   keyMap = "us";
   # };
 
-  fonts.packages = with pkgs; [
-    nerdfonts
-    source-code-pro
-    fira-code
-    fira-code-symbols
-    noto-fonts
-    noto-fonts-cjk
-    noto-fonts-emoji
-    liberation_ttf
-    dina-font
-    proggyfonts
-    symbola
-  ];
+
+  fonts.packages = let
+    nerdfonts = with pkgs.nerd-fonts; [
+      ubuntu
+      ubuntu-sans
+      ubuntu-mono
+      terminess-ttf
+      symbols-only
+      roboto-mono
+      noto
+      liberation
+    ];
+    stdfonts = with pkgs; [
+      source-code-pro
+      fira-code
+      fira-code-symbols
+      noto-fonts
+      noto-fonts-cjk-sans
+      noto-fonts-emoji
+      liberation_ttf
+      dina-font
+      proggyfonts
+      symbola
+      aegyptus
+    ];
+  in nerdfonts ++ stdfonts;
 
   fonts.fontconfig = {
     enable = true;
@@ -151,6 +164,7 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
   hardware.nvidia = {
     modesetting.enable = true;
     nvidiaSettings = true;
+    open = false;
     prime = {
       sync.enable = true;
       nvidiaBusId = "PCI:1:0:0";
@@ -192,9 +206,12 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
 
   # Enable sound.
   # sound.enable = true;
-  hardware.pulseaudio = {
+
+  services.pipewire = {
     enable = true;
-    package = pkgs.pulseaudioFull;
+    alsa.enable = true;
+    alsa.support32Bit = true;
+    pulse.enable = true;
   };
 
   services.acpid = {

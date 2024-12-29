@@ -79,6 +79,29 @@
           }
         ];
       };
+
+      "julia" = nixpkgs.lib.nixosSystem {
+        system = "x86_64-linux";
+        specialArgs = {
+          inherit inputs;
+          pkgs = import nixpkgs {
+            system = "x86_64-linux";
+            config.allowUnfree = true;
+            config.cudaSupport = false;
+          };
+        };
+
+        modules = [
+          (import ./nixos-configurations/julia/configuration.nix { inherit inputs; })
+          home-manager.nixosModules.home-manager {
+            home-manager.useGlobalPkgs = true;
+            home-manager.useUserPackages = true;
+            home-manager.users.rebecca = ./julia.nix;
+            home-manager.extraSpecialArgs = { inherit inputs; system = "x86_64-linux"; };
+          }
+        ];
+      };
+
     };
   };
 }
