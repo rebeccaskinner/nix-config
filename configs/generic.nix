@@ -18,7 +18,7 @@ let
                 ./git.nix
                 ./ssh-agent.nix
                 ./gpg.nix
-                ./kdeconnect.nix
+                # ./kdeconnect.nix
                 ./fzf.nix
               ];
 
