@@ -4,7 +4,7 @@
 { inputs }:
 { config, pkgs, ... }:
 {
-  nixpkgs.config.allowUnfree = true;
+  # nixpkgs.config.allowUnfree = true;
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
   imports =
@@ -176,14 +176,14 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
   };
 
   services.libinput.enable = true;
-  services.xserver.displayManager.gdm.enable = true;
-  # services.displayManager.sddm.enable = true;
+  # services.xserver.displayManager.gdm.enable = true;
+  services.displayManager.sddm.enable = true;
   services.xserver = {
     xkb.layout = "us";
     xkb.options = "ctrl:nocaps";
-    # windowManager.xmonad.enable = true;
+    windowManager.xmonad.enable = true;
     # desktopManager.plasma5 = { enable = true; useQtScaling = true; };
-    desktopManager.gnome.enable = true;
+    # desktopManager.gnome.enable = true;
     # desktopManager.cinnamon.enable = true;
     # desktopManager.enlightenment.enable = true;
     # desktopManager.xfce.enable = true;
