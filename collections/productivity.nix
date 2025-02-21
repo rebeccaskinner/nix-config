@@ -2,6 +2,7 @@
 utils.env.packagesEnvironment (with pkgs; [
   bitwarden
   slack
+  element-desktop
   thunderbird
   libreoffice
   signal-desktop

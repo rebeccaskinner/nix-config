@@ -621,7 +621,7 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
 (defun haskell-config-setup-haskell-mode()
   "Setup the haskell editing environment."
 
-  (setq haskell-tags-on-save t)
+  (setq haskell-tags-on-save nil)
   (rainbow-delimiters-mode t)
   (turn-on-line-numbers)
 
