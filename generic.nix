@@ -1,6 +1,6 @@
 { config
 , pkgs
-, pkgs-stable ? pkgs
+, pkgsStable ? pkgs
 , cudaPkgs ? pkgs # nixpkgs with cuda (potentially) enabled
 , desktopEnvironment # should be one of "kde" or "xmonad"
 , platform # should be one of "x86-64" or "arm64"
@@ -18,10 +18,10 @@ let
   environment =
     let
       usrEnvs = utils.env.concatEnvironments extraEnvironments;
-      envPackages = import ./collections/system-defaults.nix {inherit cudaPkgs pkgs utils platform; };
+      envPackages = import ./collections/system-defaults.nix {inherit cudaPkgs pkgs pkgsStable utils platform; };
       devEnvironment = import ./development-environment ({ inherit pkgs utils haskellVersion; } // developmentEnvironmentArgs);
       de = import ./desktop-environment/config.nix { inherit pkgs utils desktopEnvironment; };
-      defaultEnvironment = import ./configs/generic.nix { inherit pkgs pkgs-stable utils inputs system; };
+      defaultEnvironment = import ./configs/generic.nix { inherit pkgs pkgsStable utils inputs system; };
       e = utils.env.concatEnvironments [ devEnvironment de defaultEnvironment envPackages ];
       emacsEnvironment = import ./emacs { inherit pkgs utils;
                                           extraPackages = e.emacsExtraPackages;

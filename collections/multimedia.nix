@@ -1,4 +1,4 @@
-{utils, pkgs, cudaPkgs, ...}:
+{utils, pkgs, pkgsStable, cudaPkgs, ...}:
 let
   libbluray = pkgs.libbluray.override {
     withAACS = true;
@@ -20,7 +20,6 @@ utils.env.simpleEnvironment {
       yt-dlp
       mat2
       whisper-cpp
-      ccextractor
 
       # audio cd ripping
       cdparanoiaIII
@@ -33,6 +32,6 @@ utils.env.simpleEnvironment {
       pdftk
       ghostscript
       calibre
-    ]);
+    ]) ++ [pkgsStable.ccextractor];
   imports = [(import ./java.nix { inherit pkgs; })];
 }

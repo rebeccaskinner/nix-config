@@ -1,4 +1,4 @@
-{ config, pkgs, pkgs-stable, cudaPkgs, inputs, system, ... }:
+{ config, pkgs, pkgsStable, cudaPkgs, inputs, system, ... }:
 
 let
   load     = f: import f { inherit pkgs utils; };
@@ -14,5 +14,6 @@ import ./generic.nix
     developmentEnvironmentArgs = {
       haskell-formatter-package = ./development-environment/haskell/formatter/fourmolu.nix;
     };
-    inherit config pkgs pkgs-stable cudaPkgs inputs system;
+    extraPackages = [pkgs.anki];
+    inherit config pkgs pkgsStable cudaPkgs inputs system;
   }
