@@ -10,6 +10,7 @@
   "Run some stuff after init, like setting a theme and disabling scrollbars."
   ;; Setup theme
   (load-theme 'darkplum t)
+  ;; (load-theme 'dracula t)
 
   ;; disable the menu bar
   (menu-bar-mode -1)

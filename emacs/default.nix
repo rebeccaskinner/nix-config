@@ -25,6 +25,24 @@ let
     };
   };
 
+  darkplum-theme = emacsPackage.pkgs.melpaBuild {
+    name = "darkplum-theme";
+    pname = "darkplum-theme";
+    version = "0.0.2";
+    src = pkgs.fetchFromGitHub {
+      owner = "rebeccaskinner";
+      repo = "darkplum-theme";
+      rev = "7a93038ede49c1c30e540d510d54ef83e00c2bce";
+      sha256 = "0rsfvx8nsq9sbkdzs4mjqfwsqdwg5zz9y4wyqq05pamdhchmy2al";
+    };
+    meta = {
+      description = "A dark purple theme for emacs";
+      longDescription = "A dark purple theme for emacs";
+    };
+    license = pkgs.lib.licenses.gpl3Plus.spdxId;
+  };
+
+
   emacsFiles = emacsConfigDir // emacsAppLink;
 in
 utils.env.importOnlyEnvironment ({
@@ -33,41 +51,7 @@ utils.env.importOnlyEnvironment ({
     enable = true;
     package = emacsPackage;
     overrides = self: super: rec {
-      darkplum-theme = self.melpaBuild rec {
-        name = "darkplum-theme";
-        pname = "darkplum-theme";
-        version = "0.0.2";
-        src = pkgs.fetchFromGitHub {
-          owner = "rebeccaskinner";
-          repo = "darkplum-theme";
-          rev = "7a93038ede49c1c30e540d510d54ef83e00c2bce";
-          sha256 = "0rsfvx8nsq9sbkdzs4mjqfwsqdwg5zz9y4wyqq05pamdhchmy2al";
-        };
-        recipe = pkgs.writeText "recipe" ''
-          (darkplum-theme
-          :repo "rebeccaskinner/darkplum-theme"
-          :fetcher github)
-        '';
-        installPhase = ''
-          runHook preInstall
-          archive="$NIX_BUILD_TOP/source/$ename.el"
-          if [ ! -f "$archive" ]; then
-              echo "archive not found ($archive)"
-              archive="$NIX_BUILD_TOP/packages/$ename-$version.tar"
-          fi
-          emacs --batch -Q \
-              -l "$elpa2nix" \
-              -f elpa2nix-install-package \
-              "$archive" "$out/share/emacs/site-lisp/elpa"
-          runHook postInstall
-        '';
-        meta = {
-          description = "A dark purple theme for emacs";
-          longDescription = "A dark purple theme for emacs";
-        };
-        license = pkgs.lib.licenses.gpl3Plus.spdxId;
-      };
-    };
+          };
 
     extraConfig =
       builtins.foldl' (a: b: a + b) "" extraConfigs;

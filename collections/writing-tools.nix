@@ -27,7 +27,7 @@ let
 
   graphicalTools =
     if includeGraphicalTools
-    then utils.env.packagesEnvironment [ pkgs.evince pkgs.okular ]
+    then utils.env.packagesEnvironment [ pkgs.evince pkgs.kdePackages.okular ]
     else utils.env.emptyEnvironment;
 
 
