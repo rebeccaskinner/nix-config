@@ -101,9 +101,9 @@ utils.env.importOnlyEnvironment ({
             github-review
 
             # tree-sitter
-            tree-sitter
-            tree-sitter-indent
-            tree-sitter-langs
+            # tree-sitter
+            # tree-sitter-indent
+            # tree-sitter-langs
 
             # misc. programming language modes
             dhall-mode

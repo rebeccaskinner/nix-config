@@ -18,6 +18,7 @@
   (toggle-scroll-bar -1)
   )
 
+  (require 'evil)
   (evil-mode 1)
 
 (defun deamon-look-and-feel (frame)
@@ -128,7 +129,6 @@
 (add-hook 'org-mode-hook 'enable-org-reveal)
 (add-hook 'org-mode-hook 'turn-on-visual-line-mode)
 (add-hook 'org-mode-hook 'enable-orgmode-graphiz-execution)
-(add-hook 'org-mode-hook 'enable-orgmode-ditaa-execution)
 (add-hook 'org-mode-hook 'enable-orgmode-inline-preview)
 (add-hook 'org-mode-hook 'enable-orgmode-ruby-execution)
 
@@ -556,11 +556,7 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
 
 ;; set up auto-complete-mode for C files
 (add-hook 'c-mode-hook 'auto-complete-mode)
-(add-hook 'c-mode-hook 'etags-c-tags)
-(add-hook 'c-mode-hook 'auto-complete-mode)
 (add-hook 'c-mode-hook 'extra-cc-keybindings)
-
-(pdf-loader-install)
 
 (defcustom haskell-pretty-printer nil
   "Program used to reformat haskell source code."
