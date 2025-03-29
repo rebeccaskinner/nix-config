@@ -1,8 +1,21 @@
-{ pkgs, config, lib, http-port ? "8181", ... }:
+{ pkgs, config, lib, ... }:
+let
+  http-port = "8181";
+in
 {
+  environment.etc."miniflux-admin-credentials" = {
+    text = ''
+      ADMIN_USERNAME=rebecca
+      ADMIN_PASSWORD=changeMe!0000
+    '';
+    mode = "0600";
+    user = "miniflux";
+    group = "miniflux";
+  };
   services.miniflux = {
     enable = true;
-    database.createLocally = true;
+    createDatabaseLocally = true;
+    adminCredentialsFile = "/etc/miniflux-admin-credentials";
     config = {
       BASE_URL = "https://news.borg.cube/";
       PORT = http-port;
