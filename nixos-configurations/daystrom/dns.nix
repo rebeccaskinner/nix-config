@@ -12,19 +12,20 @@ let
     ;
     ; name servers - NS records
             IN      NS      ns1.borg.cube.
-    
+
     ; name servers - A records
     ns1.borg.cube.          IN      A       192.168.50.148
-    
+
     ; 192.168.50.0/24 A records
     fillory.borg.cube.      IN      A       192.168.50.214
-    
+
     ; 192.168.50.0/24 CNAME records
     daystrom.borg.cube.     IN      CNAME   ns1.borg.cube.
     portal.borg.cube.       IN      CNAME   ns1.borg.cube.
     nextcloud.borg.cube.    IN      CNAME   ns1.borg.cube.
     photos.borg.cube.       IN      CNAME   ns1.borg.cube.
     video.borg.cube.        IN      CNAME   ns1.borg.cube.
+    news.borg.cube.         IN      CNAME   ns1.borg.cube.
     audio-books.borg.cube.        IN      CNAME   ns1.borg.cube.
     www.borg.cube.          IN      CNAME   ns1.borg.cube.
     wiki.borg.cube.          IN      CNAME   ns1.borg.cube.
@@ -40,7 +41,7 @@ let
                              604800 )       ; Negative Cache TTL
     ; name servers
           IN      NS      ns1.borg.cube.
-    
+
     ; PTR Records
     148     IN      PTR     ns1.borg.cube.           ; 192.168.50.148
     214     IN      PTR     fillory.borg.cube.       ; 192.168.50.214
@@ -57,18 +58,19 @@ let
     ;
     ; name servers - NS records
             IN      NS      ns1.borg.cube.
-    
+
     ; name servers - A records
     ns1.borg.cube.          IN      A       100.123.186.116
-    
+
     ; 192.168.50.0/24 A records
     fillory.borg.cube.      IN      A       100.91.57.97
-    
+
     ; 192.168.50.0/24 CNAME records
     daystrom.borg.cube.     IN      CNAME   ns1.borg.cube.
     portal.borg.cube.       IN      CNAME   ns1.borg.cube.
     nextcloud.borg.cube.    IN      CNAME   ns1.borg.cube.
     photos.borg.cube.       IN      CNAME   ns1.borg.cube.
+    news.borg.cube.         IN      CNAME   ns1.borg.cube.
     video.borg.cube.        IN      CNAME   ns1.borg.cube.
     audio-books.borg.cube.        IN      CNAME   ns1.borg.cube.
     www.borg.cube.          IN      CNAME   ns1.borg.cube.
@@ -85,7 +87,7 @@ let
                              604800 )       ; Negative Cache TTL
     ; name servers
           IN      NS      ns1.borg.cube.
-    
+
     ; PTR Records
     116.186.123.100.in-addr.arpa.     IN      PTR     ns1.borg.cube.           ; 100.123.186.116
     97.57.91.100.in-addr.arpa.     IN      PTR     fillory.borg.cube.       ; 100.91.57.97
