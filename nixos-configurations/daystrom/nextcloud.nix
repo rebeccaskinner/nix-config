@@ -4,8 +4,8 @@
   services.nextcloud = {
     enable = true;
     hostName = "nextcloud.borg.cube";
-    package = pkgs.nextcloud26;
-    extraApps = with pkgs.nextcloud26Packages.apps; { inherit calendar contacts deck notes news groupfolders tasks bookmarks; };
+    package = pkgs.nextcloud30;
+    extraApps = with pkgs.nextcloud30Packages.apps; { inherit calendar contacts notes bookmarks; };
     extraAppsEnable = true;
     https = true;
     config = {
@@ -16,7 +16,7 @@
       adminpassFile = "/var/nextcloud/admin_passfile";
       adminuser = "root";
     };
-    extraOptions = {
+    settings = {
       redis = {
         host = "/run/redis-nextcloud/redis.sock";
         port = 0;
@@ -40,7 +40,8 @@
     ensureDatabases = ["nextcloud"];
     ensureUsers = [
       { name = "nextcloud";
-        ensurePermissions."DATABASE nextcloud" = "ALL PRIVILEGES";
+        # ensurePermissions."DATABASE nextcloud" = "ALL PRIVILEGES";
+        ensureDBOwnership = true;
       }];
   };
 

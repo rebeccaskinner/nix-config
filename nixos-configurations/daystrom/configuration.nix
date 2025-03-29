@@ -2,6 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
+{ inputs }:
 { config, pkgs, ... }:
 
 let
@@ -34,8 +35,8 @@ in {
     ./nginx.nix
     ./nextcloud.nix
     ./jellyfin.nix
-    ./kiwix.nix
-    # ./audiobookshelf.nix
+    # ./kiwix.nix
+    ./audiobookshelf.nix
     ];
 
   hardware.system76.enableAll = true;
@@ -44,6 +45,13 @@ in {
   boot.loader.systemd-boot.enable = true;
   boot.loader.efi.canTouchEfiVariables = true;
   boot.loader.efi.efiSysMountPoint = "/boot/efi";
+  boot.supportedFilesystems = ["zfs"];
+  boot.zfs.extraPools = [ "zfs-archive" ];
+
+  services.zfs = {
+    trim.enable = true;
+    autoScrub.enable = true;
+  };
 
   services.fstrim.enable = true;
   fileSystems."/".options = ["noatime" "nodiratime" "discard"];
@@ -97,6 +105,9 @@ in {
 # Enable networking
     networking.networkmanager.enable = true;
 
+# needed for ZFS
+    networking.hostId = "d74a9a1b";
+
 # Set your time zone.
   time.timeZone = "America/Chicago";
 
@@ -117,9 +128,9 @@ in {
 
 # Configure keymap in X11
   services.xserver = {
-    layout = "us";
-    xkbVariant = "";
-    xkbOptions = "ctrl:nocaps";
+    xkb.layout = "us";
+    xkb.variant = "";
+    xkb.options = "ctrl:nocaps";
   };
 
 # Define a user account. Don't forget to set a password with ‘passwd’.
@@ -141,15 +152,15 @@ in {
       systemVim
       git
       system76-firmware
-      qemu_kvm
-      qemu-utils
-      qemu
+      # qemu_kvm
+      # qemu-utils
+      # qemu
       tunctl
       ethtool
-      virt-top
-      virt-viewer
-      man-pages
-      man-pages-posix
+      # virt-top
+      # virt-viewer
+      # man-pages
+      # man-pages-posix
       pciutils
       usbutils
       scowl
@@ -157,9 +168,15 @@ in {
       bottom
       smartmontools
       tmux
+      zfstools
+      zfs
+
+     tailscale
 #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
 #  wget
       ];
+
+  services.tailscale.enable = true;
 
   documentation.dev.enable = true;
 
@@ -177,8 +194,7 @@ in {
 # services.openssh.enable = true;
   services.openssh = {
     enable = true;
-# permitRootLogin = "no";
-# passwordAuthentication = false;
+    openFirewall = false;
     settings = {
       PasswordAuthentication = false;
       KbdInteractiveAuthentication = false;
@@ -186,6 +202,12 @@ in {
     };
   };
   networking.firewall.enable = true;
+  networking.firewall.extraCommands = ''
+  iptables -A nixos-fw -p tcp --source 192.168.50.0/24 --dport 22:22 -j nixos-fw-accept || true
+'';
+  networking.firewall.extraStopCommands = ''
+  iptables -D nixos-fw -p tcp --source 192.168.50.0/24 --dport 22:22 -j nixos-fw-accept || true
+'';
   networking.firewall.allowedUDPPorts = [ 53 ];
   networking.firewall.allowedTCPPorts = [ 53 80 443 ];
 
