@@ -47,8 +47,8 @@
 
   services.nginx.virtualHosts.${config.services.nextcloud.hostName} = {
     onlySSL = true;
-    sslCertificate = "/var/www/ssl-keys/borg.cube.crt";
-    sslCertificateKey = "/var/www/ssl-keys/borg.cube.key";
+    sslCertificate = "/var/www/ssl-keys/wildcard.borg.cube.crt";
+    sslCertificateKey = "/var/www/ssl-keys/wildcard.borg.cube.key";
   };
 
   systemd.services."nextcloud-setup" = {
