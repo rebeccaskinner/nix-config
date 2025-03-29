@@ -42,7 +42,6 @@ let
     license = pkgs.lib.licenses.gpl3Plus.spdxId;
   };
 
-
   emacsFiles = emacsConfigDir // emacsAppLink;
 in
 utils.env.importOnlyEnvironment ({
@@ -99,11 +98,6 @@ utils.env.importOnlyEnvironment ({
             # Git / Github integration
             forge
             github-review
-
-            # tree-sitter
-            # tree-sitter
-            # tree-sitter-indent
-            # tree-sitter-langs
 
             # misc. programming language modes
             dhall-mode

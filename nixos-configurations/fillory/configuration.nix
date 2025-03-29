@@ -141,6 +141,10 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
       proggyfonts
       symbola
       aegyptus
+      sigi
+      material-design-icons
+      hasklig
+      font-awesome
     ];
   in nerdfonts ++ stdfonts;
 
