@@ -37,6 +37,7 @@ in {
     ./jellyfin.nix
     # ./kiwix.nix
     ./audiobookshelf.nix
+    ./miniflux.nix
     ];
 
   hardware.system76.enableAll = true;
