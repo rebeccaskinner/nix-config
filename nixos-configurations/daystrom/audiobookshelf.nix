@@ -30,8 +30,8 @@ in
 
   services.nginx.virtualHosts."audio-books.borg.cube" = {
     onlySSL = true;
-    sslCertificate = "/var/www/ssl-keys/audio-books.borg.cube.crt";
-    sslCertificateKey = "/var/www/ssl-keys/audio-books.borg.cube.key";
+    sslCertificate = "/var/www/ssl-keys/wildcard.borg.cube.crt";
+    sslCertificateKey = "/var/www/ssl-keys/wildcard.borg.cube.key";
     locations."/" = {
       proxyPass = "http://127.0.0.1:${audiobookshelfPort}";
       proxyWebsockets = true;
