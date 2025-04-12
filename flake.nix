@@ -52,7 +52,24 @@
           ];
         };
       };
+
       nixosConfigurations = {
+        "daystrom" = nixpkgs.lib.nixosSystem {
+          system = "x86_64-linux";
+          specialArgs = {
+            inherit inputs;
+            pkgs = import nixpkgs {
+              system = "x86_64-linux";
+              config.allowUnfree = true;
+              config.cudaSupport = false;
+            };
+          };
+          modules = [
+            (import ./nixos-configurations/daystrom/configuration.nix { inherit inputs; })
+
+          ];
+        };
+
         "fillory" = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           specialArgs = {

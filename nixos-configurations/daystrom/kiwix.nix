@@ -36,8 +36,8 @@ in
 
   services.nginx.virtualHosts."wiki.borg.cube" = {
     onlySSL = true;
-    sslCertificate = "/var/www/ssl-keys/borg.cube.crt";
-    sslCertificateKey = "/var/www/ssl-keys/borg.cube.key";
+    sslCertificate = "/var/www/ssl-keys/wildcard.borg.cube.crt";
+    sslCertificateKey = "/var/www/ssl-keys/wildcard.borg.cube.key";
     locations."/" = {
       proxyPass = "http://127.0.0.1:${kiwixLocalPort}";
       proxyWebsockets = true;

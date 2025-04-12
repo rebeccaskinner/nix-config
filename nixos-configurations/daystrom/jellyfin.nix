@@ -1,6 +1,6 @@
 { config, lib, pkgs, ... }:
 {
-  hardware.opengl = {
+  hardware.graphics = {
     enable = true;
     extraPackages = with pkgs; [
       intel-media-driver
@@ -20,8 +20,8 @@
 
   services.nginx.virtualHosts."video.borg.cube" = {
     addSSL = true;
-    sslCertificate = "/var/www/ssl-keys/borg.cube.crt";
-    sslCertificateKey = "/var/www/ssl-keys/borg.cube.key";
+    sslCertificate = "/var/www/ssl-keys/wildcard.borg.cube.crt";
+    sslCertificateKey = "/var/www/ssl-keys/wildcard.borg.cube.key";
     locations."/" = {
       proxyPass = "http://127.0.0.1:8096";
       proxyWebsockets = true;

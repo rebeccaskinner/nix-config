@@ -1,13 +1,15 @@
 { config, pkgs, lib, ... }:
 let
-  audiobookshelfPort = 8005;
+  audiobookshelfPort = "8005";
   audiobookshelfBindAddress = "127.0.0.1";
-  audiobookDirectory = "/var/archive/data/audio-books";
+  audiobookDirectory = "/var/audiobookshelf";
 in
 {
-  users = {
-    users.audiobookshelf.isSystemUser = true;
-    groups.audiobookshelf.members = ["audiobookshelf"];
+
+  users.users.audiobookshelf = {
+    isSystemUser = true;
+    description = "audiobookshelf server";
+    group = "users";
   };
 
   systemd.services.audiobookshelf = with pkgs; {
@@ -20,16 +22,16 @@ in
       ExecReload = "${util-linux}/bin/kill -HUP $MAINPID";
       Restart = "always";
       User = "audiobookshelf";
-      Group = "audiobookshelf";
+      Group = "users";
     };
     wantedBy = ["multi-user.target"];
     requires = ["network.target"];
   };
 
-  services.nginx.virtualHosts."wiki.borg.cube" = {
+  services.nginx.virtualHosts."audio-books.borg.cube" = {
     onlySSL = true;
-    sslCertificate = "/var/www/ssl-keys/borg.cube.crt";
-    sslCertificateKey = "/var/www/ssl-keys/borg.cube.key";
+    sslCertificate = "/var/www/ssl-keys/wildcard.borg.cube.crt";
+    sslCertificateKey = "/var/www/ssl-keys/wildcard.borg.cube.key";
     locations."/" = {
       proxyPass = "http://127.0.0.1:${audiobookshelfPort}";
       proxyWebsockets = true;

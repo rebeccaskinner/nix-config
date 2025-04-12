@@ -93,26 +93,6 @@
 (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
 (add-hook 'tex-mode-hook 'turn-on-visual-line-mode)
 
-(defun enable-orgmode-graphiz-execution()
-  "Enable dot rendering and editing with org-bable."
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((dot . t)
-     (haskell . t)
-     (shell . t)
-     )) ; this line activates dot
-  )
-
-(defun enable-orgmode-inline-preview()
-  "Turn on inline preview in orgmode."
-  (setq org-start-with-inline-images t)
-  )
-
-(defun enable-orgmode-ruby-execution()
-  "Enable ruby rendering and execution with org-bable."
-  (require 'ob-ruby)
-  )
-
 (defun disable-org-auto-indent()
   "Disable automatic indentation of sections in org mode."
   (setq org-adapt-indentation nil)
@@ -126,11 +106,7 @@
 
 (configure-org-agenda)
 (add-hook 'org-mode-hook 'disable-org-auto-indent)
-(add-hook 'org-mode-hook 'enable-org-reveal)
 (add-hook 'org-mode-hook 'turn-on-visual-line-mode)
-(add-hook 'org-mode-hook 'enable-orgmode-graphiz-execution)
-(add-hook 'org-mode-hook 'enable-orgmode-inline-preview)
-(add-hook 'org-mode-hook 'enable-orgmode-ruby-execution)
 
 ;; flycheck
 (add-hook 'after-init-hook #'global-flycheck-mode)

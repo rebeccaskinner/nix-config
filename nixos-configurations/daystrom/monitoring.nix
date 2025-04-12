@@ -9,8 +9,8 @@
 
   services.nginx.virtualHosts.${config.services.grafana.domain} = {
     onlySSL = true;
-    sslCertificate = "/var/www/ssl-keys/infra.borg.cube.crt";
-    sslCertificateKey = "/var/www/ssl-keys/infra.borg.cube.key";
+    sslCertificate = "/var/www/ssl-keys/wildcard.borg.cube.crt";
+    sslCertificateKey = "/var/www/ssl-keys/wildcard.borg.cube.key";
     locations."/" = {
       proxyPass = "http://127.0.0.1:${toString config.services.grafana.port}/";
       proxyWebsockets = true;
