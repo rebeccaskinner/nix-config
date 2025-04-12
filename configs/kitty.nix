@@ -104,10 +104,10 @@ let
   other-settings = {
     remember_window_size = "yes";
   };
-in utils.env.configOnlyEnvironment ({
+in {
   programs.kitty = {
     enable = true;
     font.name = "Fira Code";
     settings = dracula-settings // opacity-settings // other-settings;
   };
-})
+}

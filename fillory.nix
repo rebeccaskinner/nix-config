@@ -8,9 +8,16 @@ let
   mkConfigs = cfgPaths:
     utils.env.concatEnvironments (builtins.map cfg cfgPaths);
 
-  mkImport = p: utils.env.importOnlyEnvironment (import p);
+  mkImport = p: utils.env.importOnlyEnvironment (
+    import p { inherit config pkgs pkgsStable cudaPkgs inputs system utils; }
+  );
   mkImports = importPaths:
     utils.env.concatEnvironments (builtins.map mkImport importPaths);
+
+  desktopEnv = utils.env.concatEnvironments [
+    (load ./desktop-environment/xserverTools.nix)
+    (load ./desktop-environment/xmonad)
+  ];
 
   basicPackages = utils.env.packagesEnvironment (with pkgs; [
     bat
@@ -38,7 +45,6 @@ let
     kdePackages.bomber
     kdePackages.kbounce
     chiaki
-    (import ./dungeondraft { inherit pkgs; })
   ]);
 
   libbluray = pkgs.libbluray.override {
@@ -47,7 +53,7 @@ let
     withJava = true;
   };
   vlc = pkgs.vlc.override { inherit libbluray; };
-  whisper-cpp = cudaPkgs.callPackage ./whisper-cpp { nvidia_x11 = cudaPkgs.linuxPackages.nvidia_x11; gcc = cudaPkgs.gcc11; };
+  whisper-cpp = cudaPkgs.callPackage ./collections/whisper-cpp { nvidia_x11 = cudaPkgs.linuxPackages.nvidia_x11; gcc = cudaPkgs.gcc11; };
 
   multimedia = let
     customPkgs = [ vlc libbluray whisper-cpp pkgsStable.ccextractor];
@@ -93,13 +99,14 @@ let
     nextcloud-client # file sync
     simplex-chat-desktop # messaging
     kazam # screen recording
-    aspellPkgs
-    pandoc
-    ispell
-    texlive.combined.scheme-full
-    python3Packages.pygments
-    evince
-    kdePackages.okular
+    aspellPkgs # spell checking
+    pandoc # document conversion
+    ispell # spell checking
+    texlive.combined.scheme-full # latex
+    python3Packages.pygments # syntax highlighting
+    evince # document viewer
+    kdePackages.okular # document viewer
+    kdePackages.k3b # audio cd ripping and burning
   ]);
 
   devPackages = utils.env.packagesEnvironment (with pkgs; [
@@ -116,13 +123,13 @@ let
       inherit pkgs utils;
     };
 
-  configs = mkConfigs [
+  configs = mkImports [
+    ./configs/kitty.nix
     ./configs/dircolors.nix
     ./configs/direnv.nix
     ./configs/git.nix
     ./configs/gpg.nix
     ./configs/fzf.nix
-    ./configs/kitty.nix
     ./configs/tmux.nix
     ./configs/bash.nix
     ./configs/java.nix
@@ -143,6 +150,7 @@ let
   nvimConfig = import ./development-environment/nvim { inherit pkgs utils; };
 
   devTools = utils.env.concatEnvironments [
+    devPackages
     haskellDevelopmentEnv
     rustDevelopmentEnv
     globalDevelopmentEnv
@@ -151,8 +159,8 @@ let
 
   emacsConfig = import ./emacs {
     inherit pkgs utils;
-    createMacosSymlink = true;
-    emacsPackage = pkgs.emacs-macport;
+    createMacosSymlink = false;
+    emacsPackage = pkgs.emacs;
     extraPackages = ePkgs:
       (with ePkgs; [ rustic cargo hasklig-mode haskell-mode nix-haskell-mode ]);
     extraConfigs =
@@ -160,7 +168,18 @@ let
   };
 
   environment =
-    utils.env.concatEnvironments [ basicPackages configs devTools emacsConfig ];
+    utils.env.concatEnvironments [
+      desktopEnv
+      basicPackages
+      configs
+      games
+      multimedia
+      ebookTools
+      applications
+      rofi
+      devTools
+      emacsConfig
+    ];
 in {
   # Let Home Manager install and manage itself.
   programs.home-manager.enable = true;

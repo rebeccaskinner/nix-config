@@ -1,7 +1,7 @@
 { pkgs
 , utils
 , ...}:
-utils.env.importOnlyEnvironment ({
+{
   programs.tmux = {
     enable = true;
     mouse = true;
@@ -15,4 +15,4 @@ utils.env.importOnlyEnvironment ({
       set -g default-shell "$SHELL"
     '';
   };
-})
+}

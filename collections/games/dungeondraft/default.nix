@@ -21,7 +21,7 @@ let
       xorg.libX11
       xorg.libXi
       libpulseaudio
-      alsaLib
+      alsa-lib
       libGL
       stdenv.cc.cc.lib
     ];
