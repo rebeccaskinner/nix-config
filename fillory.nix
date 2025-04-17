@@ -1,6 +1,7 @@
 { config, pkgs, pkgsStable, cudaPkgs, inputs, system, ... }:
 
 let
+
   utils = import ./utils;
   load = f: import f { inherit config pkgs pkgsStable cudaPkgs inputs system utils; };
 
@@ -18,6 +19,8 @@ let
     (load ./desktop-environment/xserverTools.nix)
     (load ./desktop-environment/xmonad)
   ];
+
+  gtkTheme = "Adwaita:dark";
 
   basicPackages = utils.env.packagesEnvironment (with pkgs; [
     bat
@@ -190,7 +193,7 @@ in {
   home.homeDirectory = "/home/rebecca";
   imports = environment.imports;
   home.packages = environment.packages;
-
+  home.sessionVariables = { GTK_THEME = gtkTheme; };
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
   # when a new Home Manager release introduces backwards
