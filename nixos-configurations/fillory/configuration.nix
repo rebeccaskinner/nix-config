@@ -16,7 +16,7 @@
   # security.pki.certificateFiles = ["/var/certs/borg.cube.crt"];
 
   security.pki.certificates = [
-# borg.cube.crt
+    # borg.cube.crt
 ''
 -----BEGIN CERTIFICATE-----
 MIIFsjCCA5qgAwIBAgIULKseXC11/QX2Yn43njCir8qHbRcwDQYJKoZIhvcNAQEL
@@ -246,15 +246,40 @@ e++szYeZXIUnYawvwoWFNnvqLdXVmbrHwauKXXd80/VZa3f3PrMH0YrGCDPIZzog
   services.fstrim.enable = true;
   fileSystems."/".options = ["noatime" "nodiratime" "discard"];
 
-  # hardware.pulseaudio = { enable = true; package = pkgs.pulseaudioFull; };
   security.rtkit = {
     enable = true;
   };
+
   services.pipewire = {
     enable = true;
+    audio.enable = true;
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
+    extraConfig.pipewire."90-virtual-sinks" = {
+      "context.objects" = [
+        {
+          factory = "adapter";
+          args = {
+            "factory.name"     = "support.null-audio-sink";
+            "node.name"        = "FilterSink";
+            "node.description" = "Filtered Output";
+            "media.class"      = "Audio/Sink";
+            "audio.position"   = "FL,FR";
+          };
+        }
+        {
+          factory = "adapter";
+          args = {
+            "factory.name"     = "support.null-audio-sink";
+            "node.name"        = "MaxFilterSink";
+            "node.description" = "Max Thump Filtered Output";
+            "media.class"      = "Audio/Sink";
+            "audio.position"   = "FL,FR";
+          };
+        }
+      ];
+    };
   };
 
   services.tailscale.enable = true;
@@ -309,50 +334,15 @@ e++szYeZXIUnYawvwoWFNnvqLdXVmbrHwauKXXd80/VZa3f3PrMH0YrGCDPIZzog
       # cuda
       autoAddDriverRunpath
       autoFixElfFiles
+
+      # pipewire
+      pipewire
     ];
 
   documentation.dev.enable = true;
   programs.steam.enable = true;
   programs.ssh.startAgent = true;
 
-
-  # Configure keymap in X11
-  # services.xserver.layout = "us";
-  # services.xserver.xkbOptions = "eurosign:e";
-
-  # Enable CUPS to print documents.
-  # services.printing.enable = true;
-
-  # Enable sound.
-  # sound.enable = true;
-  # hardware.pulseaudio.enable = true;
-
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
-
-  # Define a user account. Don't forget to set a password with ‘passwd’.
-  # users.users.jane = {
-  #   isNormalUser = true;
-  #   extraGroups = [ "wheel" ]; # Enable ‘sudo’ for the user.
-  # };
-
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  # environment.systemPackages = with pkgs; [
-  #   vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #   wget
-  #   firefox
-  # ];
-
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;

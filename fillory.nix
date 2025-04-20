@@ -38,6 +38,12 @@ let
     mat2
   ]);
 
+  audioFilteringPackages = utils.env.packagesEnvironment (with pkgs; [
+    easyeffects
+    helvum
+    pamixer
+  ]);
+
   games = utils.env.packagesEnvironment (with pkgs; [
     nethack
     bastet
@@ -182,6 +188,7 @@ let
       rofi
       devTools
       emacsConfig
+      audioFilteringPackages
     ];
 in {
   # Let Home Manager install and manage itself.
