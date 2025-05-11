@@ -27,6 +27,7 @@ in {
   nixpkgs.config.packageOverrides = pkgs: {
     vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
   };
+  nix.settings.experimental-features = ["nix-command" "flakes"];
 
   imports =
     [ # Include the results of the hardware scan.
