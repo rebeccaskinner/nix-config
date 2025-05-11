@@ -1,7 +1,7 @@
-{ pkgs, foundryvtt, config, lib, ... }:
+{ pkgs, inputs, config, lib, ... }:
 let
   http-port = "8123";
-  https-port = "443";
+  https-port = 443;
 in
 {
 
@@ -18,13 +18,13 @@ in
   # lrwxr-xr-x   1 reckenrode staff   65 Jun 18 18:33 FoundryVTT-<version>.zip -> /nix/store/<hash>-FoundryVTT-<version>.zip
 
   services.foundryvtt = {
-    enable = false;
+    enable = true;
     hostname = "vtt.borg.cube";
     minifyStaticFiles = true;
     proxySSL = true;
     proxyPort = https-port;
     upnp = false;
-    package = foundryvtt.packages.${pkgs.system}.foundryvtt_13;
+    package = inputs.foundryvtt.packages.${pkgs.system}.foundryvtt_13;
   };
 
   services.nginx.virtualHosts."vtt.borg.cube" = {
