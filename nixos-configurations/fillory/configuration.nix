@@ -293,6 +293,16 @@ e++szYeZXIUnYawvwoWFNnvqLdXVmbrHwauKXXd80/VZa3f3PrMH0YrGCDPIZzog
 
   virtualisation.libvirtd.enable = true;
   programs.dconf.enable = true;
+  programs.obs-studio = {
+    enable = true;
+    enableVirtualCamera = true;
+    plugins = with pkgs.obs-studio-plugins; [
+      wlrobs
+      obs-backgroundremoval
+      obs-pipewire-audio-capture
+      obs-source-record
+    ];
+  };
 
   users.users.rebecca = {
     isNormalUser = true;
