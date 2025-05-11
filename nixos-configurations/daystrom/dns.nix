@@ -29,6 +29,7 @@ let
     audio-books.borg.cube.        IN      CNAME   ns1.borg.cube.
     www.borg.cube.          IN      CNAME   ns1.borg.cube.
     wiki.borg.cube.          IN      CNAME   ns1.borg.cube.
+    vtt.borg.cube.          IN      CNAME   ns1.borg.cube.
   '';
 
   reverseZoneInternal = pkgs.writeText "db.192.168.50" ''
@@ -75,6 +76,7 @@ let
     audio-books.borg.cube.        IN      CNAME   ns1.borg.cube.
     www.borg.cube.          IN      CNAME   ns1.borg.cube.
     wiki.borg.cube.          IN      CNAME   ns1.borg.cube.
+    vtt.borg.cube.          IN      CNAME   ns1.borg.cube.
   '';
 
   reverseZoneTailscale = pkgs.writeText "db.100" ''

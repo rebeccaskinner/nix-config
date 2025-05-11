@@ -38,6 +38,7 @@ in {
     # ./kiwix.nix
     ./audiobookshelf.nix
     ./miniflux.nix
+    ./foundryvtt.nix
     ];
 
   hardware.system76.enableAll = true;

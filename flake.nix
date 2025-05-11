@@ -6,6 +6,8 @@
     home-manager.inputs.nixpkgs.follows = "nixpkgs";
     rofi-hoogle.url = "github:rebeccaskinner/rofi-hoogle/main";
     rofi-hoogle.inputs.nixpkgs.follows = "nixpkgs";
+    foundryvtt.url = "github:reckenrode/nix-foundryvtt";
+    foundryvtt.inputs.nixpkgs.follows = "nixpkgs";
 
     darwin = {
       url = "github:lnl7/nix-darwin";
@@ -20,6 +22,7 @@
     , rofi-hoogle
     , home-manager
     , darwin
+    , foundryvtt
     , ... }@inputs:
     {
       darwinConfigurations = {
@@ -66,7 +69,7 @@
           };
           modules = [
             (import ./nixos-configurations/daystrom/configuration.nix { inherit inputs; })
-
+            foundryvtt.nixosModules.foundryvtt
           ];
         };
 

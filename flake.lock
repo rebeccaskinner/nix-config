@@ -38,6 +38,26 @@
         "type": "github"
       }
     },
+    "foundryvtt": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1746877938,
+        "narHash": "sha256-N9J96pSPg4vbozV+ZZ++dwLnMIf2Le6ONNMO0kZCj1M=",
+        "owner": "reckenrode",
+        "repo": "nix-foundryvtt",
+        "rev": "f1b401831d796dd94cf5a11b65fd169a199d4ff0",
+        "type": "github"
+      },
+      "original": {
+        "owner": "reckenrode",
+        "repo": "nix-foundryvtt",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -116,6 +136,7 @@
     "root": {
       "inputs": {
         "darwin": "darwin",
+        "foundryvtt": "foundryvtt",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
         "nixpkgs-stable": "nixpkgs-stable",
