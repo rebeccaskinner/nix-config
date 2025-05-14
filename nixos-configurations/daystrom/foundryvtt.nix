@@ -1,6 +1,6 @@
 { pkgs, inputs, config, lib, ... }:
 let
-  http-port = "8123";
+  http-port = "30000";
   https-port = 443;
 in
 {
@@ -18,22 +18,35 @@ in
   # lrwxr-xr-x   1 reckenrode staff   65 Jun 18 18:33 FoundryVTT-<version>.zip -> /nix/store/<hash>-FoundryVTT-<version>.zip
 
   services.foundryvtt = {
-    enable = true;
-    hostname = "vtt.borg.cube";
+    enable = true; 
+    hostName = "vtt.internal.rebeccaskinner.net";
     minifyStaticFiles = true;
     proxySSL = true;
     proxyPort = https-port;
+    port = 30000;
     upnp = false;
-    package = inputs.foundryvtt.packages.${pkgs.system}.foundryvtt_13;
+    package = inputs.foundryvtt.packages.${pkgs.system}.foundryvtt_13.overrideAttrs {
+      version = "13.0.0+342";
+    };
   };
 
-  services.nginx.virtualHosts."vtt.borg.cube" = {
+  services.nginx.virtualHosts."vtt.internal.rebeccaskinner.net" = {
     onlySSL = true;
-    sslCertificate = "/var/www/ssl-keys/wildcard.borg.cube.crt";
-    sslCertificateKey = "/var/www/ssl-keys/wildcard.borg.cube.key";
+    sslCertificate = "/var/www/ssl-keys/wildcard.internal.rebeccaskinner.net.crt";
+    sslCertificateKey = "/var/www/ssl-keys/wildcard.internal.rebeccaskinner.net.key";
+    extraConfig = ''
+      client_max_body_size 300M;
+    '';
+
     locations."/" = {
-      proxyPass = "http://127.0.0.1:${http-port}";
-      proxyWebsockets = true;
+      proxyPass = "http://localhost:30000";
+      extraConfig = ''
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection "Upgrade";
+        proxy_pass_request_headers on;
+        proxy_cookie_path / "/; SameSite=Lax; Secure";
+      '';
     };
+       
   };
 }
