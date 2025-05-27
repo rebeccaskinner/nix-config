@@ -38,21 +38,24 @@
         "type": "github"
       }
     },
-   "foundryvtt": {
+    "foundryvtt": {
       "inputs": {
         "nixpkgs": [
           "nixpkgs"
         ]
       },
       "locked": {
-        "lastModified": 1747101436,
-        "narHash": "sha256-oHN1qvT8zakoIg0r26I+NaIZ8R/Y8/yRgLVaaf722W8=",
-        "path": "/home/rebecca/nix-foundryvtt",
-        "type": "path"
+        "lastModified": 1746877938,
+        "narHash": "sha256-N9J96pSPg4vbozV+ZZ++dwLnMIf2Le6ONNMO0kZCj1M=",
+        "owner": "reckenrode",
+        "repo": "nix-foundryvtt",
+        "rev": "f1b401831d796dd94cf5a11b65fd169a199d4ff0",
+        "type": "github"
       },
       "original": {
-        "path": "/home/rebecca/nix-foundryvtt",
-        "type": "path"
+        "owner": "reckenrode",
+        "repo": "nix-foundryvtt",
+        "type": "github"
       }
     },
     "home-manager": {

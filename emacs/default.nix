@@ -45,7 +45,10 @@ let
   emacsFiles = emacsConfigDir // emacsAppLink;
 in
 utils.env.importOnlyEnvironment ({
-  services.emacs.enable = true;
+  services.emacs = {
+    enable = true;
+    startWithUserSession = true;
+  };
   programs.emacs = {
     enable = true;
     package = emacsPackage;
