@@ -53,7 +53,14 @@ let
     lbreakouthd
     kdePackages.bomber
     kdePackages.kbounce
+    kdePackages.kolf
+    kdePackages.kbreakout
+    kdePackages.kollision
+    kdePackages.ksnakeduel
+    kdePackages.kreversi
     chiaki
+    neverball
+    xmoto
   ]);
 
   libbluray = pkgs.libbluray.override {
@@ -66,7 +73,7 @@ let
 
   multimedia = let
     customPkgs = [ vlc libbluray whisper-cpp pkgsStable.ccextractor];
-    defaultPkgs = with pkgs; [
+    defaultPkgs = (with pkgs; [
       makemkv
       mkvtoolnix
       handbrake
@@ -75,7 +82,7 @@ let
       yt-dlp
       cdparanoiaIII
       abcde
-    ];
+    ]) ++ (with cudaPkgs; [blender]);
   in utils.env.packagesEnvironment (customPkgs ++ defaultPkgs);
 
   ebookTools = utils.env.packagesEnvironment (with pkgs; [
@@ -106,7 +113,7 @@ let
     kiwix # offline website archive
     kiwix-tools # tools for kiwix
     nextcloud-client # file sync
-    simplex-chat-desktop # messaging
+    # simplex-chat-desktop # messaging
     kazam # screen recording
     aspellPkgs # spell checking
     pandoc # document conversion

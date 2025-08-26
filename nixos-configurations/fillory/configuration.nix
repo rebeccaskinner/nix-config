@@ -203,6 +203,7 @@ DSNhxHVhjDOOxF8dnOQ=
       source-code-pro
       fira-code
       fira-code-symbols
+      google-fonts
       noto-fonts
       noto-fonts-cjk-sans
       noto-fonts-emoji
@@ -326,7 +327,7 @@ DSNhxHVhjDOOxF8dnOQ=
     fallbackDns = ["192.168.50.1 # local network DNS"];
   };
 
-  virtualisation.libvirtd.enable = true;
+  virtualisation.libvirtd.enable = false;
   programs.dconf.enable = true;
   programs.obs-studio = {
     enable = true;
@@ -343,7 +344,7 @@ DSNhxHVhjDOOxF8dnOQ=
     isNormalUser = true;
     home = "/home/rebecca";
     description = "Rebecca Skinner";
-    extraGroups = ["wheel" "networkmanager" "libvirtd"];
+    extraGroups = ["wheel" "networkmanager"];
   };
 
   environment.systemPackages = with pkgs;
@@ -355,14 +356,11 @@ DSNhxHVhjDOOxF8dnOQ=
       bluez-tools
       pavucontrol
       system76-firmware
-      virt-manager
       qemu_kvm
       qemu-utils
       qemu
       tunctl
       ethtool
-      virt-top
-      virt-viewer
       man-pages
       man-pages-posix
       pciutils
