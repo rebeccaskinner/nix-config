@@ -6,6 +6,8 @@
 ;; Disable the splash screen
 (setq inhibit-splash-screen t)
 
+(require 'use-package)
+
 (defun configure-look-and-feel ()
   "Run some stuff after init, like setting a theme and disabling scrollbars."
   ;; Setup theme
@@ -15,7 +17,8 @@
   ;; disable the menu bar
   (menu-bar-mode -1)
   (tool-bar-mode -1)
-  (toggle-scroll-bar -1)
+  ;; (toggle-scroll-bar -1)
+  (scroll-bar-mode -1)
   )
 
   (require 'evil)
@@ -53,6 +56,96 @@
 (use-package direnv
   :config
   (direnv-mode))
+
+;; -------------------------------------------------------------------
+;; 🧠 gptel Keybindings (for code + Org mode buffers)
+;;
+;; C-c g g   →  Open a new gptel chat buffer for the current context
+;; C-c g s   →  Send a prompt at point (or from minibuffer) to LLM
+;; C-c g r   →  Send the active region (or Org subtree) to LLM
+;; C-c g b   →  Interactively choose/switch gptel backend (OpenAI / Claude)
+;; C-c g t   →  Open gptel-transient menu (adjust model, temperature, etc.)
+;;
+;; Notes:
+;; - Works in programming modes and inside Org-mode source blocks.
+;; - Backend defaults to OpenAI (gpt-4o). Use C-c g b to switch to Claude.
+;; - Make sure OPENAI_API_KEY and ANTHROPIC_API_KEY are set in your environment.
+;; -------------------------------------------------------------------
+
+(with-eval-after-load 'org-ai
+  (setq org-ai-openai-api-token (getenv "OPENAI_API_KEY")))
+
+;; Make sure this is set so gptel never prompts
+(setq gptel-api-key (getenv "OPENAI_API_KEY"))
+
+;; --- LLMs in Emacs with gptel + Org + OpenAI + Claude ---
+
+(use-package gptel
+  :ensure t
+  :commands (gptel gptel-send gptel-send-region gptel-fn-complete gptel-set-backend)
+  :init
+  ;; Tweak display; put chat buffers at bottom
+  (setq gptel-display-buffer-action '(display-buffer-at-bottom))
+  :bind (("C-c g g" . gptel)               ;; open chat buffer for current file
+         ("C-c g s" . gptel-send)          ;; send prompt at point / minibuffer
+         ("C-c g a" . gptel-add)           ;; add the active region to gptel's context
+
+         ("C-c g f" . gptel-fn-complete)   ;; complete current function
+         ("C-c g b" . my/gptel-choose-backend)) ;; quickly switch backends
+  :config
+  ;; --- Define backends ---
+  (setq my/gptel-openai
+        (gptel-make-openai "openai"
+          :key   (getenv "OPENAI_API_KEY")
+          :host  "api.openai.com"
+          :endpoint "/v1/chat/completions"
+          :models '("gpt-4o" "gpt-4o-mini" "gpt-5" "gpt-5-mini")))
+
+  (setq my/gptel-claude
+        (gptel-make-anthropic "claude"
+          :key   (getenv "ANTHROPIC_API_KEY")
+          ;; Use any current Claude chat-completion model you prefer:
+          :models '("claude-3-5-sonnet-20240620")))
+
+  (setq gptel-backends `((openai . ,my/gptel-openai)
+                         (claude . ,my/gptel-claude)))
+
+  ;; Default: OpenAI
+  (setq gptel-backend (alist-get 'openai gptel-backends))
+
+  ;; ;; Helper to switch backends quickly
+  (defun my/gptel-choose-backend ()
+    "Interactively choose a gptel backend (OpenAI/Claude)."
+    (interactive)
+    (let* ((choice (intern (completing-read "gptel backend: "
+                                            (mapcar #'car gptel-backends) nil t)))
+           (backend (alist-get choice gptel-backends)))
+      (gptel-set-backend backend)
+      (message "gptel backend set to %s" choice)))
+
+  ;; --- Org-mode niceties ---
+  ;; Use the same keybindings inside Org buffers
+  (with-eval-after-load 'org
+    (define-key org-mode-map (kbd "C-c g g") #'gptel)
+    (define-key org-mode-map (kbd "C-c g r") #'gptel-send-region)
+    (define-key org-mode-map (kbd "C-c g s") #'gptel-send))
+)
+
+;; Optional: a quick transient UI for switching models/params
+;; (use-package gptel-transient
+;;   :ensure t
+;;   :after gptel
+;;   :bind (("C-c g t" . gptel-transient)))
+
+;; Optional: async HTTP client gptel can use if available
+(use-package plz
+  :ensure t
+  :defer t)
+
+;; Tip: set your API keys in your env (e.g., ~/.profile or shell rc)
+;; export OPENAI_API_KEY="sk-..."
+;; export ANTHROPIC_API_KEY="sk-ant-..."
+
 
 (defun setup-global-keybindings()
   "Setup global keybindings."
@@ -144,15 +237,8 @@
     (display-line-numbers-mode)
     )
 
-  (defun turn-off-line-numbers()
-    (interactive)
-    (setq display-line-numbers nil)
-    )
-
-  (defun turn-on-line-numbers()
-    (interactive)
-    (display-line-numbers-mode)
-    )
+  (defun turn-off-line-numbers() (interactive) (display-line-numbers-mode -1))
+  (defun turn-on-line-numbers() (interactive) (display-line-numbers-mode 1))
 
   (defun toggle-line-numbers()
     (interactive)
@@ -202,7 +288,7 @@
   (default-programming-config)
   )
 
-(add-hook 'dhall-mode 'my-dhall-mode-config)
+(add-hook 'dhall-mode-hook 'my-dhall-mode-config)
 
 ;; Extra functions for pml mode
 (defun pml-mode-tools()
@@ -370,7 +456,6 @@
   "Configuration for JSON-mode."
   (rainbow-delimiters-mode)
   (setq visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow))
-  (window-margin-mode)
   )
 
 (defun my-javascript-mode-hook ()
@@ -411,7 +496,7 @@
       (interactive)
       (let ((name (read-string "Link Name: ")))
         (let ((to (read-string "Link To: ")))
-          (insert-relative-link name to9)
+          (insert-relative-link name to)
           )
         )
       )

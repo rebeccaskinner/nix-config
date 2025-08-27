@@ -49,6 +49,9 @@ utils.env.importOnlyEnvironment ({
     enable = true;
     startWithUserSession = true;
   };
+  systemd.user.services.emacs.Service = {
+    EnvironmentFile = ["%h/.config/secrets/emacs-llm.env"];
+  };
   programs.emacs = {
     enable = true;
     package = emacsPackage;
@@ -94,6 +97,12 @@ utils.env.importOnlyEnvironment ({
             swiper
             fzf
             vterm
+
+            # LLMs
+            org-ai
+            gptel
+            plz
+            transient
 
             # evil
             evil
