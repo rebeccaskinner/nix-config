@@ -202,6 +202,10 @@
 (add-hook 'org-mode-hook 'turn-on-visual-line-mode)
 
 ;; flycheck
+;   (use-package flycheck
+;     :ensure t
+;     :hook (after-init . global-flycheck-mode))
+
 (add-hook 'after-init-hook #'global-flycheck-mode)
 
 ;; Rainbow Delimiters

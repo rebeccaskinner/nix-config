@@ -160,6 +160,9 @@ let
   rustDevelopmentEnv =
     import ./development-environment/rust { inherit pkgs utils; };
 
+  gccDevelopmentEnv =
+    import ./development-environment/gcc { inherit pkgs utils; };
+
   globalDevelopmentEnv =
     import ./development-environment/global-dev-env { inherit pkgs utils; };
 
@@ -169,6 +172,7 @@ let
     devPackages
     haskellDevelopmentEnv
     rustDevelopmentEnv
+    gccDevelopmentEnv
     globalDevelopmentEnv
     nvimConfig
   ];
