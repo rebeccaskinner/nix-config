@@ -272,13 +272,22 @@ If PART is nil, return the whole file."
           ;; Content ends BEFORE the end line
           (buffer-substring-no-properties beg (line-beginning-position)))))))
 
-(defun pml--code-block-string (s)
-  "Format S as a Markdown-ish code block for display."
-  (let ((trimmed (string-trim-right s)))
-    (concat "\n"           ;; start on a fresh line
-            "~~~\n"        ;; keep it obvious; you can re-add faces later
-            trimmed
-            "\n~~~\n")))
+(defun pml--code-block-string (text abs &optional part)
+  "Pretty preview string for TEXT from ABS, preserving syntax highlighting.
+Adds a subtle header and background without inserting real fences."
+  (let* ((body (pml--fontify-like-file (string-trim-right text) abs))
+         (file (file-name-nondirectory abs))
+         (hdr  (format "⟦ %s%s ⟧"
+                       file
+                       (if (and part (not (string-empty-p part)))
+                           (format " : %s" part) ""))))
+    ;; Add a header line and a blank line before the code for breathing room.
+    (setq hdr (concat "\n" (propertize hdr 'face 'pml-preview-header-face) "\n"))
+    ;; Give the whole body a background while keeping existing syntax faces.
+    (add-face-text-property 0 (length body) 'pml-preview-face 'append body)
+    ;; Ensure a trailing newline so the block doesn’t run into following text.
+    (concat hdr body "\n")))
+
 
 ;; 6) find an existing preview specifically at EOL (your simple rule)
 (defun pml--preview-at-eol ()
@@ -301,42 +310,34 @@ If PART is nil, return the whole file."
                          (and (stringp p) (not (string-empty-p p)) p)))
                  (txt  (pml--extract-part abs part))
                  (ov   (make-overlay eol eol nil t t))  ;; zero-length, sticky
-                 (disp (pml--code-block-string txt)))
+                 (disp (pml--code-block-string txt abs part)))
             (overlay-put ov 'pml-embed-preview t)
             (overlay-put ov 'priority 1001)
             (overlay-put ov 'after-string disp))))
       t)))
 
+(defface pml-preview-face
+  '((t :inherit default :background "#222" :extend t))
+  "Background face for PML inline previews.")
 
-; (defun pml-toggle-embed-preview ()
-;   "Toggle inline preview for <embed …/> on the current line.  Return t if it handled the line, nil otherwise."
-;   (interactive)
-;   (let* ((info (pml--embed-at-point)))
-;     (when info
-;       (let* ((eol (plist-get info :eol))
-;              (ov  (pml--existing-preview eol)))
-;         (if ov
-;             (delete-overlay ov)
-;           (let* ((abs (pml--resolve-path (plist-get info :file)))
-;                  (part (plist-get info :part))
-;                  (txt  (pml--extract-part abs part))
-;                  (ov   (make-overlay eol eol nil t t)))
-;
-;             (message "[pml] abs=%s part=%s preview-len=%d"
-;                      abs part (length txt))
-;
-;             (message "[pml] bol=%d eol=%d line=%S"
-;                      (plist-get info :bol)
-;                      (plist-get info :eol)
-;                      (buffer-substring-no-properties
-;                       (plist-get info :bol)
-;                       (plist-get info :eol)))
-;
-;
-;             (overlay-put ov 'pml-embed-preview t)
-;             (overlay-put ov 'after-string (pml--code-block-string txt))
-;             ; (overlay-put ov 'evaporate t))))
-;       t)))
+(defface pml-preview-header-face
+  '((t :inherit shadow :weight bold))
+  "Face for the small header line above previews.")
+
+(defun pml--fontify-like-file (text abs-path)
+  "Return TEXT with font-lock faces as if it were in ABS-PATH's major mode."
+  (with-temp-buffer
+    (insert text)
+    ;; Pretend to be visiting ABS-PATH just long enough to pick the mode.
+    (let ((buffer-file-name abs-path))
+      (delay-mode-hooks (set-auto-mode t)))
+    ;; Clear so Emacs doesn’t think this buffer is visiting a file.
+    (setq buffer-file-name nil)
+    (when (boundp 'font-lock-mode)
+      (font-lock-mode 1))
+    (font-lock-ensure (point-min) (point-max))
+    (buffer-substring (point-min) (point-max))))
+
 (defun pml-clear-all-previews () (interactive)
   (remove-overlays nil nil 'pml-embed-preview t))
 
