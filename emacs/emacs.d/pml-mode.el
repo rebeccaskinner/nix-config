@@ -1,9 +1,8 @@
 ;;; pml-mode.el --- Small layer over markdown-mode for PML -*- lexical-binding: t -*-
 
-;;;###autoload (define-minor-mode pml-mode ...)
-;;;###autoload (defun pml-embed-file () ...)
-
 ;;; Commentary:
+
+;;; Code:
 
 (require 'markdown-mode)
 (require 'subr-x)
@@ -102,9 +101,7 @@
     (kbd "<tab>") #'pml-contextual-tab
     (kbd "C-i")   #'pml-contextual-tab))
 
-
-(defvar-local pml--tab-fallback nil)
-
+;;;###autoload
 (define-minor-mode pml-mode
   "Publisher Markdown layer on top of `markdown-mode`."
   :lighter " PML"
@@ -202,16 +199,6 @@ Matches ANY occurrence of START:<name> (optionally with <name> in angle brackets
 
 ;; --- embed preview toggle ----------------------------------------------------
 (defconst pml-embed-line-regexp "^\\s-*<embed\\b")
-
-(defun pml--parse-attrs (attrstr)
-  "Return alist of NAME . VALUE from ATTRSTR like: key=\"val\" key2=\"val2\"."
-  (let (alist)
-    (with-temp-buffer
-      (insert attrstr)
-      (goto-char (point-min))
-      (while (re-search-forward "\\([A-Za-z0-9_-]+\\)=\"\\([^\"]+\\)\"" nil t)
-        (push (cons (downcase (match-string 1)) (match-string 2)) alist)))
-    (nreverse alist)))
 
 (defun pml--embed-at-point ()
   "If point is on an <embed …/> line, return plist with :bol :eol :file :part.
@@ -338,40 +325,16 @@ Adds a subtle header and background without inserting real fences."
     (font-lock-ensure (point-min) (point-max))
     (buffer-substring (point-min) (point-max))))
 
-(defun pml-clear-all-previews () (interactive)
-  (remove-overlays nil nil 'pml-embed-preview t))
-
-;;; debugging
-(defvar pml-debug t
-  "When non-nil, PML commands print debug messages to *Messages*.")
-
-(defun pml--dbg (fmt &rest args)
-  (when pml-debug
-    (apply #'message (concat "[pml] " fmt) args)))
-
-(defun pml-debug-embed-status ()
-  "Report whether point is on an <embed …/> line and what was parsed."
+(defun pml-clear-all-previews ()
+  "Remove all overlay previews."
   (interactive)
-  (save-excursion
-    (beginning-of-line)
-    (let* ((line (buffer-substring-no-properties
-                  (line-beginning-position) (line-end-position)))
-           (matched (looking-at pml-embed-line-regexp))
-           (group1  (and matched (match-string 1)))
-           (info    (ignore-errors (pml--embed-at-point))))
-      (pml--dbg "line=%S" line)
-      (pml--dbg "regex=%S matched=%S group1=%S" pml-embed-line-regexp matched group1)
-      (pml--dbg "embed-at-point => %S" info)
-      (message "[pml] (foobar) on-embed? %s" (if info "YES" "no")))))
+  (remove-overlays nil nil 'pml-embed-preview t))
 
 (defun pml-contextual-tab ()
   "If on an <embed …/> line, toggle preview; otherwise do the usual thing.
 Always prints whether it detected an embed line."
   (interactive)
   (let ((info (pml--embed-at-point)))
-    (pml--dbg "fizzblah TAB pressed. on-embed? %s (evil-state=%S)"
-              (if info "YES" "no")
-              (and (boundp 'evil-state) evil-state))
     (if info
         (progn
           (pml-toggle-embed-preview)
@@ -386,37 +349,6 @@ Always prints whether it detected an embed line."
         (call-interactively #'markdown-cycle))
        (t
         (call-interactively #'indent-for-tab-command))))))
-
-(defun pml-dev-reload ()
-  "Re-eval the current pml-mode.el buffer and re-enable pml-mode here if applicable."
-  (interactive)
-  (let* ((src (or (buffer-file-name)
-                  (user-error "Run pml-dev-reload from pml-mode.el buffer")))
-         (was-pml (derived-mode-p 'emacs-lisp-mode)))
-    (save-buffer)
-    (eval-buffer)                           ;; redefines functions/keymaps
-    (message "[pml] reloaded %s" src)))
-
-(defun pml-dev-touch ()
-  "In a .pml buffer: re-run key setup & refresh previews without reopening."
-  (interactive)
-  (when (bound-and-true-p pml-mode)
-    ;; clear previews if you want a clean slate
-    (ignore-errors (pml-clear-all-previews))
-    ;; re-run Evil bindings if you’re tweaking them
-    (when (featurep 'evil)
-      (evil-define-key* '(normal visual motion) pml-mode-map
-        (kbd "TAB")   #'pml-contextual-tab
-        (kbd "<tab>") #'pml-contextual-tab
-        (kbd "C-i")   #'pml-contextual-tab))
-    (message "[pml] touched bindings in %s" (buffer-name))))
-
-;;;;;;;;;
-
-;; Bind in your minor-mode map; only steals TAB when your mode is active.
-(with-eval-after-load 'pml-mode
-  (when (boundp 'pml-mode-map)
-    (define-key pml-mode-map (kbd "<tab>") #'pml-contextual-tab)))
 
 (provide 'pml-mode)
 ;;; pml-mode.el ends here
