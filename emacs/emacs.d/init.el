@@ -7,6 +7,7 @@
 (setq inhibit-splash-screen t)
 
 (require 'use-package)
+(require 'pml-mode)
 
 (defun configure-look-and-feel ()
   "Run some stuff after init, like setting a theme and disabling scrollbars."
@@ -172,15 +173,28 @@
 
 (setq-default indent-tabs-mode nil)
 
-(defun configure-ivy-mode ()
-  "Configure ivy-mode and set up a few keybindings."
-  (ivy-mode)
-  (setq ivy-use-virtual-buffers t)
-  (setq enable-recursive-minibuffers t)
-;  (global-set-key (kbd "C-s") 'swiper-isearch)
-  )
+; (use-package ivy
+;   :ensure t
+;   :config
+;   (ivy-mode))
 
-(configure-ivy-mode)
+(use-package ivy
+  :ensure t
+  :config
+  (progn
+    (ivy-mode)
+    (setq ivy-use-virtual-buffers t
+          enable-recursive-minibuffers t))
+)
+
+; (defun configure-ivy-mode ()
+;   "Configure ivy-mode and set up a few keybindings."
+;   (ivy-mode)
+;   (setq ivy-use-virtual-buffers t)
+;   (setq enable-recursive-minibuffers t)
+; ;  (global-set-key (kbd "C-s") 'swiper-isearch)
+;   )
+; (configure-ivy-mode)
 
 ;; Turn on visual line-wrapping mode
 (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
@@ -202,21 +216,35 @@
 (add-hook 'org-mode-hook 'turn-on-visual-line-mode)
 
 ;; flycheck
-;   (use-package flycheck
-;     :ensure t
-;     :hook (after-init . global-flycheck-mode))
-
-(add-hook 'after-init-hook #'global-flycheck-mode)
+(use-package flycheck
+  :ensure t
+  :hook (after-init . global-flycheck-mode))
+; (add-hook 'after-init-hook #'global-flycheck-mode)
 
 ;; Rainbow Delimiters
-(require 'rainbow-delimiters)
+(use-package rainbow-delimiters
+  :ensure t
+  :hook (prog-mode . rainbow-delimiters-mode))
+; (require 'rainbow-delimiters)
 
-;;; Setup Fill-Mode
-(require 'fill-column-indicator)
+;; Use built-in fill-column-indicator mode
+(setq-default fill-column 80)  ;; Set your desired fill column width
+(setq display-fill-column-indicator-character ?\u2502)  ;; Set the character if you want a custom one
 
-;; Visual fci config
-(setq fci-rule-width 1)
-(setq fci-rule-color "darkgrey")
+(use-package display-fill-column-indicator
+  :ensure nil  ;; Built-in, no need to install
+  :hook (after-init . global-display-fill-column-indicator-mode)  ;; Enable globally
+  :config
+  ;; Set the color and width (using face attributes)
+  (set-face-foreground 'fill-column-indicator "darkgrey")
+  (setq-default display-fill-column-indicator nil))  ;; Turn it off by default for modes that need it explicitly
+
+; ;;; Setup Fill-Mode
+; (require 'fill-column-indicator)
+;
+; ;; Visual fci config
+; (setq fci-rule-width 1)
+; (setq fci-rule-color "darkgrey")
 
 ;; Turn on fci mode by default
 (add-hook 'after-init-hook 'fci-mode)
@@ -265,12 +293,16 @@
   (turn-on-visual-line-mode)
   )
 
-(defun enable-expand-region ()
-  "Configures the 'expand-region' command for development modes."
-  (require 'expand-region)
-  (global-set-key (kbd "C-=") 'er/expand-region))
+(use-package expand-region
+     :ensure t
+     :bind (("C-=" . er/expand-region)))
 
-(enable-expand-region)
+; (defun enable-expand-region ()
+;   "Configures the 'expand-region' command for development modes."
+;   (require 'expand-region)
+;   (global-set-key (kbd "C-=") 'er/expand-region))
+;
+; (enable-expand-region)
 
 ;; mode specific configs
 (defun default-programming-config ()
@@ -297,15 +329,17 @@
 ;; Extra functions for pml mode
 (defun pml-mode-tools()
   "The pml-mode-tools enable some extra functions to make it nicer to edit PML."
-  (defvar tag-contents-history '())
-  (defvar tag-name-history '())
-  (defvar code-block-history '())
-  (defvar method-name-history '())
   (interactive)
+  (defvar-local tag-contents-history '())
+  (defvar-local tag-name-history '())
+  (defvar-local code-block-history '())
+  (defvar-local method-name-history '())
   (defun insert-tag-with-value(tag val)
     (insert (format "<%s>%s</%s>" tag val tag))
     )
+
   (defun make-tag()
+
     (interactive)
     "The make-tag function gets a tag name and value and inserts the tag."
     (let ((tag (read-string "tag: " nil 'tag-name-history )))
@@ -322,32 +356,17 @@
     (insert "~~~")
     (newline-and-indent)
     (insert "~~~")
-    (previous-line)
+    (forward-line -1)
     (end-of-line)
     (newline-and-indent)
     )
+
   (defun insert-code-block-with-contents(lang contents)
     (insert-code-block-without-contents lang)
     (insert contents)
-    (next-line)
+    (forward-line 1)
     (end-of-line)
     (newline-and-indent)
-    )
-
-  (defun add-objc-method ()
-    "Add an objcmethod tag."
-    (interactive)
-    (let ((method (read-string "method: " nil 'method-name-history)))
-      (insert-tag-with-value "objcmethod" method)
-      )
-    )
-
-  (defun add-inline-code ()
-    "Add an ic tag."
-    (interactive)
-    (let ((method (read-string "code: " nil 'method-name-history)))
-      (insert-tag-with-value "ic" method)
-      )
     )
 
   (defun add-backtick-code ()
@@ -374,11 +393,9 @@
     )
 
   (local-set-key (kbd "C-c l") 'insert-lambda)
-  (local-set-key (kbd "C-c c") 'add-backtick-code)
   (local-set-key (kbd "C-c t") 'make-tag)
   (local-set-key (kbd "C-c b") 'add-code-block)
   (local-set-key (kbd "C-c m") 'add-backtick-code)
-  (local-set-key (kbd "C-c i") 'add-inline-code)
   )
 
 (defun markdown-mode-tools()
@@ -419,7 +436,7 @@
     (insert (format "```%s" lang))
     (newline-and-indent)
     (insert "```")
-    (previous-line)
+    (forward-line -1)
     (end-of-line)
     (newline-and-indent)
     )
@@ -427,7 +444,7 @@
   (defun insert-code-block-with-contents(lang contents)
     (insert-code-block-without-contents lang)
     (insert contents)
-    (next-line)
+    (forward-line 1)
     (end-of-line)
     (newline-and-indent)
     )
@@ -725,7 +742,5 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
 
 (add-hook 'haskell-cabal-mode-hook 'haskell-config-setup-cabal-mode)
 (add-hook 'before-save-hook 'haskell-config-save-hook)
-
-
 
 ;;; init.el ends here
