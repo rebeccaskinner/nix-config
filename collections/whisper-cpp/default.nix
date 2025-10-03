@@ -5,18 +5,21 @@
 , wget
 , nvidia_x11
 , gcc
+, cmake
+, ninja
+, pkg-config
 , cudaPackages
 }:
 
 gcc.stdenv.mkDerivation rec {
   pname = "whisper-cpp";
-  version = "1.4.2";
+  version = "1.8.0";
 
   src = fetchFromGitHub {
     owner = "ggerganov";
     repo = "whisper.cpp";
-    rev = "c7b6988678779901d02ceba1a8212d2c9908956e"; # "f9ca90256bf691642407e589db1a36562c461db7";
-    hash = "sha256-hIEIu7feOZWqxRskf6Ej7l653/9KW8B3cnpPLoCRBAc="; # "sha256-Z7f5QcySxJHps/9FMcrw/Hmp+byVyL5I2SD4jUlLrd4=";
+    rev = "8c0855fd6bb115e113c0dca6255ea05f774d35f7";
+    hash = "sha256-K/op1nCFDcUzG8bryocuSS/XfLIm+qrzgQYbqOg/YSI=";
   };
 
   # The upstream download script tries to download the models to the
@@ -25,11 +28,11 @@ gcc.stdenv.mkDerivation rec {
   # the models to the current directory of where it is being run from.
   # patches = [ ./download-models.patch ];
 
-  nativeBuildInputs = [ makeWrapper ];
+  nativeBuildInputs = [ makeWrapper cmake ninja pkg-config];
 
   # buildInputs = [ SDL2 cudatoolkit libcublas cudaPackages.cuda_cudart nvidia_x11 gcc ];
   buildInputs =
-    [ SDL2 nvidia_x11 gcc
+    [ SDL2 nvidia_x11 gcc cmake
 
       cudaPackages.cuda_cuobjdump
       cudaPackages.cuda_gdb
@@ -58,19 +61,38 @@ gcc.stdenv.mkDerivation rec {
     WHISPER_CUDA="1";
     EXTRA_LDFLAGS="-L/lib -L${cudaPackages.cuda_cudart.lib}/lib";
     EXTRA_CCFLAGS="-I/usr/include";
+    CUDACXX = "${cudaPackages.cuda_nvcc}/bin/nvcc";
   };
+  CC  = "${gcc}/bin/cc";
+  CXX = "${gcc}/bin/c++";
 
-  makeFlags = [ "main" "stream" ];
+  cmakeFlags =
+    [ "-DGGML_CUDA=ON"
+      "-DWHISPER_BUILD_EXAMPLES=OFF"
+      "-DCMAKE_BUILD_TYPE=Release"
+      "-DTARGET=build"
+      "-DWHISPER_BUILD_TESTS=OFF"
+    ];
 
-  installPhase = ''
-    runHook preInstall
+  outputs = [ "out" "dev" ];
 
-    mkdir -p $out/bin
-    cp ./main $out/bin/whisper-cpp
-    cp ./stream $out/bin/whisper-cpp-stream
+  postInstall =
+  ''
+  mkdir -p $out/bin
+  for b in stream whisper-cli; do
+    if [ -x "build/bin/$b" ]; then install -m755 bin/$b $out/bin/; fi
+    if [ -x "build/$b" ]; then install -m755 "$b" $out/bin/; fi
+  done
 
-    runHook postInstall
+  # CUDA runtime wrapper so libcuda.so is found on NixOS:
+  libPath=${lib.makeLibraryPath [ cudaPackages.cudatoolkit nvidia_x11 ]}
+  for b in $out/bin/*; do
+    if [ -x "$b" ] && [ ! -L "$b" ]; then
+      wrapProgram "$b" --set LD_LIBRARY_PATH "$libPath"
+    fi
+  done
   '';
+
 
   meta = with lib; {
     description = "Port of OpenAI's Whisper model in C/C++";
