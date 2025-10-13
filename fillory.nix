@@ -53,7 +53,14 @@ let
     lbreakouthd
     kdePackages.bomber
     kdePackages.kbounce
+    kdePackages.kolf
+    kdePackages.kbreakout
+    kdePackages.kollision
+    kdePackages.ksnakeduel
+    kdePackages.kreversi
     chiaki
+    neverball
+    xmoto
   ]);
 
   libbluray = pkgs.libbluray.override {
@@ -62,20 +69,21 @@ let
     withJava = true;
   };
   vlc = pkgs.vlc.override { inherit libbluray; };
-  whisper-cpp = cudaPkgs.callPackage ./collections/whisper-cpp { nvidia_x11 = cudaPkgs.linuxPackages.nvidia_x11; gcc = cudaPkgs.gcc11; };
+  whisper-cpp = cudaPkgs.callPackage ./collections/whisper-cpp { nvidia_x11 = cudaPkgs.linuxPackages.nvidia_x11; gcc = cudaPkgs.gcc13; };
 
   multimedia = let
     customPkgs = [ vlc libbluray whisper-cpp pkgsStable.ccextractor];
-    defaultPkgs = with pkgs; [
+    defaultPkgs = (with pkgs; [
       makemkv
       mkvtoolnix
       handbrake
       ffmpeg
-      jellyfin-media-player
+      # jellyfin-media-player is built on an insecure version of qtwebengine
+      # jellyfin-media-player
       yt-dlp
       cdparanoiaIII
       abcde
-    ];
+    ]) ++ (with cudaPkgs; [blender]);
   in utils.env.packagesEnvironment (customPkgs ++ defaultPkgs);
 
   ebookTools = utils.env.packagesEnvironment (with pkgs; [
@@ -106,7 +114,7 @@ let
     kiwix # offline website archive
     kiwix-tools # tools for kiwix
     nextcloud-client # file sync
-    simplex-chat-desktop # messaging
+    # simplex-chat-desktop # messaging
     kazam # screen recording
     aspellPkgs # spell checking
     pandoc # document conversion
@@ -153,6 +161,9 @@ let
   rustDevelopmentEnv =
     import ./development-environment/rust { inherit pkgs utils; };
 
+  gccDevelopmentEnv =
+    import ./development-environment/gcc { inherit pkgs utils; };
+
   globalDevelopmentEnv =
     import ./development-environment/global-dev-env { inherit pkgs utils; };
 
@@ -162,6 +173,7 @@ let
     devPackages
     haskellDevelopmentEnv
     rustDevelopmentEnv
+    gccDevelopmentEnv
     globalDevelopmentEnv
     nvimConfig
   ];

@@ -6,6 +6,9 @@
 ;; Disable the splash screen
 (setq inhibit-splash-screen t)
 
+(require 'use-package)
+(require 'pml-mode)
+
 (defun configure-look-and-feel ()
   "Run some stuff after init, like setting a theme and disabling scrollbars."
   ;; Setup theme
@@ -15,7 +18,8 @@
   ;; disable the menu bar
   (menu-bar-mode -1)
   (tool-bar-mode -1)
-  (toggle-scroll-bar -1)
+  ;; (toggle-scroll-bar -1)
+  (scroll-bar-mode -1)
   )
 
   (require 'evil)
@@ -54,6 +58,96 @@
   :config
   (direnv-mode))
 
+;; -------------------------------------------------------------------
+;; 🧠 gptel Keybindings (for code + Org mode buffers)
+;;
+;; C-c g g   →  Open a new gptel chat buffer for the current context
+;; C-c g s   →  Send a prompt at point (or from minibuffer) to LLM
+;; C-c g r   →  Send the active region (or Org subtree) to LLM
+;; C-c g b   →  Interactively choose/switch gptel backend (OpenAI / Claude)
+;; C-c g t   →  Open gptel-transient menu (adjust model, temperature, etc.)
+;;
+;; Notes:
+;; - Works in programming modes and inside Org-mode source blocks.
+;; - Backend defaults to OpenAI (gpt-4o). Use C-c g b to switch to Claude.
+;; - Make sure OPENAI_API_KEY and ANTHROPIC_API_KEY are set in your environment.
+;; -------------------------------------------------------------------
+
+(with-eval-after-load 'org-ai
+  (setq org-ai-openai-api-token (getenv "OPENAI_API_KEY")))
+
+;; Make sure this is set so gptel never prompts
+(setq gptel-api-key (getenv "OPENAI_API_KEY"))
+
+;; --- LLMs in Emacs with gptel + Org + OpenAI + Claude ---
+
+(use-package gptel
+  :ensure t
+  :commands (gptel gptel-send gptel-send-region gptel-fn-complete gptel-set-backend)
+  :init
+  ;; Tweak display; put chat buffers at bottom
+  (setq gptel-display-buffer-action '(display-buffer-at-bottom))
+  :bind (("C-c g g" . gptel)               ;; open chat buffer for current file
+         ("C-c g s" . gptel-send)          ;; send prompt at point / minibuffer
+         ("C-c g a" . gptel-add)           ;; add the active region to gptel's context
+
+         ("C-c g f" . gptel-fn-complete)   ;; complete current function
+         ("C-c g b" . my/gptel-choose-backend)) ;; quickly switch backends
+  :config
+  ;; --- Define backends ---
+  (setq my/gptel-openai
+        (gptel-make-openai "openai"
+          :key   (getenv "OPENAI_API_KEY")
+          :host  "api.openai.com"
+          :endpoint "/v1/chat/completions"
+          :models '("gpt-4o" "gpt-4o-mini" "gpt-5" "gpt-5-mini")))
+
+  (setq my/gptel-claude
+        (gptel-make-anthropic "claude"
+          :key   (getenv "ANTHROPIC_API_KEY")
+          ;; Use any current Claude chat-completion model you prefer:
+          :models '("claude-3-5-sonnet-20240620")))
+
+  (setq gptel-backends `((openai . ,my/gptel-openai)
+                         (claude . ,my/gptel-claude)))
+
+  ;; Default: OpenAI
+  (setq gptel-backend (alist-get 'openai gptel-backends))
+
+  ;; ;; Helper to switch backends quickly
+  (defun my/gptel-choose-backend ()
+    "Interactively choose a gptel backend (OpenAI/Claude)."
+    (interactive)
+    (let* ((choice (intern (completing-read "gptel backend: "
+                                            (mapcar #'car gptel-backends) nil t)))
+           (backend (alist-get choice gptel-backends)))
+      (gptel-set-backend backend)
+      (message "gptel backend set to %s" choice)))
+
+  ;; --- Org-mode niceties ---
+  ;; Use the same keybindings inside Org buffers
+  (with-eval-after-load 'org
+    (define-key org-mode-map (kbd "C-c g g") #'gptel)
+    (define-key org-mode-map (kbd "C-c g r") #'gptel-send-region)
+    (define-key org-mode-map (kbd "C-c g s") #'gptel-send))
+)
+
+;; Optional: a quick transient UI for switching models/params
+;; (use-package gptel-transient
+;;   :ensure t
+;;   :after gptel
+;;   :bind (("C-c g t" . gptel-transient)))
+
+;; Optional: async HTTP client gptel can use if available
+(use-package plz
+  :ensure t
+  :defer t)
+
+;; Tip: set your API keys in your env (e.g., ~/.profile or shell rc)
+;; export OPENAI_API_KEY="sk-..."
+;; export ANTHROPIC_API_KEY="sk-ant-..."
+
+
 (defun setup-global-keybindings()
   "Setup global keybindings."
   (global-set-key (kbd "M-P") 'ace-window)
@@ -79,15 +173,28 @@
 
 (setq-default indent-tabs-mode nil)
 
-(defun configure-ivy-mode ()
-  "Configure ivy-mode and set up a few keybindings."
-  (ivy-mode)
-  (setq ivy-use-virtual-buffers t)
-  (setq enable-recursive-minibuffers t)
-;  (global-set-key (kbd "C-s") 'swiper-isearch)
-  )
+; (use-package ivy
+;   :ensure t
+;   :config
+;   (ivy-mode))
 
-(configure-ivy-mode)
+(use-package ivy
+  :ensure t
+  :config
+  (progn
+    (ivy-mode)
+    (setq ivy-use-virtual-buffers t
+          enable-recursive-minibuffers t))
+)
+
+; (defun configure-ivy-mode ()
+;   "Configure ivy-mode and set up a few keybindings."
+;   (ivy-mode)
+;   (setq ivy-use-virtual-buffers t)
+;   (setq enable-recursive-minibuffers t)
+; ;  (global-set-key (kbd "C-s") 'swiper-isearch)
+;   )
+; (configure-ivy-mode)
 
 ;; Turn on visual line-wrapping mode
 (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
@@ -109,17 +216,35 @@
 (add-hook 'org-mode-hook 'turn-on-visual-line-mode)
 
 ;; flycheck
-(add-hook 'after-init-hook #'global-flycheck-mode)
+(use-package flycheck
+  :ensure t
+  :hook (after-init . global-flycheck-mode))
+; (add-hook 'after-init-hook #'global-flycheck-mode)
 
 ;; Rainbow Delimiters
-(require 'rainbow-delimiters)
+(use-package rainbow-delimiters
+  :ensure t
+  :hook (prog-mode . rainbow-delimiters-mode))
+; (require 'rainbow-delimiters)
 
-;;; Setup Fill-Mode
-(require 'fill-column-indicator)
+;; Use built-in fill-column-indicator mode
+(setq-default fill-column 80)  ;; Set your desired fill column width
+(setq display-fill-column-indicator-character ?\u2502)  ;; Set the character if you want a custom one
 
-;; Visual fci config
-(setq fci-rule-width 1)
-(setq fci-rule-color "darkgrey")
+(use-package display-fill-column-indicator
+  :ensure nil  ;; Built-in, no need to install
+  :hook (after-init . global-display-fill-column-indicator-mode)  ;; Enable globally
+  :config
+  ;; Set the color and width (using face attributes)
+  (set-face-foreground 'fill-column-indicator "darkgrey")
+  (setq-default display-fill-column-indicator nil))  ;; Turn it off by default for modes that need it explicitly
+
+; ;;; Setup Fill-Mode
+; (require 'fill-column-indicator)
+;
+; ;; Visual fci config
+; (setq fci-rule-width 1)
+; (setq fci-rule-color "darkgrey")
 
 ;; Turn on fci mode by default
 (add-hook 'after-init-hook 'fci-mode)
@@ -144,15 +269,8 @@
     (display-line-numbers-mode)
     )
 
-  (defun turn-off-line-numbers()
-    (interactive)
-    (setq display-line-numbers nil)
-    )
-
-  (defun turn-on-line-numbers()
-    (interactive)
-    (display-line-numbers-mode)
-    )
+  (defun turn-off-line-numbers() (interactive) (display-line-numbers-mode -1))
+  (defun turn-on-line-numbers() (interactive) (display-line-numbers-mode 1))
 
   (defun toggle-line-numbers()
     (interactive)
@@ -175,12 +293,16 @@
   (turn-on-visual-line-mode)
   )
 
-(defun enable-expand-region ()
-  "Configures the 'expand-region' command for development modes."
-  (require 'expand-region)
-  (global-set-key (kbd "C-=") 'er/expand-region))
+(use-package expand-region
+     :ensure t
+     :bind (("C-=" . er/expand-region)))
 
-(enable-expand-region)
+; (defun enable-expand-region ()
+;   "Configures the 'expand-region' command for development modes."
+;   (require 'expand-region)
+;   (global-set-key (kbd "C-=") 'er/expand-region))
+;
+; (enable-expand-region)
 
 ;; mode specific configs
 (defun default-programming-config ()
@@ -202,20 +324,22 @@
   (default-programming-config)
   )
 
-(add-hook 'dhall-mode 'my-dhall-mode-config)
+(add-hook 'dhall-mode-hook 'my-dhall-mode-config)
 
 ;; Extra functions for pml mode
 (defun pml-mode-tools()
   "The pml-mode-tools enable some extra functions to make it nicer to edit PML."
-  (defvar tag-contents-history '())
-  (defvar tag-name-history '())
-  (defvar code-block-history '())
-  (defvar method-name-history '())
   (interactive)
+  (defvar-local tag-contents-history '())
+  (defvar-local tag-name-history '())
+  (defvar-local code-block-history '())
+  (defvar-local method-name-history '())
   (defun insert-tag-with-value(tag val)
     (insert (format "<%s>%s</%s>" tag val tag))
     )
+
   (defun make-tag()
+
     (interactive)
     "The make-tag function gets a tag name and value and inserts the tag."
     (let ((tag (read-string "tag: " nil 'tag-name-history )))
@@ -232,32 +356,17 @@
     (insert "~~~")
     (newline-and-indent)
     (insert "~~~")
-    (previous-line)
+    (forward-line -1)
     (end-of-line)
     (newline-and-indent)
     )
+
   (defun insert-code-block-with-contents(lang contents)
     (insert-code-block-without-contents lang)
     (insert contents)
-    (next-line)
+    (forward-line 1)
     (end-of-line)
     (newline-and-indent)
-    )
-
-  (defun add-objc-method ()
-    "Add an objcmethod tag."
-    (interactive)
-    (let ((method (read-string "method: " nil 'method-name-history)))
-      (insert-tag-with-value "objcmethod" method)
-      )
-    )
-
-  (defun add-inline-code ()
-    "Add an ic tag."
-    (interactive)
-    (let ((method (read-string "code: " nil 'method-name-history)))
-      (insert-tag-with-value "ic" method)
-      )
     )
 
   (defun add-backtick-code ()
@@ -284,11 +393,9 @@
     )
 
   (local-set-key (kbd "C-c l") 'insert-lambda)
-  (local-set-key (kbd "C-c c") 'add-backtick-code)
   (local-set-key (kbd "C-c t") 'make-tag)
   (local-set-key (kbd "C-c b") 'add-code-block)
   (local-set-key (kbd "C-c m") 'add-backtick-code)
-  (local-set-key (kbd "C-c i") 'add-inline-code)
   )
 
 (defun markdown-mode-tools()
@@ -329,7 +436,7 @@
     (insert (format "```%s" lang))
     (newline-and-indent)
     (insert "```")
-    (previous-line)
+    (forward-line -1)
     (end-of-line)
     (newline-and-indent)
     )
@@ -337,7 +444,7 @@
   (defun insert-code-block-with-contents(lang contents)
     (insert-code-block-without-contents lang)
     (insert contents)
-    (next-line)
+    (forward-line 1)
     (end-of-line)
     (newline-and-indent)
     )
@@ -370,7 +477,6 @@
   "Configuration for JSON-mode."
   (rainbow-delimiters-mode)
   (setq visual-line-fringe-indicators '(left-curly-arrow right-curly-arrow))
-  (window-margin-mode)
   )
 
 (defun my-javascript-mode-hook ()
@@ -411,7 +517,7 @@
       (interactive)
       (let ((name (read-string "Link Name: ")))
         (let ((to (read-string "Link To: ")))
-          (insert-relative-link name to9)
+          (insert-relative-link name to)
           )
         )
       )
@@ -636,7 +742,5 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
 
 (add-hook 'haskell-cabal-mode-hook 'haskell-config-setup-cabal-mode)
 (add-hook 'before-save-hook 'haskell-config-save-hook)
-
-
 
 ;;; init.el ends here

@@ -42,6 +42,8 @@ let
     license = pkgs.lib.licenses.gpl3Plus.spdxId;
   };
 
+  pml-mode = import ./packages/pml-mode { emacs = emacsPackage; lib = pkgs.lib; };
+
   emacsFiles = emacsConfigDir // emacsAppLink;
 in
 utils.env.importOnlyEnvironment ({
@@ -49,11 +51,14 @@ utils.env.importOnlyEnvironment ({
     enable = true;
     startWithUserSession = true;
   };
+  systemd.user.services.emacs.Service = {
+    EnvironmentFile = ["%h/.config/secrets/emacs-llm.env"];
+  };
   programs.emacs = {
     enable = true;
     package = emacsPackage;
     overrides = self: super: rec {
-          };
+    };
 
     extraConfig =
       builtins.foldl' (a: b: a + b) "" extraConfigs;
@@ -95,6 +100,12 @@ utils.env.importOnlyEnvironment ({
             fzf
             vterm
 
+            # LLMs
+            org-ai
+            gptel
+            plz
+            transient
+
             # evil
             evil
 
@@ -124,6 +135,9 @@ utils.env.importOnlyEnvironment ({
             lsp-ivy
             dap-mode
             which-key
+
+            # additional modes
+            pml-mode
           ];
         extras = userDefinedPackages epkgs;
       in defaults ++ extras;

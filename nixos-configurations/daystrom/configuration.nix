@@ -205,14 +205,15 @@ in {
     };
   };
   networking.firewall.enable = true;
-  networking.firewall.extraCommands = ''
-  iptables -A nixos-fw -p tcp --source 192.168.50.0/24 --dport 22:22 -j nixos-fw-accept || true
-'';
-  networking.firewall.extraStopCommands = ''
-  iptables -D nixos-fw -p tcp --source 192.168.50.0/24 --dport 22:22 -j nixos-fw-accept || true
-'';
+#   networking.firewall.extraCommands = ''
+#   iptables -A nixos-fw -p tcp --source 192.168.50.0/24 --dport 22:22 -j nixos-fw-accept || true
+# '';
+#   networking.firewall.extraStopCommands = ''
+#   iptables -D nixos-fw -p tcp --source 192.168.50.0/24 --dport 22:22 -j nixos-fw-accept || true
+# '';
   networking.firewall.allowedUDPPorts = [ 53 ];
-  networking.firewall.allowedTCPPorts = [ 53 80 443 30000 ];
+  # networking.firewall.allowedTCPPorts = [ 53 80 443 30000 ];
+  networking.firewall.allowedTCPPorts = [ 53 80 443 ];
 
 # Open ports in the firewall.
 # networking.firewall.allowedTCPPorts = [ ... ];
