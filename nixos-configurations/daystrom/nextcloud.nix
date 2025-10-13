@@ -4,7 +4,7 @@
   services.nextcloud = {
     enable = true;
     hostName = "nextcloud.borg.cube";
-    package = pkgs.nextcloud30;
+    package = pkgs.nextcloud31;
     extraApps = with pkgs.nextcloud30Packages.apps; { inherit calendar contacts notes bookmarks; };
     extraAppsEnable = true;
     https = true;
