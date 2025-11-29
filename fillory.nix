@@ -72,7 +72,11 @@ let
   whisper-cpp = cudaPkgs.callPackage ./collections/whisper-cpp { nvidia_x11 = cudaPkgs.linuxPackages.nvidia_x11; gcc = cudaPkgs.gcc13; };
 
   multimedia = let
-    customPkgs = [ vlc libbluray whisper-cpp pkgsStable.ccextractor];
+    customPkgs = [ vlc
+                   libbluray
+                   # whisper-cpp
+                   pkgsStable.ccextractor
+                 ];
     defaultPkgs = (with pkgs; [
       makemkv
       mkvtoolnix

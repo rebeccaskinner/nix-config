@@ -284,15 +284,6 @@
 
 (line-number-config)
 
-(defun soft-wrap-config (&optional width)
-  "Configure soft-wrap to WIDTH columns of text, and set a visual fill column at the boundry."
-  (unless width (setq width 80))
-  (set-fill-column width)
-  (fci-mode 1)
-  (auto-fill-mode -1)
-  (turn-on-visual-line-mode)
-  )
-
 (use-package expand-region
      :ensure t
      :bind (("C-=" . er/expand-region)))
