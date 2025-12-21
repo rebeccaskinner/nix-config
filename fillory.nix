@@ -109,7 +109,7 @@ let
     inkscape # svg editor
     scrot # screenshots
     qiv # image viewer
-    bitwarden # password manager
+    bitwarden-desktop # password manager
     slack # communications
     element-desktop # matrix client
     thunderbird # email
