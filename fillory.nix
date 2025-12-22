@@ -82,8 +82,7 @@ let
       mkvtoolnix
       handbrake
       ffmpeg
-      # jellyfin-media-player is built on an insecure version of qtwebengine
-      # jellyfin-media-player
+      jellyfin-media-player
       yt-dlp
       cdparanoiaIII
       abcde
@@ -117,7 +116,7 @@ let
     signal-desktop # messaging
     kiwix # offline website archive
     kiwix-tools # tools for kiwix
-    nextcloud-client # file sync
+    # nextcloud-client # file sync
     # simplex-chat-desktop # messaging
     kazam # screen recording
     aspellPkgs # spell checking
@@ -154,6 +153,7 @@ let
     ./configs/tmux.nix
     ./configs/bash.nix
     ./configs/java.nix
+    ./configs/nextcloud-client.nix
   ];
 
   haskellDevelopmentEnv = import ./development-environment/haskell {
