@@ -32,7 +32,8 @@ let
     bitwarden-cli
     ripgrep
     unzip
-    renameutils
+    # renameutils for qmv, but it conflicts with imv the image viewer
+    # renameutils
     rename
     graphicsmagick
     mat2
@@ -100,7 +101,7 @@ let
   aspellPkgs = pkgs.aspellWithDicts(dicts: with dicts; [ en en-computers en-science ]);
 
   applications = utils.env.packagesEnvironment (with pkgs; [
-    anki # flashcars
+    anki # flashcards
     baobab # disk usage visualization
     wireshark # network traffic
     gimp # image editing
@@ -116,7 +117,6 @@ let
     signal-desktop # messaging
     kiwix # offline website archive
     kiwix-tools # tools for kiwix
-    # nextcloud-client # file sync
     # simplex-chat-desktop # messaging
     kazam # screen recording
     aspellPkgs # spell checking
@@ -154,6 +154,8 @@ let
     ./configs/bash.nix
     ./configs/java.nix
     ./configs/nextcloud-client.nix
+    ./configs/chromium.nix
+    ./configs/imv.nix
   ];
 
   haskellDevelopmentEnv = import ./development-environment/haskell {

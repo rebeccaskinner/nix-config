@@ -21,6 +21,10 @@ let
 
   xmonadImports = mkImports [ ./xmonad ./dunst.nix ./polybar ];
 
-  xmonadPackages = utils.env.packagesEnvironment (with pkgs; [ pcmanfm candy-icons ]);
+  xmonadPackages = utils.env.packagesEnvironment (with pkgs;
+    [ pcmanfm candy-icons
+      xfce.thunar
+      xfce.tumbler
+    ]);
 
 in utils.env.concatEnvironments [xmonadImports xmonadGeneralEnv xmonadPackages]
