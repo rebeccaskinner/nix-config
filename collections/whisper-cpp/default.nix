@@ -18,8 +18,8 @@ gcc.stdenv.mkDerivation rec {
   src = fetchFromGitHub {
     owner = "ggerganov";
     repo = "whisper.cpp";
-    rev = "8c0855fd6bb115e113c0dca6255ea05f774d35f7";
-    hash = "sha256-K/op1nCFDcUzG8bryocuSS/XfLIm+qrzgQYbqOg/YSI=";
+    rev = "4979e04f5dcaccb36057e059bbaed8a2f5288315";
+    hash = "";
   };
 
   # The upstream download script tries to download the models to the

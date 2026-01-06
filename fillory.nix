@@ -70,12 +70,11 @@ let
     withJava = true;
   };
   vlc = pkgs.vlc.override { inherit libbluray; };
-  whisper-cpp = cudaPkgs.callPackage ./collections/whisper-cpp { nvidia_x11 = cudaPkgs.linuxPackages.nvidia_x11; gcc = cudaPkgs.gcc13; };
+  # whisper-cpp = cudaPkgs.callPackage ./collections/whisper-cpp { nvidia_x11 = cudaPkgs.linuxPackages.nvidia_x11; gcc = cudaPkgs.gcc13; };
 
   multimedia = let
     customPkgs = [ vlc
                    libbluray
-                   # whisper-cpp
                    pkgsStable.ccextractor
                  ];
     defaultPkgs = (with pkgs; [
@@ -87,7 +86,9 @@ let
       yt-dlp
       cdparanoiaIII
       abcde
-    ]) ++ (with cudaPkgs; [blender]);
+    ]) ++ (with cudaPkgs; [
+      whisper-cpp
+      blender]);
   in utils.env.packagesEnvironment (customPkgs ++ defaultPkgs);
 
   ebookTools = utils.env.packagesEnvironment (with pkgs; [
