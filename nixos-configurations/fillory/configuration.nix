@@ -25,6 +25,9 @@
   # temporarily broken, using security.pki.certificates instead
   # security.pki.certificateFiles = ["/var/certs/borg.cube.crt"];
 
+  security.polkit.enable = true;
+
+
   security.pki.certificates = [
     # borg.cube.crt
 ''
@@ -159,6 +162,7 @@ DSNhxHVhjDOOxF8dnOQ=
     };
     blueman.enable = true;
     udisks2.enable = true;
+    gvfs.enable = true;
   };
   # networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -383,6 +387,12 @@ DSNhxHVhjDOOxF8dnOQ=
       zfs
       tailscale
       exfatprogs
+
+      # MTP
+      gvfs
+      libmtp
+      jmtpfs
+      polkit_gnome
 
       # cuda
       autoAddDriverRunpath

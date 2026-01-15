@@ -157,6 +157,7 @@ let
     ./configs/nextcloud-client.nix
     ./configs/chromium.nix
     ./configs/imv.nix
+    ./configs/polkit-gnome.nix
   ];
 
   haskellDevelopmentEnv = import ./development-environment/haskell {
