@@ -43,11 +43,11 @@ utils.env.importOnlyEnvironment ({
       nvim-hs-vim
       nvim-lint
       nvim-surround
-      nvim-treesitter
-      nvim-treesitter-context
-      nvim-treesitter-pyfold
-      nvim-treesitter-refactor
-      nvim-treesitter-textobjects
+      # nvim-treesitter
+      # nvim-treesitter-context
+      # nvim-treesitter-pyfold
+      # nvim-treesitter-refactor
+      # nvim-treesitter-textobjects
       nvim-ts-autotag
       nvim-ts-context-commentstring
       rainbow-delimiters-nvim

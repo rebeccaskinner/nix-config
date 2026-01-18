@@ -59,7 +59,6 @@ let
     kdePackages.kollision
     kdePackages.ksnakeduel
     kdePackages.kreversi
-    chiaki
     neverball
     xmoto
   ]);
@@ -69,7 +68,7 @@ let
     withBDplus = true;
     withJava = true;
   };
-  vlc = pkgs.vlc.override { inherit libbluray; };
+  vlc = pkgs.vlc.override { }; # inherit libbluray; };
   # whisper-cpp = cudaPkgs.callPackage ./collections/whisper-cpp { nvidia_x11 = cudaPkgs.linuxPackages.nvidia_x11; gcc = cudaPkgs.gcc13; };
 
   multimedia = let
