@@ -4,7 +4,7 @@
 }:
 utils.env.packagesEnvironment(
   with pkgs; [
-    xorg.xcursorthemes
+    xcursor-themes
     hicolor-icon-theme
     kdePackages.breeze-gtk
   ])

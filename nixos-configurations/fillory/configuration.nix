@@ -6,6 +6,7 @@
 {
   # nixpkgs.config.allowUnfree = true;
   nix.settings = {
+    download-buffer-size = 2 * 1024 * 1024 * 1024;
     experimental-features = ["nix-command" "flakes"];
     substituters = [
       "https://cache.nixos.org"
@@ -336,9 +337,11 @@ DSNhxHVhjDOOxF8dnOQ=
 
   services.resolved = {
     enable = true;
-    dnssec = "true";
-    domains = ["~."];
-    fallbackDns = ["192.168.50.1 # local network DNS"];
+    settings.Resolve = {
+      dnssec = "true";
+      domains = ["~."];
+      fallbackDns = ["192.168.50.1 # local network DNS"];
+    };
   };
 
   virtualisation.libvirtd.enable = false;
@@ -366,7 +369,7 @@ DSNhxHVhjDOOxF8dnOQ=
       vim
       git
       firefox
-      xorg.xrandr
+      xrandr
       bluez-tools
       pavucontrol
       system76-firmware

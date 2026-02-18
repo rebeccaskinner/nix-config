@@ -12,27 +12,27 @@ utils.env.importOnlyEnvironment ({
       b64-nvim
       bat-vim
       codi-vim
-      csv
+      csv-vim
       dhall-vim
       diffview-nvim
       dirbuf-nvim
       direnv-vim
       dracula-nvim
-      easy-align
+      vim-easy-align
       editorconfig-nvim
       file-line
       fzf-checkout-vim
       fzf-hoogle-vim
       fzf-lua
       fzf-vim
-      fzfWrapper
+      fzf-wrapper
       galaxyline-nvim
       ghcid
       git-blame-nvim
       gitlinker-nvim
       graphviz-vim
       haskell-vim
-      hoogle
+      vim-hoogle
       html5-vim
       hydra-nvim
       markdown-preview-nvim
@@ -54,7 +54,7 @@ utils.env.importOnlyEnvironment ({
       orgmode
       pgsql-vim
       popup-nvim
-      prettyprint
+      vim-prettyprint
       prev_indent
       python-mode
       readline-vim
@@ -76,6 +76,6 @@ utils.env.importOnlyEnvironment ({
       nightfox-nvim
     ];
     extraConfig = builtins.readFile ./nvim-init.vim;
-    extraLuaConfig = builtins.readFile ./nvim-init.lua;
+    initLua = builtins.readFile ./nvim-init.lua;
   };
 })

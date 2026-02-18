@@ -23,8 +23,8 @@ let
 
   xmonadPackages = utils.env.packagesEnvironment (with pkgs;
     [ pcmanfm candy-icons
-      xfce.thunar
-      xfce.tumbler
+      thunar
+      tumbler
     ]);
 
 in utils.env.concatEnvironments [xmonadImports xmonadGeneralEnv xmonadPackages]

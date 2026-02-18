@@ -162,7 +162,7 @@ let
   haskellDevelopmentEnv = import ./development-environment/haskell {
     inherit pkgs utils;
     formatter = ./development-environment/haskell/formatter/fourmolu.nix;
-    haskellVersion = 98;
+    # haskellVersion = 98;
   };
 
   rustDevelopmentEnv =
