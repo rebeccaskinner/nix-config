@@ -282,6 +282,10 @@ DSNhxHVhjDOOxF8dnOQ=
   # Enable the GNOME Desktop Environment.
   # services.xserver.desktopManager.gnome.enable = true;
 
+  services.mullvad-vpn = {
+    enable = true;
+    package = pkgs.mullvad-vpn;
+  };
 
   hardware.bluetooth =
     { enable = true;

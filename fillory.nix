@@ -41,7 +41,7 @@ let
 
   audioFilteringPackages = utils.env.packagesEnvironment (with pkgs; [
     easyeffects
-    helvum
+    crosspipe
     pamixer
   ]);
 
