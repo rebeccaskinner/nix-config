@@ -29,20 +29,16 @@
     };
   };
 
+  services.postgresql = {
+    enable = true;
+    ensureDatabases = ["nextcloud"];
+    ensureUsers = [{ name = "nextcloud"; ensureDBOwnership = true;}];
+  };
+
   services.redis.servers.nextcloud = {
     enable = true;
     user = "nextcloud";
     port = 0;
-  };
-
-  services.postgresql = {
-    enable = true;
-    ensureDatabases = ["nextcloud"];
-    ensureUsers = [
-      { name = "nextcloud";
-        # ensurePermissions."DATABASE nextcloud" = "ALL PRIVILEGES";
-        ensureDBOwnership = true;
-      }];
   };
 
   services.nginx.virtualHosts.${config.services.nextcloud.hostName} = {

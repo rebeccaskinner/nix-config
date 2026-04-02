@@ -34,9 +34,9 @@ in {
     ./hardware-configuration.nix
     ./dns.nix
     ./nginx.nix
+    ./vikunja.nix
     ./nextcloud.nix
     ./jellyfin.nix
-    # ./kiwix.nix
     ./audiobookshelf.nix
     ./miniflux.nix
     ./foundryvtt.nix

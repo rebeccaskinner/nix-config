@@ -5,7 +5,7 @@ let
   borgCubeInternal = pkgs.writeText "db.borg.cube-internal" ''
     $TTL    604800
     @       IN      SOA     ns1.borg.cube. admin.borg.cube. (
-                         2025051201         ; Serial
+                         2026033101         ; Serial
                              604800         ; Refresh
                               86400         ; Retry
                             2419200         ; Expire
@@ -24,6 +24,7 @@ let
     daystrom.borg.cube.     IN      CNAME   ns1.borg.cube.
     portal.borg.cube.       IN      CNAME   ns1.borg.cube.
     nextcloud.borg.cube.    IN      CNAME   ns1.borg.cube.
+    tasks.borg.cube.        IN      CNAME   ns1.borg.cube.
     photos.borg.cube.       IN      CNAME   ns1.borg.cube.
     video.borg.cube.        IN      CNAME   ns1.borg.cube.
     news.borg.cube.         IN      CNAME   ns1.borg.cube.
@@ -36,7 +37,7 @@ let
   borgCubeTailscale = pkgs.writeText "db.borg.cube-tailscale" ''
     $TTL    604800
     @       IN      SOA     ns1.borg.cube. admin.borg.cube. (
-                         2025051201         ; Serial
+                         2026033101         ; Serial
                              604800         ; Refresh
                               86400         ; Retry
                             2419200         ; Expire
@@ -55,6 +56,7 @@ let
     daystrom.borg.cube.     IN      CNAME   ns1.borg.cube.
     portal.borg.cube.       IN      CNAME   ns1.borg.cube.
     nextcloud.borg.cube.    IN      CNAME   ns1.borg.cube.
+    tasks.borg.cube.        IN      CNAME   ns1.borg.cube.
     photos.borg.cube.       IN      CNAME   ns1.borg.cube.
     news.borg.cube.         IN      CNAME   ns1.borg.cube.
     video.borg.cube.        IN      CNAME   ns1.borg.cube.
@@ -68,7 +70,7 @@ let
   internalRebeccaSkinnerNetInternal = pkgs.writeText "db.internal.rebeccaskinner.net-internal" ''
     $TTL    604800
     @       IN      SOA     ns1.internal.rebeccaskinner.net. admin.internal.rebeccaskinner.net. (
-                         2025051201         ; Serial
+                         2026033101         ; Serial
                              604800         ; Refresh
                               86400         ; Retry
                             2419200         ; Expire
@@ -87,6 +89,7 @@ let
     daystrom.internal.rebeccaskinner.net.     IN      CNAME   ns1.internal.rebeccaskinner.net.
     portal.internal.rebeccaskinner.net.       IN      CNAME   ns1.internal.rebeccaskinner.net.
     nextcloud.internal.rebeccaskinner.net.    IN      CNAME   ns1.internal.rebeccaskinner.net.
+    tasks.internal.rebeccaskinner.net.        IN      CNAME   ns1.internal.rebeccaskinner.net.
     photos.internal.rebeccaskinner.net.       IN      CNAME   ns1.internal.rebeccaskinner.net.
     video.internal.rebeccaskinner.net.        IN      CNAME   ns1.internal.rebeccaskinner.net.
     news.internal.rebeccaskinner.net.         IN      CNAME   ns1.internal.rebeccaskinner.net.
@@ -134,6 +137,7 @@ let
     daystrom.internal.rebeccaskinner.net.     IN      CNAME   ns1.internal.rebeccaskinner.net.
     portal.internal.rebeccaskinner.net.       IN      CNAME   ns1.internal.rebeccaskinner.net.
     nextcloud.internal.rebeccaskinner.net.    IN      CNAME   ns1.internal.rebeccaskinner.net.
+    tasks.internal.rebeccaskinner.net.        IN      CNAME   ns1.internal.rebeccaskinner.net.
     photos.internal.rebeccaskinner.net.       IN      CNAME   ns1.internal.rebeccaskinner.net.
     news.internal.rebeccaskinner.net.         IN      CNAME   ns1.internal.rebeccaskinner.net.
     video.internal.rebeccaskinner.net.        IN      CNAME   ns1.internal.rebeccaskinner.net.
