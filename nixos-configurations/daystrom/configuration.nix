@@ -7,7 +7,7 @@
 
 let
 
-systemVim = (pkgs.vim_configurable.override {}).customize {
+systemVim = (pkgs.vim-full.override {}).customize {
   name = "vim";
   vimrcConfig.packages.myplugins = with pkgs.vimPlugins; {
     start = [ vim-nix vim-lastplace ];
@@ -24,9 +24,6 @@ systemVim = (pkgs.vim_configurable.override {}).customize {
 };
 
 in {
-  nixpkgs.config.packageOverrides = pkgs: {
-    vaapiIntel = pkgs.vaapiIntel.override { enableHybridCodec = true; };
-  };
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
   imports =

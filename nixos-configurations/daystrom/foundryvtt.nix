@@ -26,7 +26,7 @@ in
     port = 30000;
     upnp = false;
     package = inputs.foundryvtt.packages.${pkgs.system}.foundryvtt_13.overrideAttrs {
-      version = "13.0.0+342";
+      version = "13.351";
     };
   };
 

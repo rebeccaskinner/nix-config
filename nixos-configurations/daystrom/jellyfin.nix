@@ -4,12 +4,16 @@
     enable = true;
     extraPackages = with pkgs; [
       intel-media-driver
-      vaapiIntel
-      vaapiVdpau
-      libvdpau-va-gl
+      vpl-gpu-rt
       intel-compute-runtime
     ];
   };
+
+  users.users.jellyfin.extraGroups = [ "video" "render" ];
+
+  systemd.services.jellyfin.serviceConfig.Environment = [
+    "LIBVA_DRIVER_NAME=iHD"
+  ];
 
   environment.systemPackages = with pkgs; [ ffmpeg ];
 
