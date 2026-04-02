@@ -26,7 +26,7 @@ in
     port = 30000;
     upnp = false;
     package = inputs.foundryvtt.packages.${pkgs.system}.foundryvtt_13.overrideAttrs {
-      version = "13.0.0+342";
+      version = "13.351";
     };
   };
 
@@ -36,6 +36,24 @@ in
     sslCertificateKey = "/var/www/ssl-keys/wildcard.internal.rebeccaskinner.net.key";
     extraConfig = ''
       client_max_body_size 300M;
+
+      add_header Strict-Transport-Security $hsts_header;
+
+      # Minimize information leaked to other domains
+      add_header 'Referrer-Policy' 'origin-when-cross-origin';
+
+      # Disable embedding as a frame
+      add_header X-Frame-Options DENY;
+
+      # Prevent injection of code in other mime types (XSS Attacks)
+      add_header X-Content-Type-Options nosniff;
+
+      # Enable XSS protection of the browser.
+      # May be unnecessary when CSP is configured properly (see above)
+      add_header X-XSS-Protection "1; mode=block";
+
+      # This might create errors
+      proxy_cookie_path / "/; secure; HttpOnly; SameSite=strict";
     '';
 
     locations."/" = {
