@@ -7,12 +7,4 @@ let
       emacsExtraConfig = "";
     };
 
-  gitEnv =
-    { packages = with pkgs; [ ];
-      imports = [ (utils.constImport ./git.nix) ];
-      emacsExtraPackages = epkgs: [epkgs.magit];
-      emacsExtraConfig = "";
-    };
-
-
-in utils.env.concatEnvironments [ defaultGlobalEnv gitEnv ]
+in utils.env.concatEnvironments [ defaultGlobalEnv ]

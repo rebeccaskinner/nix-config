@@ -71,7 +71,7 @@ in
       fira-code-symbols
       noto-fonts
       noto-fonts-cjk
-      noto-fonts-emoji
+      noto-fonts-color-emoji
       liberation_ttf
       dina-font
       proggyfonts

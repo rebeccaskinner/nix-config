@@ -32,7 +32,8 @@ let
     bitwarden-cli
     ripgrep
     unzip
-    renameutils
+    # renameutils for qmv, but it conflicts with imv the image viewer
+    # renameutils
     rename
     graphicsmagick
     mat2
@@ -58,7 +59,6 @@ let
     kdePackages.kollision
     kdePackages.ksnakeduel
     kdePackages.kreversi
-    chiaki
     neverball
     xmoto
   ]);
@@ -68,22 +68,26 @@ let
     withBDplus = true;
     withJava = true;
   };
-  vlc = pkgs.vlc.override { inherit libbluray; };
-  whisper-cpp = cudaPkgs.callPackage ./collections/whisper-cpp { nvidia_x11 = cudaPkgs.linuxPackages.nvidia_x11; gcc = cudaPkgs.gcc13; };
+  vlc = pkgs.vlc.override { }; # inherit libbluray; };
+  # whisper-cpp = cudaPkgs.callPackage ./collections/whisper-cpp { nvidia_x11 = cudaPkgs.linuxPackages.nvidia_x11; gcc = cudaPkgs.gcc13; };
 
   multimedia = let
-    customPkgs = [ vlc libbluray whisper-cpp pkgsStable.ccextractor];
+    customPkgs = [ vlc
+                   libbluray
+                   pkgsStable.ccextractor
+                 ];
     defaultPkgs = (with pkgs; [
       makemkv
       mkvtoolnix
       handbrake
       ffmpeg
-      # jellyfin-media-player is built on an insecure version of qtwebengine
-      # jellyfin-media-player
+      jellyfin-media-player
       yt-dlp
       cdparanoiaIII
       abcde
-    ]) ++ (with cudaPkgs; [blender]);
+    ]) ++ (with cudaPkgs; [
+      whisper-cpp
+      blender]);
   in utils.env.packagesEnvironment (customPkgs ++ defaultPkgs);
 
   ebookTools = utils.env.packagesEnvironment (with pkgs; [
@@ -97,7 +101,7 @@ let
   aspellPkgs = pkgs.aspellWithDicts(dicts: with dicts; [ en en-computers en-science ]);
 
   applications = utils.env.packagesEnvironment (with pkgs; [
-    anki # flashcars
+    anki # flashcards
     baobab # disk usage visualization
     wireshark # network traffic
     gimp # image editing
@@ -105,7 +109,7 @@ let
     inkscape # svg editor
     scrot # screenshots
     qiv # image viewer
-    bitwarden # password manager
+    bitwarden-desktop # password manager
     slack # communications
     element-desktop # matrix client
     thunderbird # email
@@ -113,7 +117,6 @@ let
     signal-desktop # messaging
     kiwix # offline website archive
     kiwix-tools # tools for kiwix
-    nextcloud-client # file sync
     # simplex-chat-desktop # messaging
     kazam # screen recording
     aspellPkgs # spell checking
@@ -150,12 +153,16 @@ let
     ./configs/tmux.nix
     ./configs/bash.nix
     ./configs/java.nix
+    ./configs/nextcloud-client.nix
+    ./configs/chromium.nix
+    ./configs/imv.nix
+    ./configs/polkit-gnome.nix
   ];
 
   haskellDevelopmentEnv = import ./development-environment/haskell {
     inherit pkgs utils;
     formatter = ./development-environment/haskell/formatter/fourmolu.nix;
-    haskellVersion = 98;
+    # haskellVersion = 98;
   };
 
   rustDevelopmentEnv =

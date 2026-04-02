@@ -5,7 +5,18 @@
 { config, pkgs, ... }:
 {
   # nixpkgs.config.allowUnfree = true;
-  nix.settings.experimental-features = ["nix-command" "flakes"];
+  nix.settings = {
+    download-buffer-size = 2 * 1024 * 1024 * 1024;
+    experimental-features = ["nix-command" "flakes"];
+    substituters = [
+      "https://cache.nixos.org"
+      "https://cache.nixos-cuda.org"
+    ];
+    trusted-public-keys = [
+      "cache.nixos.org-1:6NCHdD59X431o0gWypbMrAURkbJ16ZPMQFGspcDShjY="
+      "cache.nixos-cuda.org:74DUi4Ye579gUqzH4ziL9IyiJBlDpMRn9MBN8oNan9M="
+    ];
+  };
 
   imports =
     [ # Include the results of the hardware scan.
@@ -14,6 +25,9 @@
 
   # temporarily broken, using security.pki.certificates instead
   # security.pki.certificateFiles = ["/var/certs/borg.cube.crt"];
+
+  security.polkit.enable = true;
+
 
   security.pki.certificates = [
     # borg.cube.crt
@@ -149,6 +163,7 @@ DSNhxHVhjDOOxF8dnOQ=
     };
     blueman.enable = true;
     udisks2.enable = true;
+    gvfs.enable = true;
   };
   # networking.hostName = "nixos"; # Define your hostname.
   # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -206,7 +221,7 @@ DSNhxHVhjDOOxF8dnOQ=
       google-fonts
       noto-fonts
       noto-fonts-cjk-sans
-      noto-fonts-emoji
+      noto-fonts-color-emoji
       liberation_ttf
       dina-font
       proggyfonts
@@ -242,7 +257,7 @@ DSNhxHVhjDOOxF8dnOQ=
   hardware.graphics.enable = true;
   # hardware.nvidia.open = false;
   hardware.nvidia = {
-    open = false;
+    open = true;
     modesetting.enable = true;
     powerManagement.enable = false;
     powerManagement.finegrained = false;
@@ -322,9 +337,11 @@ DSNhxHVhjDOOxF8dnOQ=
 
   services.resolved = {
     enable = true;
-    dnssec = "true";
-    domains = ["~."];
-    fallbackDns = ["192.168.50.1 # local network DNS"];
+    settings.Resolve = {
+      dnssec = "true";
+      domains = ["~."];
+      fallbackDns = ["192.168.50.1 # local network DNS"];
+    };
   };
 
   virtualisation.libvirtd.enable = false;
@@ -352,7 +369,7 @@ DSNhxHVhjDOOxF8dnOQ=
       vim
       git
       firefox
-      xorg.xrandr
+      xrandr
       bluez-tools
       pavucontrol
       system76-firmware
@@ -373,6 +390,12 @@ DSNhxHVhjDOOxF8dnOQ=
       zfs
       tailscale
       exfatprogs
+
+      # MTP
+      gvfs
+      libmtp
+      jmtpfs
+      polkit_gnome
 
       # cuda
       autoAddDriverRunpath
