@@ -11,13 +11,6 @@ in
     frontendHostname = hostname;
     port = port;
     settings = {
-      database = {
-        type = "postgres";
-        host = "/run/postgresql";
-        user = "vikunja";
-        database = "vikunja";
-      };
-
       service = {
         # If enabled, Vikunja will send an email to everyone who is either
         # assigned to a task or created it when a task reminder is due.
@@ -40,6 +33,13 @@ in
         jwtttllong = 25920000;
         maxitemsperpage = 100;
       };
+    };
+
+    database = {
+      type = "postgres";
+      host = "/run/postgresql";
+      user = "vikunja";
+      database = "vikunja";
     };
   };
 
