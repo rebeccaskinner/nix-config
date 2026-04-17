@@ -344,7 +344,8 @@ DSNhxHVhjDOOxF8dnOQ=
     settings.Resolve = {
       dnssec = "true";
       domains = ["~."];
-      fallbackDns = ["192.168.50.1 # local network DNS"];
+      # fallbackDns = ["192.168.50.1 # local network DNS"];
+      fallbackDns = [];
     };
   };
 

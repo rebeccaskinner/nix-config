@@ -159,8 +159,8 @@ let
           IN      NS      ns1.internal.rebeccaskinner.net.
 
     ; PTR Records
-    116.186.123.100.in-addr.arpa.     IN      PTR     ns1.internal.rebeccaskinner.net.           ; 100.123.186.116
-    97.57.91.100.in-addr.arpa.     IN      PTR     fillory.internal.rebeccaskinner.net.       ; 100.91.57.97
+    116.186.123     IN      PTR     ns1.internal.rebeccaskinner.net.           ; 100.123.186.116
+    97.57.91        IN      PTR     fillory.internal.rebeccaskinner.net.       ; 100.91.57.97
   '';
 
 
@@ -168,53 +168,62 @@ in
 {
   services.bind = {
     enable = true;
-    cacheNetworks = [ "127.0.0.0/24" "192.168.50.0/24" "100.64.0.0/10" "::1/128" ];
     forwarders = [ "1.1.1.1" "1.0.0.1" "8.8.8.8" "8.8.4.4" ];
     extraConfig = ''
+      acl "localhosts" { 127.0.0.1; ::1; };
+      acl "lan" { 192.168.50.0/24; };
+      acl "tailscale" { 100.64.0.0/10; };
+
       view "internal" {
-        match-clients { 127.0.0.0/24; ::1/128; 192.168.50.0/24; };
+        match-clients { localhosts; lan; };
+
         recursion yes;
+        allow-recursion { localhosts; lan; };
+        allow-query-cache { localhosts; lan; };
+        allow-query { localhosts; lan; };
+
         zone "borg.cube" {
           type master;
-          allow-transfer { };
-          allow-query { 127.0.0.0/24; ::1/128; 192.168.50.0/24; };
+          allow-transfer { none; };
           file "${borgCubeInternal}";
         };
 
         zone "internal.rebeccaskinner.net" {
           type master;
-          allow-transfer { };
-          allow-query { 127.0.0.0/24; ::1/128; 192.168.50.0/24; };
+          allow-transfer { none; };
           file "${internalRebeccaSkinnerNetInternal}";
         };
 
         zone "192.168.50.in-addr.arpa" {
           type master;
-          allow-transfer { };
+          allow-transfer { none; };
           allow-query { 127.0.0.0/24; ::1/128; 192.168.50.0/24; };
           file "${internalRebeccaSkinnerNetReverseZoneInternal}";
         };
       };
 
       view "tailscale" {
-        match-clients { 100.64.0.0/10; };
+        match-clients { tailscale; };
+
         recursion yes;
+        allow-recursion { tailscale; };
+        allow-query-cache { tailscale; };
+        allow-query { tailscale; };
+
         zone "borg.cube" {
           type master;
-          allow-transfer { };
-          allow-query { 100.64.0.0/10; };
+          allow-transfer { none; };
           file "${borgCubeTailscale}";
         };
+
         zone "internal.rebeccaskinner.net" {
           type master;
-          allow-transfer { };
-          allow-query { 100.64.0.0/10; };
+          allow-transfer { none; };
           file "${internalRebeccaSkinnerNetTailscale}";
         };
         zone "100.in-addr.arpa" {
           type master;
-          allow-transfer { };
-          allow-query { 100.64.0.0/10; };
+          allow-transfer { none; };
           file "${internalRebeccaSkinnerNetReverseZoneTailscale}";
         };
       };
