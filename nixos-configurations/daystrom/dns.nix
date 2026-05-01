@@ -1,4 +1,4 @@
-{ config, lib, pkgs, ... }:
+{ config, lib, pkgs, pkgsStable, ... }:
 
 let
 ## borg.cube
@@ -168,6 +168,7 @@ in
 {
   services.bind = {
     enable = true;
+    package = pkgsStable.bind;
     forwarders = [ "1.1.1.1" "1.0.0.1" "8.8.8.8" "8.8.4.4" ];
     extraConfig = ''
       acl "localhosts" { 127.0.0.1; ::1; };

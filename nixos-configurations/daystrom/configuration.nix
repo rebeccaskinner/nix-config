@@ -3,7 +3,7 @@
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
 { inputs }:
-{ config, pkgs, ... }:
+{ config, pkgs, pkgsStable, ... }:
 
 let
 
@@ -36,7 +36,7 @@ in {
     ./jellyfin.nix
     ./audiobookshelf.nix
     ./miniflux.nix
-    ./foundryvtt.nix
+    # ./foundryvtt.nix
     ];
 
   hardware.system76.enableAll = true;

@@ -16,125 +16,130 @@
   };
 
   outputs =
-    { self
+  { self
     , nixpkgs
-    , nixpkgs-stable
-    , rofi-hoogle
-    , home-manager
-    , darwin
-    , foundryvtt
-    , ... }@inputs:
-    {
-      darwinConfigurations = {
-        "gimli" = darwin.lib.darwinSystem {
-          # username = "rebeccaskinner";
-          # hostname = "gimli";
-          system = "aarch64-darwin";
-          specialArgs = {
-            inherit inputs;
-            pkgs = import nixpkgs {
-              system = "aarch64-darwin";
-              config.allowUnfree = true;
-            };
-          };
-
-          modules = [
-            (import ./nix-darwin-configuration/gimli/configuration.nix { inherit inputs; })
-
-            home-manager.darwinModules.home-manager {
-              users.users.rebeccaskinner.home = "/Users/rebeccaskinner";
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.rebeccaskinner = ./gimli.nix;
-              home-manager.extraSpecialArgs = {
-                inherit inputs;
+      , nixpkgs-stable
+      , rofi-hoogle
+      , home-manager
+      , darwin
+      , foundryvtt
+      , ... }@inputs:
+      {
+        darwinConfigurations = {
+          "gimli" = darwin.lib.darwinSystem {
+# username = "rebeccaskinner";
+# hostname = "gimli";
+            system = "aarch64-darwin";
+            specialArgs = {
+              inherit inputs;
+              pkgs = import nixpkgs {
                 system = "aarch64-darwin";
+                config.allowUnfree = true;
               };
-            }
-
-          ];
-        };
-      };
-
-      nixosConfigurations = {
-        "daystrom" = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = {
-            inherit inputs;
-            pkgs = import nixpkgs {
-              system = "x86_64-linux";
-              config.allowUnfree = true;
-              config.cudaSupport = false;
             };
+
+            modules = [
+              (import ./nix-darwin-configuration/gimli/configuration.nix { inherit inputs; })
+
+                home-manager.darwinModules.home-manager {
+                  users.users.rebeccaskinner.home = "/Users/rebeccaskinner";
+                  home-manager.useGlobalPkgs = true;
+                  home-manager.useUserPackages = true;
+                  home-manager.users.rebeccaskinner = ./gimli.nix;
+                  home-manager.extraSpecialArgs = {
+                    inherit inputs;
+                    system = "aarch64-darwin";
+                  };
+                }
+            ];
           };
-          modules = [
-            (import ./nixos-configurations/daystrom/configuration.nix { inherit inputs; })
-            foundryvtt.nixosModules.foundryvtt
-          ];
         };
 
-        "fillory" = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = {
-            inherit inputs;
-            pkgs = import nixpkgs {
-              system = "x86_64-linux";
-              config.allowUnfree = true;
-              config.cudaSupport = false;
-            };
-          };
-
-          modules = [
-            (import ./nixos-configurations/fillory/configuration.nix { inherit inputs; })
-            home-manager.nixosModules.home-manager {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.rebecca = ./fillory.nix;
-              home-manager.extraSpecialArgs = {
-                inherit inputs;
-                cudaPkgs = import nixpkgs {
-                  system = "x86_64-linux";
-                  config.allowUnfree = true;
-                  config.cudaSupport = true;
-                };
-                pkgsStable = import nixpkgs-stable {
-                  system = "x86_64-linux";
-                  config.allowUnfree = true;
-                  config.cudaSupport = false;
-                };
+        nixosConfigurations = {
+          "daystrom" = nixpkgs.lib.nixosSystem {
+            system = "x86_64-linux";
+            specialArgs = {
+              inherit inputs;
+              pkgs = import nixpkgs {
                 system = "x86_64-linux";
+                config.allowUnfree = true;
+                config.cudaSupport = false;
               };
-            }
-          ];
-        };
-
-        "julia" = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = {
-            inherit inputs;
-            pkgs = import nixpkgs {
+              pkgsStable = import nixpkgs-stable {
+                system = "x86_64-linux";
+                config.allowUnfree = true;
+                config.cudaSupport = false;
+              };
               system = "x86_64-linux";
-              config.allowUnfree = true;
-              config.cudaSupport = false;
             };
-            pkgsStable = import nixpkgs-stable {
-              system = "x86_64-linux";
-              config.allowUnfree = true;
-              config.cudaSupport = false;
-            };
+            modules = [
+              (import ./nixos-configurations/daystrom/configuration.nix { inherit inputs; })
+                foundryvtt.nixosModules.foundryvtt
+            ];
           };
 
-          modules = [
-            (import ./nixos-configurations/julia/configuration.nix { inherit inputs; })
-            home-manager.nixosModules.home-manager {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.rebecca = ./julia.nix;
-              home-manager.extraSpecialArgs = { inherit inputs; system = "x86_64-linux"; };
-            }
-          ];
-        };
+          "fillory" = nixpkgs.lib.nixosSystem {
+            system = "x86_64-linux";
+            specialArgs = {
+              inherit inputs;
+              pkgs = import nixpkgs {
+                system = "x86_64-linux";
+                config.allowUnfree = true;
+                config.cudaSupport = false;
+              };
+            };
 
+            modules = [
+              (import ./nixos-configurations/fillory/configuration.nix { inherit inputs; })
+                home-manager.nixosModules.home-manager {
+                  home-manager.useGlobalPkgs = true;
+                  home-manager.useUserPackages = true;
+                  home-manager.users.rebecca = ./fillory.nix;
+                  home-manager.extraSpecialArgs = {
+                    inherit inputs;
+                    cudaPkgs = import nixpkgs {
+                      system = "x86_64-linux";
+                      config.allowUnfree = true;
+                      config.cudaSupport = true;
+                    };
+                    pkgsStable = import nixpkgs-stable {
+                      system = "x86_64-linux";
+                      config.allowUnfree = true;
+                      config.cudaSupport = false;
+                    };
+                    system = "x86_64-linux";
+                  };
+                }
+            ];
+          };
+
+          "julia" = nixpkgs.lib.nixosSystem {
+            system = "x86_64-linux";
+            specialArgs = {
+              inherit inputs;
+              pkgs = import nixpkgs {
+                system = "x86_64-linux";
+                config.allowUnfree = true;
+                config.cudaSupport = false;
+              };
+              pkgsStable = import nixpkgs-stable {
+                system = "x86_64-linux";
+                config.allowUnfree = true;
+                config.cudaSupport = false;
+              };
+            };
+
+            modules = [
+              (import ./nixos-configurations/julia/configuration.nix { inherit inputs; })
+                home-manager.nixosModules.home-manager {
+                  home-manager.useGlobalPkgs = true;
+                  home-manager.useUserPackages = true;
+                  home-manager.users.rebecca = ./julia.nix;
+                  home-manager.extraSpecialArgs = { inherit inputs; system = "x86_64-linux"; };
+                }
+            ];
+          };
+
+        };
       };
-    };
 }
