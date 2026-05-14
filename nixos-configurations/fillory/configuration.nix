@@ -339,15 +339,17 @@ DSNhxHVhjDOOxF8dnOQ=
 
   services.tailscale.enable = true;
 
-  services.resolved = {
-    enable = true;
-    settings.Resolve = {
-      dnssec = "true";
-      domains = ["~."];
-      # fallbackDns = ["192.168.50.1 # local network DNS"];
-      fallbackDns = [];
-    };
-  };
+  networking.networkmanager.dns = "dnsmasq";
+
+  # services.resolved = {
+  #   enable = true;
+  #   settings.Resolve = {
+  #     dnssec = "true";
+  #     domains = ["~."];
+  #     # fallbackDns = ["192.168.50.1 # local network DNS"];
+  #     fallbackDns = [];
+  #   };
+  # };
 
   virtualisation.libvirtd.enable = false;
   programs.dconf.enable = true;
