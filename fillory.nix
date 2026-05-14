@@ -176,6 +176,8 @@ let
 
   nvimConfig = import ./development-environment/nvim { inherit pkgs utils; };
 
+  agentConfig = utils.env.packagesEnvironment (with pkgs; [ claude-code ] );
+
   devTools = utils.env.concatEnvironments [
     devPackages
     haskellDevelopmentEnv
@@ -183,6 +185,7 @@ let
     gccDevelopmentEnv
     globalDevelopmentEnv
     nvimConfig
+    agentConfig
   ];
 
   emacsConfig = import ./emacs {
