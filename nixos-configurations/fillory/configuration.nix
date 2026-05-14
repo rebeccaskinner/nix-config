@@ -266,21 +266,21 @@ DSNhxHVhjDOOxF8dnOQ=
   };
 
   services.libinput.enable = true;
-  # services.xserver.displayManager.gdm.enable = true;
-  services.displayManager.sddm.enable = true;
+  services.displayManager.gdm = {
+    enable = true;
+    wayland = false;  # NVIDIA + Wayland GDM can be unstable; flip to true to try Wayland GNOME
+  };
   services.xserver = {
     xkb.layout = "us";
     xkb.options = "ctrl:nocaps";
     windowManager.xmonad.enable = true;
+    desktopManager.gnome.enable = true;
     # desktopManager.plasma5 = { enable = true; useQtScaling = true; };
-    # desktopManager.gnome.enable = true;
     # desktopManager.cinnamon.enable = true;
     # desktopManager.enlightenment.enable = true;
     # desktopManager.xfce.enable = true;
     # desktopManager.mate.enable = true;
   };
-  # Enable the GNOME Desktop Environment.
-  # services.xserver.desktopManager.gnome.enable = true;
 
   services.mullvad-vpn = {
     enable = true;
@@ -415,6 +415,10 @@ DSNhxHVhjDOOxF8dnOQ=
   documentation.dev.enable = true;
   programs.steam.enable = true;
   programs.ssh.startAgent = true;
+  # GNOME enables its own GCR SSH agent by default, which conflicts with the
+  # standard SSH agent above. Disable it so both xmonad and GNOME sessions
+  # share the same openssh agent. GNOME keyring (secrets/passwords) still works.
+  services.gnome.gcr-ssh-agent.enable = false;
 
 
   # Enable the OpenSSH daemon.

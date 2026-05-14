@@ -9,6 +9,7 @@
 
     Service = {
       ExecStart = "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1";
+      ExecCondition = "${pkgs.bash}/bin/bash -c '[ \"$XDG_CURRENT_DESKTOP\" != GNOME ]'";
       Restart = "on-failure";
     };
 

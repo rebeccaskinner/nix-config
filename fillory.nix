@@ -18,6 +18,7 @@ let
   desktopEnv = utils.env.concatEnvironments [
     (load ./desktop-environment/xserverTools.nix)
     (load ./desktop-environment/xmonad)
+    (load ./desktop-environment/gnome)
   ];
 
   gtkTheme = "Adwaita:dark";
