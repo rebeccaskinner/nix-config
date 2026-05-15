@@ -4,7 +4,8 @@
 }:
 let
   extensions = with pkgs.gnomeExtensions; [
-    tray-icons-reloaded
+    status-icons
+    appindicator
     removable-drive-menu
     blur-my-shell
   ];

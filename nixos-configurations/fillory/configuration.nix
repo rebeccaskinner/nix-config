@@ -148,6 +148,7 @@ DSNhxHVhjDOOxF8dnOQ=
   boot.supportedFilesystems = ["zfs"];
 
   boot.zfs.extraPools = [ "zfs-archive" ];
+  boot.zfs.forceImportRoot = false;
 
   services.zfs = {
     trim.enable = true;
@@ -161,7 +162,10 @@ DSNhxHVhjDOOxF8dnOQ=
       enable = true;
       packages = [ pkgs.dconf ];
     };
-    blueman.enable = true;
+    blueman = {
+      enable = true;
+      withApplet = false;
+    };
     udisks2.enable = true;
     gvfs.enable = true;
   };
@@ -266,15 +270,15 @@ DSNhxHVhjDOOxF8dnOQ=
   };
 
   services.libinput.enable = true;
+  services.displayManager.sddm.enable = true;
   services.displayManager.gdm = {
-    enable = true;
-    wayland = false;  # NVIDIA + Wayland GDM can be unstable; flip to true to try Wayland GNOME
+    enable = false;
   };
   services.xserver = {
     xkb.layout = "us";
     xkb.options = "ctrl:nocaps";
     windowManager.xmonad.enable = true;
-    desktopManager.gnome.enable = true;
+    desktopManager.gnome.enable = false;
     # desktopManager.plasma5 = { enable = true; useQtScaling = true; };
     # desktopManager.cinnamon.enable = true;
     # desktopManager.enlightenment.enable = true;
