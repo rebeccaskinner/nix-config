@@ -419,6 +419,7 @@ DSNhxHVhjDOOxF8dnOQ=
   documentation.dev.enable = true;
   programs.steam.enable = true;
   programs.ssh.startAgent = true;
+  services.gnome.gnome-keyring.enable = true;
   # GNOME enables its own GCR SSH agent by default, which conflicts with the
   # standard SSH agent above. Disable it so both xmonad and GNOME sessions
   # share the same openssh agent. GNOME keyring (secrets/passwords) still works.
