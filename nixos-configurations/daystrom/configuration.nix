@@ -148,33 +148,23 @@ in {
 # $ nix search wget
   environment.systemPackages = with pkgs; [
     openssl
-      wget
-      systemVim
-      git
-      system76-firmware
-      # qemu_kvm
-      # qemu-utils
-      # qemu
-      tunctl
-      ethtool
-      # virt-top
-      # virt-viewer
-      # man-pages
-      # man-pages-posix
-      pciutils
-      usbutils
-      scowl
-      ripgrep
-      bottom
-      smartmontools
-      tmux
-      zfstools
-      zfs
-
-     tailscale
-#  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-#  wget
-      ];
+    wget
+    systemVim
+    git
+    system76-firmware
+    tunctl
+    ethtool
+    pciutils
+    usbutils
+    scowl
+    ripgrep
+    bottom
+    smartmontools
+    tmux
+    zfstools
+    zfs
+    tailscale
+  ];
 
   services.tailscale.enable = true;
 
