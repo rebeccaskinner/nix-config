@@ -6,7 +6,6 @@
 ;; Disable the splash screen
 (setq inhibit-splash-screen t)
 
-(require 'use-package)
 (require 'pml-mode)
 
 (defun configure-look-and-feel ()
@@ -173,11 +172,6 @@
 
 (setq-default indent-tabs-mode nil)
 
-; (use-package ivy
-;   :ensure t
-;   :config
-;   (ivy-mode))
-
 (use-package ivy
   :ensure t
   :config
@@ -187,23 +181,11 @@
           enable-recursive-minibuffers t))
 )
 
-; (defun configure-ivy-mode ()
-;   "Configure ivy-mode and set up a few keybindings."
-;   (ivy-mode)
-;   (setq ivy-use-virtual-buffers t)
-;   (setq enable-recursive-minibuffers t)
-; ;  (global-set-key (kbd "C-s") 'swiper-isearch)
-;   )
-; (configure-ivy-mode)
-
 ;; Turn on visual line-wrapping mode
 (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
 (add-hook 'tex-mode-hook 'turn-on-visual-line-mode)
 
-(defun disable-org-auto-indent()
-  "Disable automatic indentation of sections in org mode."
-  (setq org-adapt-indentation nil)
-  )
+(setq org-adapt-indentation nil)
 
 (defun configure-org-agenda()
   "Configure org mode agenda with agenda files and keybindings."
@@ -212,20 +194,17 @@
   )
 
 (configure-org-agenda)
-(add-hook 'org-mode-hook 'disable-org-auto-indent)
 (add-hook 'org-mode-hook 'turn-on-visual-line-mode)
 
 ;; flycheck
 (use-package flycheck
   :ensure t
   :hook (after-init . global-flycheck-mode))
-; (add-hook 'after-init-hook #'global-flycheck-mode)
 
 ;; Rainbow Delimiters
 (use-package rainbow-delimiters
   :ensure t
   :hook (prog-mode . rainbow-delimiters-mode))
-; (require 'rainbow-delimiters)
 
 ;; Use built-in fill-column-indicator mode
 (setq-default fill-column 80)  ;; Set your desired fill column width
@@ -278,13 +257,6 @@
      :ensure t
      :bind (("C-=" . er/expand-region)))
 
-; (defun enable-expand-region ()
-;   "Configures the 'expand-region' command for development modes."
-;   (require 'expand-region)
-;   (global-set-key (kbd "C-=") 'er/expand-region))
-;
-; (enable-expand-region)
-
 ;; mode specific configs
 (defun default-programming-config ()
   "Configure some sane defaults shared across various programming-related major modes."
@@ -296,9 +268,7 @@
   (setq tab-width 2)
   (local-set-key (kbd "C-)") 'forward-sexp)
   (local-set-key (kbd "C-(") 'backward-sexp)
-  (turn-on-line-numbers)
-  (set-fill-column 80)
-  )
+  (turn-on-line-numbers))
 
 (defun my-dhall-mode-config ()
   "Configure basic settings when editing in dhall-mode."
@@ -308,141 +278,119 @@
 (add-hook 'dhall-mode-hook 'my-dhall-mode-config)
 
 ;; Extra functions for pml mode
-(defun pml-mode-tools()
-  "The pml-mode-tools enable some extra functions to make it nicer to edit PML."
+;; PML editing helpers
+(defvar pml/tag-name-history '())
+(defvar pml/tag-contents-history '())
+(defvar pml/code-block-history '())
+(defvar pml/inline-code-history '())
+
+(defun pml/insert-tag-with-value (tag val)
+  (insert (format "<%s>%s</%s>" tag val tag)))
+
+(defun pml/make-tag ()
+  "Read a tag name and contents from the minibuffer, then insert the tag."
   (interactive)
-  (defvar-local tag-contents-history '())
-  (defvar-local tag-name-history '())
-  (defvar-local code-block-history '())
-  (defvar-local method-name-history '())
-  (defun insert-tag-with-value(tag val)
-    (insert (format "<%s>%s</%s>" tag val tag))
-    )
+  (let ((tag (read-string "tag: " nil 'pml/tag-name-history)))
+    (add-to-history 'pml/tag-name-history tag)
+    (let ((contents (read-string "contents: " nil 'pml/tag-contents-history)))
+      (add-to-history 'pml/tag-contents-history contents)
+      (pml/insert-tag-with-value tag contents))))
 
-  (defun make-tag()
+(defun pml/insert-code-block-without-contents (lang)
+  (insert (format "{:language=\"%s\"}" lang))
+  (newline-and-indent)
+  (insert "~~~")
+  (newline-and-indent)
+  (insert "~~~")
+  (forward-line -1)
+  (end-of-line)
+  (newline-and-indent))
 
-    (interactive)
-    "The make-tag function gets a tag name and value and inserts the tag."
-    (let ((tag (read-string "tag: " nil 'tag-name-history )))
-      (add-to-history 'tag-name-history tag)
-      (let ((contents (read-string "contents: " nil 'tag-contents-history )))
-        (add-to-history 'tag-contents-history contents)
-        (insert-tag-with-value tag contents)
-        )
-      )
-    )
-  (defun insert-code-block-without-contents(lang)
-    (insert (format "{:language=\"%s\"}" lang))
-    (newline-and-indent)
-    (insert "~~~")
-    (newline-and-indent)
-    (insert "~~~")
-    (forward-line -1)
-    (end-of-line)
-    (newline-and-indent)
-    )
+(defun pml/insert-code-block-with-contents (lang contents)
+  (pml/insert-code-block-without-contents lang)
+  (insert contents)
+  (forward-line 1)
+  (end-of-line)
+  (newline-and-indent))
 
-  (defun insert-code-block-with-contents(lang contents)
-    (insert-code-block-without-contents lang)
-    (insert contents)
-    (forward-line 1)
-    (end-of-line)
-    (newline-and-indent)
-    )
-
-  (defun add-backtick-code ()
-    "Add some inline code using backticks"
-    (interactive)
-    (let ((code (read-string "code: " nil 'method-name-history)))
-      (insert (format "`%s`" code))
-      )
-    )
-
-  (defun add-code-block ()
-    "Add a code block without spawning a mini-window."
-    (interactive)
-    (let ((lang (read-string "language: " nil 'code-block-history)))
-      (add-to-history 'code-block-history lang)
-      (insert-code-block-without-contents lang)
-      )
-    )
-
-  (defun insert-lambda ()
-    "insert a literal lambda character"
-    (interactive)
-    (insert "λ")
-    )
-
-  (local-set-key (kbd "C-c l") 'insert-lambda)
-  (local-set-key (kbd "C-c t") 'make-tag)
-  (local-set-key (kbd "C-c b") 'add-code-block)
-  (local-set-key (kbd "C-c m") 'add-backtick-code)
-  )
-
-(defun markdown-mode-tools()
-  "The markdown-mode-tools enable some extra functions to make it nicer to edit code-focused blog posts in Markdown."
-
-  (defvar tag-contents-history '())
-  (defvar tag-name-history '())
-  (defvar code-block-history '())
-  (defvar inline-code-history '())
+(defun pml/add-backtick-code ()
+  "Add some inline code using backticks."
   (interactive)
+  (let ((code (read-string "code: " nil 'pml/inline-code-history)))
+    (insert (format "`%s`" code))))
 
-  (defun insert-tag-with-value(tag val)
-    (insert (format "<%s>%s</%s>" tag val tag))
-    )
+(defun pml/add-code-block ()
+  "Add a code block without spawning a mini-window."
+  (interactive)
+  (let ((lang (read-string "language: " nil 'pml/code-block-history)))
+    (add-to-history 'pml/code-block-history lang)
+    (pml/insert-code-block-without-contents lang)))
 
-  (defun make-tag()
-    (interactive)
-    "The make-tag function gets a tag name and value and inserts the tag."
-    (let ((tag (read-string "tag: " nil 'tag-name-history )))
-      (add-to-history 'tag-name-history tag)
-      (let ((contents (read-string "contents: " nil 'tag-contents-history )))
-        (add-to-history 'tag-contents-history contents)
-        (insert-tag-with-value tag contents)
-        )
-      )
-    )
+(defun pml/insert-lambda ()
+  "Insert a literal lambda character."
+  (interactive)
+  (insert "λ"))
 
-  (defun add-inline-code()
-    (interactive)
-    "The add-inline-code function gets some code and inserts it."
-    (let ((code (read-string "code: " nil 'tag-name-history )))
-      (add-to-history 'inline-code-history code)
-      (insert (format "`%s`" code))
-      )
-    )
+(defun pml-mode-tools ()
+  "Bind PML editing helpers in the current buffer."
+  (interactive)
+  (local-set-key (kbd "C-c l") 'pml/insert-lambda)
+  (local-set-key (kbd "C-c t") 'pml/make-tag)
+  (local-set-key (kbd "C-c b") 'pml/add-code-block)
+  (local-set-key (kbd "C-c m") 'pml/add-backtick-code))
 
-  (defun insert-code-block-without-contents(lang)
-    (insert (format "```%s" lang))
-    (newline-and-indent)
-    (insert "```")
-    (forward-line -1)
-    (end-of-line)
-    (newline-and-indent)
-    )
+;; Markdown editing helpers (for code-focused blog posts)
+(defvar markdown/tag-name-history '())
+(defvar markdown/tag-contents-history '())
+(defvar markdown/code-block-history '())
+(defvar markdown/inline-code-history '())
 
-  (defun insert-code-block-with-contents(lang contents)
-    (insert-code-block-without-contents lang)
-    (insert contents)
-    (forward-line 1)
-    (end-of-line)
-    (newline-and-indent)
-    )
+(defun markdown/insert-tag-with-value (tag val)
+  (insert (format "<%s>%s</%s>" tag val tag)))
 
-  (defun add-code-block ()
-    "Add a code block without spawning a mini-window."
-    (interactive)
-    (let ((lang (read-string "language: " nil 'code-block-history)))
-      (add-to-history 'code-block-history lang)
-      (insert-code-block-without-contents lang)
-      )
-    )
+(defun markdown/make-tag ()
+  "Read a tag name and contents from the minibuffer, then insert the tag."
+  (interactive)
+  (let ((tag (read-string "tag: " nil 'markdown/tag-name-history)))
+    (add-to-history 'markdown/tag-name-history tag)
+    (let ((contents (read-string "contents: " nil 'markdown/tag-contents-history)))
+      (add-to-history 'markdown/tag-contents-history contents)
+      (markdown/insert-tag-with-value tag contents))))
 
-  (local-set-key (kbd "C-c t") 'make-tag)
-  (local-set-key (kbd "C-c b") 'add-code-block)
-  (local-set-key (kbd "C-c m") 'add-inline-code)
-  )
+(defun markdown/add-inline-code ()
+  "Read some code and insert it wrapped in backticks."
+  (interactive)
+  (let ((code (read-string "code: " nil 'markdown/inline-code-history)))
+    (add-to-history 'markdown/inline-code-history code)
+    (insert (format "`%s`" code))))
+
+(defun markdown/insert-code-block-without-contents (lang)
+  (insert (format "```%s" lang))
+  (newline-and-indent)
+  (insert "```")
+  (forward-line -1)
+  (end-of-line)
+  (newline-and-indent))
+
+(defun markdown/insert-code-block-with-contents (lang contents)
+  (markdown/insert-code-block-without-contents lang)
+  (insert contents)
+  (forward-line 1)
+  (end-of-line)
+  (newline-and-indent))
+
+(defun markdown/add-code-block ()
+  "Add a code block without spawning a mini-window."
+  (interactive)
+  (let ((lang (read-string "language: " nil 'markdown/code-block-history)))
+    (add-to-history 'markdown/code-block-history lang)
+    (markdown/insert-code-block-without-contents lang)))
+
+(defun markdown-mode-tools ()
+  "Bind markdown editing helpers in the current buffer."
+  (local-set-key (kbd "C-c t") 'markdown/make-tag)
+  (local-set-key (kbd "C-c b") 'markdown/add-code-block)
+  (local-set-key (kbd "C-c m") 'markdown/add-inline-code))
 
 (add-hook 'markdown-mode-hook 'markdown-mode-tools)
 
@@ -481,32 +429,19 @@
 
 (add-hook 'json-mode-hook 'json-mode-config)
 
-(defun my-markdown-mode-hook ()
-  "Add some nice extensions for dealing with various markdown modes."
+;; Hugo-specific markdown helpers
+(defun markdown/insert-relative-link (name to)
+  "Insert a relative link called NAME to the section named TO."
+  (insert (format "[%s]({{<relref \"#%s\">}})" name to)))
 
-  (defun hugo-extras ()
-    "Add a bunch of extra functions for hugo-specific markdown."
-
-    (defun insert-relative-link (name to)
-      "Inserts a relative link called NAME to the section named TO."
-      (insert (format "[%s]({{<relref \"#%s\">}})" name to))
-      )
-
-    (defun rel-link ()
-      "Query the user for a link name and section heading, then insert a
-      relative link."
-      (interactive)
-      (let ((name (read-string "Link Name: ")))
-        (let ((to (read-string "Link To: ")))
-          (insert-relative-link name to)
-          )
-        )
-      )
-    )
-  )
+(defun markdown/rel-link ()
+  "Query the user for a link name and section heading, then insert a relative link."
+  (interactive)
+  (let ((name (read-string "Link Name: "))
+        (to (read-string "Link To: ")))
+    (markdown/insert-relative-link name to)))
 
 (add-hook 'markdown-mode-hook 'default-programming-config)
-(add-hook 'markdown-mode-hook 'my-markdown-mode-hook)
 
 ;; add sql-indent when loading sql files
 (eval-after-load "sql"
@@ -544,62 +479,54 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
 (defalias 'list-buffers 'ibuffer)
 
 ;; TeX Mode
-(defun beamer-utils()
+;; Beamer (LaTeX presentation) helpers
+(defun beamer/new-frame (name)
+  "Insert a Beamer frame with title NAME and leave point inside."
+  (insert "\\begin{frame}")
+  (reindent-then-newline-and-indent)
+  (insert "\\frametitle{")
+  (insert name)
+  (insert "}")
+  (reindent-then-newline-and-indent)
+  (insert "\\end{frame}")
+  (reindent-then-newline-and-indent)
+  (forward-line -2)
+  (end-of-line)
+  (newline-and-indent))
+
+(defun beamer/new-slide ()
+  "Prompt for a frame title and insert a new Beamer frame."
   (interactive)
-  (defun beamer-new-frame(name)
-    (insert "\\begin{frame}")
-    (reindent-then-newline-and-indent)
-    (insert "\\frametitle{")
-    (insert name)
-    (insert "}")
-    (reindent-then-newline-and-indent)
-    (insert "\\end{frame}")
-    (reindent-then-newline-and-indent)
-    (previous-line)
-    (previous-line)
-    (end-of-line)
-    (newline-and-indent)
-    )
+  (let ((name (read-string "Frame Title: ")))
+    (beamer/new-frame name)))
 
-  (defun new-slide()
-    "Get a slide NAME and insert it."
-    (interactive)
-    (let ((name (read-string "Frame Title: ")))
-      (beamer-new-frame name))
-    )
+(defun beamer/simplified-block ()
+  "Insert a Beamer exampleblock titled \"In Plain English\"."
+  (interactive)
+  (insert "\\begin{exampleblock}{In Plain English}")
+  (reindent-then-newline-and-indent)
+  (insert "\\end{exampleblock}")
+  (reindent-then-newline-and-indent)
+  (forward-line -2)
+  (end-of-line)
+  (newline-and-indent))
 
-  (local-set-key (kbd "C-c f") 'new-slide)
-
-  (defun simplified-block()
-    (interactive)
-    (insert "\\begin{exampleblock}{In Plain English}")
-    (reindent-then-newline-and-indent)
-    (insert "\\end{exampleblock}")
-    (reindent-then-newline-and-indent)
-    (previous-line)
-    (previous-line)
-    (end-of-line)
-    (newline-and-indent)
-    )
-
+(defun beamer-utils ()
+  "Configure org-latex export options and bind Beamer helpers in the current buffer."
+  (interactive)
   (setq org-latex-listings 'minted)
   (setq org-latex-custom-lang-environments
-        '(
-          (emacs-lisp "common-lispcode")
-          )
-        )
+        '((emacs-lisp "common-lispcode")))
   (setq org-latex-minted-options
         '(("frame" "lines")
           ("fontsize" "\\scriptsize")
           ("linenos" "false")))
-
   (setq org-latex-pdf-process
         '("pdflatex --shell-escape -interaction nonstopmode -output-directory %o %f"
           "pdflatex --shell-escape -interaction nonstopmode -output-directory %o %f"
           "pdflatex --shell-escape -interaction nonstopmode -output-directory %o %f"))
-
-  (local-set-key (kbd "C-c s") 'simplified-block)
-  )
+  (local-set-key (kbd "C-c f") 'beamer/new-slide)
+  (local-set-key (kbd "C-c s") 'beamer/simplified-block))
 
 ;; AUCTeX-mode
 (setq TeX-parse-self t); Enable automatic parsing
@@ -686,10 +613,9 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
   (local-set-key (kbd "C-<tab>") 'haskell-pretty-print-buffer)
   (local-set-key (kbd "M-.") 'haskell-mode-tag-find)
 
-  (custom-set-variables
-    '(haskell-process-suggest-remove-import-lines t)
-    '(haskell-process-auto-import-loaded-modules t)
-    '(haskell-process-log t))
+  (setq haskell-process-suggest-remove-import-lines t
+        haskell-process-auto-import-loaded-modules t
+        haskell-process-log t)
 
   (eval-after-load 'haskell-mode '(progn
     (define-key haskell-mode-map (kbd "C-c C-l") 'haskell-process-load-file)

@@ -58,8 +58,6 @@ utils.env.importOnlyEnvironment ({
   programs.emacs = {
     enable = true;
     package = emacsPackage;
-    overrides = self: super: rec {
-    };
 
     extraConfig =
       builtins.foldl' (a: b: a + b) "" extraConfigs;
@@ -86,7 +84,6 @@ utils.env.importOnlyEnvironment ({
             expand-region
             rainbow-delimiters
             sql-indent
-            use-package
             pdf-tools
             goto-last-change
             darkplum-theme
