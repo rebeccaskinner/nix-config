@@ -36,6 +36,7 @@ in {
     ./jellyfin.nix
     ./audiobookshelf.nix
     ./miniflux.nix
+    ./mealie.nix
     # ./foundryvtt.nix
     ];
 

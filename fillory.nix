@@ -33,6 +33,7 @@ let
     bitwarden-cli
     ripgrep
     unzip
+    vim
     # renameutils for qmv, but it conflicts with imv the image viewer
     # renameutils
     rename
@@ -175,8 +176,6 @@ let
   globalDevelopmentEnv =
     import ./development-environment/global-dev-env { inherit pkgs utils; };
 
-  nvimConfig = import ./development-environment/nvim { inherit pkgs utils; };
-
   agentConfig = utils.env.packagesEnvironment (with pkgs; [ claude-code ] );
 
   devTools = utils.env.concatEnvironments [
@@ -185,7 +184,6 @@ let
     rustDevelopmentEnv
     gccDevelopmentEnv
     globalDevelopmentEnv
-    nvimConfig
     agentConfig
   ];
 
@@ -223,7 +221,10 @@ in {
   home.homeDirectory = "/home/rebecca";
   imports = environment.imports;
   home.packages = environment.packages;
-  home.sessionVariables = { GTK_THEME = gtkTheme; };
+  home.sessionVariables = {
+    GTK_THEME = gtkTheme;
+    EDITOR = "emacs";
+  };
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
   # when a new Home Manager release introduces backwards

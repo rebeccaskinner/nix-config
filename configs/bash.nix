@@ -12,7 +12,6 @@
       emacs-client = "emacsclient -nw";
       icat = "kitty +kitten icat";
       kitty-ssh = "kitty +kitten ssh";
-      vim = "nvim";
     };
     initExtra = ''
       function get_github_url() {

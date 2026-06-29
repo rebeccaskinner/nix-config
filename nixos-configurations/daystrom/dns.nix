@@ -5,7 +5,7 @@ let
   borgCubeInternal = pkgs.writeText "db.borg.cube-internal" ''
     $TTL    604800
     @       IN      SOA     ns1.borg.cube. admin.borg.cube. (
-                         2026033101         ; Serial
+                         2026062801         ; Serial
                              604800         ; Refresh
                               86400         ; Retry
                             2419200         ; Expire
@@ -32,12 +32,13 @@ let
     www.borg.cube.          IN      CNAME   ns1.borg.cube.
     wiki.borg.cube.          IN      CNAME   ns1.borg.cube.
     vtt.borg.cube.          IN      CNAME   ns1.borg.cube.
+    recipes.borg.cube.      IN      CNAME   ns1.borg.cube.
   '';
 
   borgCubeTailscale = pkgs.writeText "db.borg.cube-tailscale" ''
     $TTL    604800
     @       IN      SOA     ns1.borg.cube. admin.borg.cube. (
-                         2026033101         ; Serial
+                         2026062801         ; Serial
                              604800         ; Refresh
                               86400         ; Retry
                             2419200         ; Expire
@@ -64,13 +65,14 @@ let
     www.borg.cube.          IN      CNAME   ns1.borg.cube.
     wiki.borg.cube.          IN      CNAME   ns1.borg.cube.
     vtt.borg.cube.          IN      CNAME   ns1.borg.cube.
+    recipes.borg.cube.      IN      CNAME   ns1.borg.cube.
   '';
 
 ## internal.rebeccaskinner.net
   internalRebeccaSkinnerNetInternal = pkgs.writeText "db.internal.rebeccaskinner.net-internal" ''
     $TTL    604800
     @       IN      SOA     ns1.internal.rebeccaskinner.net. admin.internal.rebeccaskinner.net. (
-                         2026033101         ; Serial
+                         2026062801         ; Serial
                              604800         ; Refresh
                               86400         ; Retry
                             2419200         ; Expire
@@ -97,12 +99,13 @@ let
     www.internal.rebeccaskinner.net.          IN      CNAME   ns1.internal.rebeccaskinner.net.
     wiki.internal.rebeccaskinner.net.          IN      CNAME   ns1.internal.rebeccaskinner.net.
     vtt.internal.rebeccaskinner.net.          IN      CNAME   ns1.internal.rebeccaskinner.net.
+    recipes.internal.rebeccaskinner.net.      IN      CNAME   ns1.internal.rebeccaskinner.net.
   '';
 
   internalRebeccaSkinnerNetReverseZoneInternal = pkgs.writeText "db.192.168.50-irsn" ''
     $TTL    604800
     @       IN      SOA     internal.rebeccaskinner.net. admin.internal.rebeccaskinner.net. (
-                         2025051201         ; Serial
+                         2026062801         ; Serial
                              604800         ; Refresh
                               86400         ; Retry
                             2419200         ; Expire
@@ -118,7 +121,7 @@ let
   internalRebeccaSkinnerNetTailscale = pkgs.writeText "db.internal.rebeccaskinner.net-tailscale" ''
     $TTL    604800
     @       IN      SOA     ns1.internal.rebeccaskinner.net. admin.internal.rebeccaskinner.net. (
-                         2025051201         ; Serial
+                         2026062801         ; Serial
                              604800         ; Refresh
                               86400         ; Retry
                             2419200         ; Expire
@@ -145,12 +148,13 @@ let
     www.internal.rebeccaskinner.net.          IN      CNAME   ns1.internal.rebeccaskinner.net.
     wiki.internal.rebeccaskinner.net.          IN      CNAME   ns1.internal.rebeccaskinner.net.
     vtt.internal.rebeccaskinner.net.          IN      CNAME   ns1.internal.rebeccaskinner.net.
+    recipes.internal.rebeccaskinner.net.      IN      CNAME   ns1.internal.rebeccaskinner.net.
   '';
 
   internalRebeccaSkinnerNetReverseZoneTailscale = pkgs.writeText "db.100-irsn" ''
     $TTL    604800
     @       IN      SOA     internal.rebeccaskinner.net. admin.internal.rebeccaskinner.net. (
-                         2025051201         ; Serial
+                         2026062801         ; Serial
                              604800         ; Refresh
                               86400         ; Retry
                             2419200         ; Expire
