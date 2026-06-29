@@ -239,16 +239,6 @@
   (set-face-foreground 'fill-column-indicator "darkgrey")
   (setq-default display-fill-column-indicator nil))  ;; Turn it off by default for modes that need it explicitly
 
-; ;;; Setup Fill-Mode
-; (require 'fill-column-indicator)
-;
-; ;; Visual fci config
-; (setq fci-rule-width 1)
-; (setq fci-rule-color "darkgrey")
-
-;; Turn on fci mode by default
-(add-hook 'after-init-hook 'fci-mode)
-
 (defun line-number-config()
   "Configure line numbers."
   (defun absolute-line-numbers()
@@ -603,7 +593,7 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
           ("fontsize" "\\scriptsize")
           ("linenos" "false")))
 
-  (setq org-latex-to-pdf-process
+  (setq org-latex-pdf-process
         '("pdflatex --shell-escape -interaction nonstopmode -output-directory %o %f"
           "pdflatex --shell-escape -interaction nonstopmode -output-directory %o %f"
           "pdflatex --shell-escape -interaction nonstopmode -output-directory %o %f"))
@@ -658,13 +648,11 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
   :group 'haskell-config
   :type '(boolean))
 
-(defun pretty-print-buffer(format-command)
+(defun pretty-print-buffer (format-command)
   "Run FORMAT-COMMAND to pretty-print the current buffer."
-  ((defvar-local p (point))
+  (let ((p (point)))
     (shell-command-on-region (point-min) (point-max) format-command nil t)
-    (goto-char p)
-    )
-  )
+    (goto-char p)))
 
 (defun haskell-pretty-print-buffer()
   "Pretty-print a haskell buffer using haskell-pretty-printer."
@@ -675,17 +663,15 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
 (defun cabal-pretty-print-buffer()
   "Pretty-print a cabal buffer using cabal-pretty-printer."
   (interactive)
-  ((when cabal-pretty-printer (pretty-print-buffer cabal-pretty-printer)))
-  )
+  (when cabal-pretty-printer (pretty-print-buffer cabal-pretty-printer)))
 
 (defun haskell-config-save-hook()
   "Save hook function will automatically format a haskell or cabal buffer on save."
-  (if
-      (and (eq major-mode 'haskell-mode) (haskell-format-on-save))
-      (haskell-pretty-print-buffer)
-    (if
-        (and (eq major-mode 'haskell-cabal-mode) (cabal-format-on-save))
-        (cabal-pretty-print-buffer))))
+  (cond
+   ((and (eq major-mode 'haskell-mode) haskell-format-on-save)
+    (haskell-pretty-print-buffer))
+   ((and (eq major-mode 'haskell-cabal-mode) cabal-format-on-save)
+    (cabal-pretty-print-buffer))))
 
 
 (defun haskell-config-setup-haskell-mode()

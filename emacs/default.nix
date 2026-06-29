@@ -1,12 +1,13 @@
 { pkgs
 , utils
-, userDefinedPackages ? ({...}: [])
+, extraPackages ? (epkgs: [])
 , extraConfigs ? []
 , emacsPackage ? pkgs.emacs
 , createMacosSymlink ? false
 , ...}:
 
 let
+  userExtraPackages = extraPackages;
   emacsAppLink =
     if createMacosSymlink
     then
@@ -139,8 +140,7 @@ utils.env.importOnlyEnvironment ({
             # additional modes
             pml-mode
           ];
-        extras = userDefinedPackages epkgs;
-      in defaults ++ extras;
+      in defaults ++ (userExtraPackages epkgs);
   };
   home.file = emacsFiles;
 })
