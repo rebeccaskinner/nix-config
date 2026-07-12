@@ -9,17 +9,12 @@
 (require 'pml-mode)
 
 (defun configure-look-and-feel ()
-  "Run some stuff after init, like setting a theme and disabling scrollbars."
-  ;; Setup theme
+  "Configure theme, font, and chrome. Safe to call per-frame under the daemon."
   (load-theme 'darkplum t)
-  ;; (load-theme 'dracula t)
-
-  ;; disable the menu bar
+  (set-face-attribute 'default nil :family "FiraCode" :foundry "ADBO" :height 130)
   (menu-bar-mode -1)
   (tool-bar-mode -1)
-  ;; (toggle-scroll-bar -1)
-  (scroll-bar-mode -1)
-  )
+  (scroll-bar-mode -1))
 
   (require 'evil)
   (evil-mode 1)
@@ -34,9 +29,6 @@
     (add-hook 'after-make-frame-functions #'deamon-look-and-feel)
   (configure-look-and-feel)
   )
-
-;; Set the face for the current frame
-(set-face-attribute 'default nil :family "FiraCode" :foundry "ADBO" :height 130)
 
 ;; Set the default browser to firefox
 (setq browse-url-browser-function 'browse-url-firefox)
@@ -105,7 +97,7 @@
         (gptel-make-anthropic "claude"
           :key   (getenv "ANTHROPIC_API_KEY")
           ;; Use any current Claude chat-completion model you prefer:
-          :models '("claude-3-5-sonnet-20240620")))
+          :models '("claude-opus-4-7" "claude-sonnet-4-6" "claude-haiku-4-5-20251001")))
 
   (setq gptel-backends `((openai . ,my/gptel-openai)
                          (claude . ,my/gptel-claude)))
@@ -147,28 +139,20 @@
 ;; export ANTHROPIC_API_KEY="sk-ant-..."
 
 
-(defun setup-global-keybindings()
-  "Setup global keybindings."
-  (global-set-key (kbd "M-P") 'ace-window)
-  (global-set-key (kbd "<M-up>") 'ace-window)
-  (global-set-key (kbd "C-'") 'goto-last-change)
-  (global-set-key (kbd "C-M-s") 'isearch-forward-regexp)
-  (global-set-key (kbd "C-M-r") 'isearch-backward-regexp)
-  (global-set-key (kbd "C-\"") "“")
-  (global-set-key (kbd "M-\"") "”")
-  )
+;; Global keybindings
+(global-set-key (kbd "M-P") 'ace-window)
+(global-set-key (kbd "<M-up>") 'ace-window)
+(global-set-key (kbd "C-'") 'goto-last-change)
+(global-set-key (kbd "C-M-s") 'isearch-forward-regexp)
+(global-set-key (kbd "C-M-r") 'isearch-backward-regexp)
+(global-set-key (kbd "C-\"") "“")
+(global-set-key (kbd "M-\"") "”")
 
-(setup-global-keybindings)
-
-(defun configure-temp-files()
-  "Set the auto-save and backup files to /tmp/."
-  (setq backup-directory-alist
-        `((".*" . ,temporary-file-directory)))
-  (setq auto-save-file-name-transforms
-        `((".*" ,temporary-file-directory t)))
-  )
-
-(configure-temp-files)
+;; Send auto-save and backup files to /tmp instead of cluttering source dirs
+(setq backup-directory-alist
+      `((".*" . ,temporary-file-directory)))
+(setq auto-save-file-name-transforms
+      `((".*" ,temporary-file-directory t)))
 
 (setq-default indent-tabs-mode nil)
 
@@ -187,13 +171,9 @@
 
 (setq org-adapt-indentation nil)
 
-(defun configure-org-agenda()
-  "Configure org mode agenda with agenda files and keybindings."
-  (setq org-agenda-files (list "~/agenda.org"))
-  (global-set-key (kbd "C-c a") 'org-agenda)
-  )
-
-(configure-org-agenda)
+;; Org agenda
+(setq org-agenda-files (list "~/agenda.org"))
+(global-set-key (kbd "C-c a") 'org-agenda)
 (add-hook 'org-mode-hook 'turn-on-visual-line-mode)
 
 ;; flycheck
@@ -218,40 +198,32 @@
   (set-face-foreground 'fill-column-indicator "darkgrey")
   (setq-default display-fill-column-indicator nil))  ;; Turn it off by default for modes that need it explicitly
 
-(defun line-number-config()
-  "Configure line numbers."
-  (defun absolute-line-numbers()
-    (interactive)
-    (setq display-line-numbers-type t)
-    (display-line-numbers-mode)
-    )
+;; Line numbers
+(defun absolute-line-numbers ()
+  (interactive)
+  (setq display-line-numbers-type t)
+  (display-line-numbers-mode))
 
-  (defun relative-line-numbers()
-    (interactive)
-    (setq display-line-numbers-type 'relative)
-    (display-line-numbers-mode)
-    )
+(defun relative-line-numbers ()
+  (interactive)
+  (setq display-line-numbers-type 'relative)
+  (display-line-numbers-mode))
 
-  (defun visual-line-numbers()
-    (interactive)
-    (setq display-line-numbers-type 'visual)
-    (display-line-numbers-mode)
-    )
+(defun visual-line-numbers ()
+  (interactive)
+  (setq display-line-numbers-type 'visual)
+  (display-line-numbers-mode))
 
-  (defun turn-off-line-numbers() (interactive) (display-line-numbers-mode -1))
-  (defun turn-on-line-numbers() (interactive) (display-line-numbers-mode 1))
+(defun turn-off-line-numbers () (interactive) (display-line-numbers-mode -1))
+(defun turn-on-line-numbers () (interactive) (display-line-numbers-mode 1))
 
-  (defun toggle-line-numbers()
-    (interactive)
-    (if (eq display-line-numbers nil)
-        (turn-on-line-numbers)
-      (turn-off-line-numbers)
-      )
-    )
-  (global-set-key (kbd "C-c n") 'toggle-line-numbers)
-  )
+(defun toggle-line-numbers ()
+  (interactive)
+  (if (eq display-line-numbers nil)
+      (turn-on-line-numbers)
+    (turn-off-line-numbers)))
 
-(line-number-config)
+(global-set-key (kbd "C-c n") 'toggle-line-numbers)
 
 (use-package expand-region
      :ensure t
@@ -448,18 +420,20 @@
   '(load-library "sql-indent"))
 
 
-(defadvice find-tag (around refresh-etags activate)
-  "Rerun etags and reload tags if tag not found and redo `find-tag'."
-  "If buffer is modified, ask about save before running etags."
+(defun my/find-tag-refresh-advice (orig-fn &rest args)
+  "Around advice for `find-tag': rerun etags and retry if the tag is not found.
+If the buffer is modified, ask to save before refreshing."
   (let ((extension (file-name-extension (buffer-file-name))))
-    (condition-case err
-        ad-do-it
+    (condition-case _
+        (apply orig-fn args)
       (error (and (buffer-modified-p)
                   (not (ding))
                   (y-or-n-p "Buffer is modified, save it? ")
                   (save-buffer))
              (er-refresh-etags extension)
-             ad-do-it))))
+             (apply orig-fn args)))))
+
+(advice-add 'find-tag :around #'my/find-tag-refresh-advice)
 
 (defun er-refresh-etags (&optional extension)
   "Run `etags' on all peer files in current dir and reload them silentlyf, \
