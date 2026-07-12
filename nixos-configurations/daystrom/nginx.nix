@@ -11,7 +11,7 @@
 
     # Only allow PFS-enabled ciphers with AES256
     sslCiphers = "AES256+EECDH:AES256+EDH:!aNULL";
-    sslDhparam = "/var/www/ssl-keys/dhparam.pem";
+    # sslDhparam = "/var/www/ssl-keys/dhparam.pem";
 
     commonHttpConfig = ''
       # Add HSTS header with preloading to HTTPS requests.
