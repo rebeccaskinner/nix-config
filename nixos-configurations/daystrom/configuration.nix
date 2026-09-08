@@ -48,6 +48,7 @@ in {
   boot.loader.efi.efiSysMountPoint = "/boot/efi";
   boot.supportedFilesystems = ["zfs"];
   boot.zfs.extraPools = [ "zfs-archive" ];
+  boot.zfs.forceImportRoot = false;
 
   services.zfs = {
     trim.enable = true;
