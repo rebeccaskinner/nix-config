@@ -78,7 +78,7 @@ utils.env.importOnlyEnvironment ({
             restclient
             format-sql
             paredit
-            ox-pandoc
+            # ox-pandoc
             graphviz-dot-mode
             go-playground
             expand-region
