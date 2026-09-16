@@ -1,0 +1,34 @@
+Completion: vertico + orderless + marginalia + consult + embark in the
+minibuffer, corfu + cape in buffers.  Replaces ivy and auto-complete.
+
+Global keys:
+  C-x b        consult-buffer: buffers, recent files, bookmarks (type "< f" to narrow to files)
+  M-g o        consult-outline: jump to a heading (markdown, org) or top-level form
+  M-g i        consult-imenu: jump to a definition in this buffer
+  M-s r        consult-ripgrep: grep the project, results narrow as you type
+  M-o          embark-act: menu of actions for the thing at point or the candidate (ivy's M-o)
+
+Minibuffer (vertico):
+    C-n / C-p, arrows    move            TAB      insert the candidate into the input
+    RET                  choose          C-M-j    accept what I typed, not the match (also M-RET)
+    C-j                  choose          ESC      abort
+    DEL                  in a path, delete a whole component when at a slash
+    M-DEL                delete a path component
+    C-c C-o              embark-export: dump the results into a buffer (ivy-occur)
+    C-u / C-d            page up / down (evil-collection)
+Matching: words in any order.  !word excludes.  =word literal.  ,abc initialism.  ~word flex.
+Preview: consult commands show the target as you move; C-g goes back.
+
+In-buffer popup (corfu), appears after 2 characters; nothing is preselected, so
+just keep typing if you do not want it:
+    TAB / S-TAB          next / previous candidate (cycles)      M-n / M-p, C-j / C-k, arrows also move
+    RET                  insert the candidate if you navigated to one; otherwise a plain newline
+    C-g                  close           ESC          close and leave insert state
+    M-h                  documentation for the candidate
+    C-M-i                open the popup by hand (ESC TAB in a terminal)
+Sources: the major mode's own completion, then words from other buffers
+(cape-dabbrev) and file paths (cape-file).  Off in Haskell buffers; see
+:cheatsheet haskell-mode.
+
+Terminal frames: the popup is drawn by corfu-terminal; everything else is
+the same.  Keys the terminal can't send: C-<tab>, C-., C-;.

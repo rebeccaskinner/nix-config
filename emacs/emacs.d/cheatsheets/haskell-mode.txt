@@ -1,0 +1,37 @@
+haskell-mode: custom bindings from init.el.  No language server by choice;
+the workflow is haskell-mode's REPL (haskell-interactive) plus cabal.
+
+  C-c C-l      haskell-process-load-file: load this file into the REPL (starts it if needed)
+  C-c C-z      haskell-interactive-switch: jump to the REPL
+  C-c C-n C-t  haskell-process-do-type: show the type of the identifier at point
+  C-c C-n C-i  haskell-process-do-info: show info for the identifier at point
+  C-c C-n C-c  haskell-process-cabal-build
+  C-c C-n c    haskell-process-cabal: run an arbitrary cabal command
+  M-.          haskell-mode-tag-find: jump to definition (etags; inside a string, open that file)
+  C-<tab>      haskell-pretty-print-buffer: reformat with haskell-pretty-printer (GUI frames only)
+  C-)          forward-sexp
+  C-(          backward-sexp
+
+In a terminal frame C-<tab> is not a key the terminal can send; use
+M-x haskell-pretty-print-buffer instead.
+
+Formatting: haskell-pretty-printer and haskell-format-on-save are defcustoms
+(M-x customize-group haskell-config).  They save to ~/.emacs.d/custom.el.
+fourmolu is on PATH.  The same applies to cabal-pretty-printer.
+
+Cabal files (haskell-cabal-mode):
+    C-c C-c      haskell-process-cabal-build
+    C-c c        haskell-process-cabal
+    C-c C-z      haskell-interactive-switch
+    C-c C-k      haskell-interactive-mode-clear
+    C-<tab>      cabal-pretty-print-buffer
+
+Completion: the corfu popup is deliberately OFF in haskell-mode,
+haskell-cabal-mode, and the REPL (global-corfu-modes in init.el).
+    M-x corfu-mode         turn the popup on for this buffer only
+    C-M-i                  completion-at-point without a popup (*Completions* buffer);
+                           in a terminal this is ESC TAB
+    C-n / C-p              (insert state) evil's own word completion from open buffers
+To make the popup permanent, drop haskell-mode from global-corfu-modes in
+init.el.  With the REPL loaded (C-c C-l), completion knows the identifiers
+of the loaded modules.

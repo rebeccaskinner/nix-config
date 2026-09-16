@@ -1,0 +1,18 @@
+markdown-mode: custom bindings from init.el.
+
+  C-c b      markdown/add-code-block: prompt for a language, insert a ```lang fence
+  C-c m      markdown/add-inline-code: prompt for text, insert `text`
+  C-c t      markdown/make-tag: prompt for a tag and contents, insert <tag>contents</tag>
+  C-)        forward-sexp
+  C-(        backward-sexp
+
+Not bound:  M-x markdown/rel-link inserts a Hugo link, [name]({{<relref "#to">}}).
+
+From default-programming-config: fill column 80 with auto-fill, whitespace
+cleanup on save, rainbow delimiters, and line numbers.
+
+Handy markdown-mode built-ins:
+  C-c C-s C  markdown-insert-gfm-code-block: fenced block with language completion, wraps region
+  C-c C-s c  markdown-insert-code: wrap the region in backticks
+  C-c C-l    markdown-insert-link
+  C-c C-c p  markdown-preview

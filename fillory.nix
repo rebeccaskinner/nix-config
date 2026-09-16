@@ -23,23 +23,26 @@ let
 
   gtkTheme = "Adwaita:dark";
 
-  basicPackages = utils.env.packagesEnvironment (with pkgs; [
-    bat
-    pulsemixer
-    file
-    alsa-utils
-    gifsicle
-    dnsutils
-    bitwarden-cli
-    ripgrep
-    unzip
-    vim
-    # renameutils for qmv, but it conflicts with imv the image viewer
-    # renameutils
-    rename
-    graphicsmagick
-    mat2
-  ]);
+  basicPackages =
+    let
+      basic = with pkgs; [
+        bat
+        pulsemixer
+        file
+        alsa-utils
+        gifsicle
+        dnsutils
+        bitwarden-cli
+        ripgrep
+        unzip
+        vim
+        renameutils
+        rename
+        mat2
+        graphicsmagick
+      ];
+      basicStable = with pkgsStable; [];
+    in utils.env.packagesEnvironment (basic ++ basicStable);
 
   audioFilteringPackages = utils.env.packagesEnvironment (with pkgs; [
     easyeffects
@@ -76,9 +79,10 @@ let
   multimedia = let
     customPkgs = [ vlc
                    libbluray
-                   pkgsStable.ccextractor
+                   # pkgsStable.ccextractor
                  ];
     defaultPkgs = (with pkgs; [
+      ccextractor
       makemkv
       mkvtoolnix
       handbrake
@@ -89,7 +93,8 @@ let
       abcde
     ]) ++ (with cudaPkgs; [
       whisper-cpp
-      blender]);
+      # blender
+    ]);
   in utils.env.packagesEnvironment (customPkgs ++ defaultPkgs);
 
   ebookTools = utils.env.packagesEnvironment (with pkgs; [
@@ -111,9 +116,7 @@ let
     inkscape # svg editor
     scrot # screenshots
     qiv # image viewer
-    bitwarden-desktop # password manager
     slack # communications
-    element-desktop # matrix client
     thunderbird # email
     libreoffice # office suite
     signal-desktop # messaging
@@ -124,7 +127,7 @@ let
     aspellPkgs # spell checking
     pandoc # document conversion
     ispell # spell checking
-    texlive.combined.scheme-full # latex
+    texliveFull
     python3Packages.pygments # syntax highlighting
     evince # document viewer
     kdePackages.okular # document viewer
@@ -157,7 +160,7 @@ let
     ./configs/java.nix
     ./configs/nextcloud-client.nix
     ./configs/chromium.nix
-    ./configs/imv.nix
+    # ./configs/imv.nix
     ./configs/polkit-gnome.nix
   ];
 
@@ -192,7 +195,7 @@ let
     createMacosSymlink = false;
     emacsPackage = pkgs.emacs;
     extraPackages = ePkgs:
-      (with ePkgs; [ rustic cargo hasklig-mode haskell-mode nix-haskell-mode ]);
+      (with ePkgs; [ rustic cargo haskell-mode nix-haskell-mode ]);
     extraConfigs =
       [ (builtins.readFile ./development-environment/rust/rust.el) ];
   };

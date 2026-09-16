@@ -164,7 +164,6 @@ DSNhxHVhjDOOxF8dnOQ=
     };
     blueman = {
       enable = true;
-      withApplet = false;
     };
     udisks2.enable = true;
     gvfs.enable = true;
@@ -278,7 +277,6 @@ DSNhxHVhjDOOxF8dnOQ=
     xkb.layout = "us";
     xkb.options = "ctrl:nocaps";
     windowManager.xmonad.enable = true;
-    desktopManager.gnome.enable = false;
     # desktopManager.plasma5 = { enable = true; useQtScaling = true; };
     # desktopManager.cinnamon.enable = true;
     # desktopManager.enlightenment.enable = true;
@@ -288,7 +286,7 @@ DSNhxHVhjDOOxF8dnOQ=
 
   services.mullvad-vpn = {
     enable = true;
-    package = pkgs.mullvad-vpn;
+    gui.enable = true;
   };
 
   hardware.bluetooth =
@@ -345,6 +343,7 @@ DSNhxHVhjDOOxF8dnOQ=
 
   networking.networkmanager.dns = "dnsmasq";
 
+  services.resolved.enable = false;
   # services.resolved = {
   #   enable = true;
   #   settings.Resolve = {
@@ -405,7 +404,8 @@ DSNhxHVhjDOOxF8dnOQ=
       # MTP
       gvfs
       libmtp
-      jmtpfs
+      # jmtpfs
+      go-mtpfs
       polkit_gnome
 
       # cuda

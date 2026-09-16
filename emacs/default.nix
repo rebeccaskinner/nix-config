@@ -29,12 +29,12 @@ let
   darkplum-theme = emacsPackage.pkgs.melpaBuild {
     name = "darkplum-theme";
     pname = "darkplum-theme";
-    version = "0.0.2";
+    version = "0.3";
     src = pkgs.fetchFromGitHub {
       owner = "rebeccaskinner";
       repo = "darkplum-theme";
-      rev = "7a93038ede49c1c30e540d510d54ef83e00c2bce";
-      sha256 = "0rsfvx8nsq9sbkdzs4mjqfwsqdwg5zz9y4wyqq05pamdhchmy2al";
+      rev = "7a290bbb0dae2839825dd51e27ca4907ff06d529";
+      sha256 = "0smjim1mhh9n5vs9v5rq09pnj68vwf0ykn3dgwcgygxkd8wv52lx";
     };
     meta = {
       description = "A dark purple theme for emacs";
@@ -70,7 +70,6 @@ utils.env.importOnlyEnvironment ({
             flycheck
             direnv
             fill-column-indicator
-            auto-complete
             pdf-tools
             proof-general
             magit
@@ -78,7 +77,7 @@ utils.env.importOnlyEnvironment ({
             restclient
             format-sql
             paredit
-            ox-pandoc
+            # ox-pandoc
             graphviz-dot-mode
             go-playground
             expand-region
@@ -89,14 +88,20 @@ utils.env.importOnlyEnvironment ({
             darkplum-theme
             dracula-theme
             inkpot-theme
-            counsel
-            counsel-org-clock
-            counsel-tramp
-            counsel-etags
-            counsel-jq
-            swiper
             fzf
             vterm
+
+            # completion: minibuffer
+            vertico
+            orderless
+            marginalia
+            consult
+            embark
+            embark-consult
+            # completion: in-buffer
+            corfu
+            corfu-terminal
+            cape
 
             # LLMs
             org-ai
@@ -106,6 +111,11 @@ utils.env.importOnlyEnvironment ({
 
             # evil
             evil
+            evil-collection
+            evil-org
+
+            # markdown (also pulled in by pml-mode, but init.el configures it directly)
+            markdown-mode
 
             # Git / Github integration
             forge
@@ -126,11 +136,6 @@ utils.env.importOnlyEnvironment ({
             treemacs
             lsp-treemacs
             lsp-ui
-            company # popups
-            helm
-            helm-lsp
-            ivy
-            lsp-ivy
             dap-mode
             which-key
 

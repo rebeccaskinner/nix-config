@@ -1,0 +1,13 @@
+gptel: LLM chat and completion.  Global bindings, available in any buffer.
+
+  C-c g g    gptel: open (or switch to) a chat buffer for the current context
+  C-c g s    gptel-send: send the prompt at point (or the active region) to the model
+  C-c g a    gptel-add: add the region or buffer to the chat context
+  C-c g b    my/gptel-choose-backend: switch between the openai and claude backends
+
+Not bound, but useful:  M-x gptel-menu opens the transient for model, system
+prompt, and other per-request settings.
+
+The default backend is openai (gpt-4o).  API keys come from OPENAI_API_KEY and
+ANTHROPIC_API_KEY, loaded from ~/.config/secrets/emacs-llm.env by the emacs
+systemd user service.
