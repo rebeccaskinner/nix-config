@@ -19,9 +19,10 @@ Minibuffer (vertico):
 Matching: words in any order.  !word excludes.  =word literal.  ,abc initialism.  ~word flex.
 Preview: consult commands show the target as you move; C-g goes back.
 
-In-buffer popup (corfu), appears after 2 characters:
-    M-n / M-p, arrows    move            C-j / C-k    move (evil-collection)
-    RET                  insert          TAB          complete the common prefix / selected item
+In-buffer popup (corfu), appears after 2 characters; nothing is preselected, so
+just keep typing if you do not want it:
+    TAB / S-TAB          next / previous candidate (cycles)      M-n / M-p, C-j / C-k, arrows also move
+    RET                  insert the candidate if you navigated to one; otherwise a plain newline
     C-g                  close           ESC          close and leave insert state
     M-h                  documentation for the candidate
     C-M-i                open the popup by hand (ESC TAB in a terminal)

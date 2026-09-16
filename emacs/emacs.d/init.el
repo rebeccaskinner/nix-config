@@ -221,11 +221,20 @@
 (define-key minibuffer-local-map (kbd "C-c C-o") #'embark-export)  ; like ivy-occur: results to a buffer
 
 ;; In-buffer popup completion.
+;; evil-collection key themes for the popup, read when corfu loads:
+;;   tab-n-go      TAB / S-TAB cycle candidates (as auto-complete did); nothing is
+;;                 preselected, so typing on just keeps typing
+;;   magic-return  RET inserts the candidate only if you navigated to one;
+;;                 otherwise it is an ordinary newline
+(defvar evil-collection-corfu-key-themes)   ; defined by evil-collection-corfu, loaded with corfu
+(setq evil-collection-corfu-key-themes '(default tab-n-go magic-return))
 (require 'corfu)
 (require 'corfu-auto)
 (setq corfu-auto t            ; pop up automatically, as auto-complete did
       corfu-auto-prefix 2
       corfu-auto-delay 0.1
+      corfu-preselect 'prompt ; tab-n-go sets this too; stated here so it's not a surprise
+      corfu-cycle t
       ;; Haskell buffers stay popup-free; :cheatsheet haskell-mode says how to turn it on.
       global-corfu-modes '((not haskell-mode haskell-cabal-mode haskell-interactive-mode) t))
 (global-corfu-mode 1)
