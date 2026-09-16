@@ -1,0 +1,6 @@
+Beamer: LaTeX presentation helpers from init.el.
+Run M-x beamer-utils in the buffer first; it binds these keys locally and
+switches org-latex export to minted (pdflatex --shell-escape, three passes).
+
+  C-c f      beamer/new-slide: prompt for a frame title, insert \begin{frame} ... \end{frame} with point inside
+  C-c s      beamer/simplified-block: insert an "In Plain English" exampleblock with point inside

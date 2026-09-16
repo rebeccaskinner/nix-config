@@ -52,11 +52,9 @@
 ;; -------------------------------------------------------------------
 ;; 🧠 gptel Keybindings (for code + Org mode buffers)
 ;;
-;; C-c g g   →  Open a new gptel chat buffer for the current context
-;; C-c g s   →  Send a prompt at point (or from minibuffer) to LLM
-;; C-c g r   →  Send the active region (or Org subtree) to LLM
-;; C-c g b   →  Interactively choose/switch gptel backend (OpenAI / Claude)
-;; C-c g t   →  Open gptel-transient menu (adjust model, temperature, etc.)
+;; The C-c g bindings are documented in cheatsheets/gptel.txt; view it
+;; with `:cheatsheet gptel' (or M-x cheatsheet).  Keep that file in sync
+;; with the :bind form below.
 ;;
 ;; Notes:
 ;; - Works in programming modes and inside Org-mode source blocks.
@@ -74,15 +72,14 @@
 
 (use-package gptel
   :ensure t
-  :commands (gptel gptel-send gptel-send-region gptel-fn-complete gptel-set-backend)
+  :commands (gptel gptel-send gptel-add)
   :init
   ;; Tweak display; put chat buffers at bottom
   (setq gptel-display-buffer-action '(display-buffer-at-bottom))
+  ;; These are global, so they also apply in org and prog-mode buffers.
   :bind (("C-c g g" . gptel)               ;; open chat buffer for current file
-         ("C-c g s" . gptel-send)          ;; send prompt at point / minibuffer
+         ("C-c g s" . gptel-send)          ;; send prompt at point (or region)
          ("C-c g a" . gptel-add)           ;; add the active region to gptel's context
-
-         ("C-c g f" . gptel-fn-complete)   ;; complete current function
          ("C-c g b" . my/gptel-choose-backend)) ;; quickly switch backends
   :config
   ;; --- Define backends ---
@@ -105,23 +102,19 @@
   ;; Default: OpenAI
   (setq gptel-backend (alist-get 'openai gptel-backends))
 
-  ;; ;; Helper to switch backends quickly
+  ;; Helper to switch backends quickly.  gptel has no setter for this;
+  ;; the backend and model are plain variables, and the model must be
+  ;; one the new backend knows about, so reset it to that backend's
+  ;; first model.
   (defun my/gptel-choose-backend ()
     "Interactively choose a gptel backend (OpenAI/Claude)."
     (interactive)
     (let* ((choice (intern (completing-read "gptel backend: "
                                             (mapcar #'car gptel-backends) nil t)))
            (backend (alist-get choice gptel-backends)))
-      (gptel-set-backend backend)
-      (message "gptel backend set to %s" choice)))
-
-  ;; --- Org-mode niceties ---
-  ;; Use the same keybindings inside Org buffers
-  (with-eval-after-load 'org
-    (define-key org-mode-map (kbd "C-c g g") #'gptel)
-    (define-key org-mode-map (kbd "C-c g r") #'gptel-send-region)
-    (define-key org-mode-map (kbd "C-c g s") #'gptel-send))
-)
+      (setq gptel-backend backend
+            gptel-model (car (gptel-backend-models backend)))
+      (message "gptel backend set to %s (%s)" choice gptel-model))))
 
 ;; Optional: a quick transient UI for switching models/params
 ;; (use-package gptel-transient
@@ -248,68 +241,6 @@
   )
 
 (add-hook 'dhall-mode-hook 'my-dhall-mode-config)
-
-;; Extra functions for pml mode
-;; PML editing helpers
-(defvar pml/tag-name-history '())
-(defvar pml/tag-contents-history '())
-(defvar pml/code-block-history '())
-(defvar pml/inline-code-history '())
-
-(defun pml/insert-tag-with-value (tag val)
-  (insert (format "<%s>%s</%s>" tag val tag)))
-
-(defun pml/make-tag ()
-  "Read a tag name and contents from the minibuffer, then insert the tag."
-  (interactive)
-  (let ((tag (read-string "tag: " nil 'pml/tag-name-history)))
-    (add-to-history 'pml/tag-name-history tag)
-    (let ((contents (read-string "contents: " nil 'pml/tag-contents-history)))
-      (add-to-history 'pml/tag-contents-history contents)
-      (pml/insert-tag-with-value tag contents))))
-
-(defun pml/insert-code-block-without-contents (lang)
-  (insert (format "{:language=\"%s\"}" lang))
-  (newline-and-indent)
-  (insert "~~~")
-  (newline-and-indent)
-  (insert "~~~")
-  (forward-line -1)
-  (end-of-line)
-  (newline-and-indent))
-
-(defun pml/insert-code-block-with-contents (lang contents)
-  (pml/insert-code-block-without-contents lang)
-  (insert contents)
-  (forward-line 1)
-  (end-of-line)
-  (newline-and-indent))
-
-(defun pml/add-backtick-code ()
-  "Add some inline code using backticks."
-  (interactive)
-  (let ((code (read-string "code: " nil 'pml/inline-code-history)))
-    (insert (format "`%s`" code))))
-
-(defun pml/add-code-block ()
-  "Add a code block without spawning a mini-window."
-  (interactive)
-  (let ((lang (read-string "language: " nil 'pml/code-block-history)))
-    (add-to-history 'pml/code-block-history lang)
-    (pml/insert-code-block-without-contents lang)))
-
-(defun pml/insert-lambda ()
-  "Insert a literal lambda character."
-  (interactive)
-  (insert "λ"))
-
-(defun pml-mode-tools ()
-  "Bind PML editing helpers in the current buffer."
-  (interactive)
-  (local-set-key (kbd "C-c l") 'pml/insert-lambda)
-  (local-set-key (kbd "C-c t") 'pml/make-tag)
-  (local-set-key (kbd "C-c b") 'pml/add-code-block)
-  (local-set-key (kbd "C-c m") 'pml/add-backtick-code))
 
 ;; Markdown editing helpers (for code-focused blog posts)
 (defvar markdown/tag-name-history '())
@@ -661,5 +592,115 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
 
 (add-hook 'haskell-cabal-mode-hook 'haskell-config-setup-cabal-mode)
 (add-hook 'before-save-hook 'haskell-config-save-hook)
+
+;; -------------------------------------------------------------------
+;; Cheatsheets:  M-x cheatsheet  /  :cheatsheet [NAME]
+;;
+;; Each sheet is a plain-text file, ~/.emacs.d/cheatsheets/NAME.txt,
+;; installed from emacs/emacs.d/cheatsheets in home-manager.  With no
+;; argument the sheets for the current buffer are shown: any active
+;; minor mode with a sheet (e.g. pml-mode), then the major mode and its
+;; parents (gfm-mode falls back to markdown-mode).  `:cheatsheet gptel'
+;; or `C-u M-x cheatsheet' picks a sheet by name.
+;;
+;; Sheet format: a line indented by exactly two spaces is a key entry,
+;; "  KEY  description", where KEY is in `kbd' syntax.  Each KEY is
+;; looked up in the buffer the command was run from, and entries that
+;; are not bound there are flagged, so a sheet can't silently drift
+;; from the real bindings.  Everything else is free text.
+;; -------------------------------------------------------------------
+(defvar cheatsheet-directory (expand-file-name "cheatsheets" user-emacs-directory)
+  "Directory holding cheatsheet text files, one NAME.txt per sheet.")
+
+(defconst cheatsheet--key-line-regexp "^  \\([^ ].*?\\)  +\\S-"
+  "Match a \"  KEY  description\" line; group 1 is KEY.")
+
+(defun cheatsheet--file (name)
+  "Path of the cheatsheet called NAME."
+  (expand-file-name (concat name ".txt") cheatsheet-directory))
+
+(defun cheatsheet--available ()
+  "Names of every sheet in `cheatsheet-directory'."
+  (when (file-directory-p cheatsheet-directory)
+    (mapcar #'file-name-sans-extension
+            (directory-files cheatsheet-directory nil "\\.txt\\'"))))
+
+(defun cheatsheet--names-for-buffer ()
+  "Sheet names that apply to the current buffer.
+Active minor modes come first, then the major mode and its parents."
+  (let ((modes (seq-filter (lambda (m) (and (boundp m) (symbol-value m)))
+                           minor-mode-list))
+        (mode major-mode))
+    (while mode
+      (setq modes (append modes (list mode)))
+      (setq mode (get mode 'derived-mode-parent)))
+    (seq-filter (lambda (name) (file-readable-p (cheatsheet--file name)))
+                (mapcar #'symbol-name modes))))
+
+(defun cheatsheet--key-bound-p (key)
+  "Non-nil if KEY, a `kbd' string, is bound in the current buffer."
+  (condition-case nil
+      (let ((binding (key-binding (kbd key))))
+        (and binding (not (numberp binding))))
+    (error nil)))
+
+(defun cheatsheet--render (name source-buffer)
+  "Return the text of sheet NAME, flagging keys unbound in SOURCE-BUFFER."
+  (with-temp-buffer
+    (insert-file-contents (cheatsheet--file name))
+    (goto-char (point-min))
+    (while (re-search-forward cheatsheet--key-line-regexp nil t)
+      (let ((key (match-string 1)))
+        (unless (with-current-buffer source-buffer (cheatsheet--key-bound-p key))
+          (end-of-line)
+          (insert "   [not bound in this buffer]"))))
+    (buffer-string)))
+
+(define-derived-mode cheatsheet-mode special-mode "Cheatsheet"
+  "Read-only display of a cheatsheet.  Press q to close it.")
+
+(with-eval-after-load 'evil
+  (evil-set-initial-state 'cheatsheet-mode 'motion))
+
+(defun cheatsheet (&optional name)
+  "Show the cheatsheets for the current buffer, or the sheet called NAME.
+With a prefix argument, prompt for NAME."
+  (interactive
+   (list (when current-prefix-arg
+           (completing-read "Cheatsheet: " (cheatsheet--available) nil t))))
+  (let* ((source (current-buffer))
+         (available (cheatsheet--available))
+         (names (cond ((and name (not (string-empty-p name))) (list name))
+                      ((cheatsheet--names-for-buffer))
+                      (t (list (completing-read
+                                (format "No cheatsheet for %s; show: " major-mode)
+                                available nil t)))))
+         (missing (seq-remove (lambda (n) (member n available)) names)))
+    (when missing
+      (user-error "No cheatsheet named %s (available: %s)"
+                  (car missing) (string-join available ", ")))
+    (let ((buf (get-buffer-create "*cheatsheet*"))
+          (others (seq-difference available names)))
+      (with-current-buffer buf
+        (let ((inhibit-read-only t))
+          (erase-buffer)
+          (insert (string-join
+                   (mapcar (lambda (n) (cheatsheet--render n source)) names)
+                   "\n\n"))
+          (when others
+            (insert (format "\n\nOther sheets: %s   (:cheatsheet NAME)\n"
+                            (string-join others ", "))))
+          (goto-char (point-min)))
+        (cheatsheet-mode))
+      (select-window
+       (display-buffer buf '(display-buffer-at-bottom
+                             . ((window-height . fit-window-to-buffer))))))))
+
+;; evil is required unconditionally near the top of this file.
+(evil-define-command cheatsheet-ex (&optional name)
+  "Show a cheatsheet from the ex command line: `:cheatsheet [NAME]'."
+  (interactive "<a>")
+  (cheatsheet name))
+(evil-ex-define-cmd "cheatsheet" 'cheatsheet-ex)
 
 ;;; init.el ends here

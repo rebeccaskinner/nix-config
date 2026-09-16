@@ -1,0 +1,13 @@
+pml-mode: PragProg markup, a minor mode layered on markdown-mode (pml-mode.el).
+These bindings take precedence over the markdown-mode ones.
+
+  C-c b      pml-insert-code-block: prompt for a language, insert {:language="lang"} and ~~~ fences, wraps region
+  C-c m      pml-add-backtick-code: inline `code`, wraps region
+  C-c t      pml-make-tag: prompt for a tag and contents, insert <tag>contents</tag>
+  C-c l      pml-insert-lambda: insert a literal λ
+  C-c e      pml-embed-file: pick a file under the book root and an optional START:/END: part, insert <embed file=... part=.../>
+  TAB        pml-contextual-tab: on an <embed/> line, toggle an inline preview of the embedded code; elsewhere markdown-cycle (or evil-jump-forward in normal state)
+
+Ex command:  :embed-file does the same as C-c e.
+
+Not bound:  M-x pml-clear-all-previews removes every embed preview overlay.

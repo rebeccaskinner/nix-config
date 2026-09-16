@@ -1,0 +1,14 @@
+org-mode: custom bindings from init.el.
+
+  C-c b      org/add-code-block: prompt for a language, insert #+begin_src lang ... #+end_src, wraps region
+  C-c m      org/add-inline-code: prompt for text, insert ~text~, wraps region
+  C-c a      org-agenda (global; the agenda file is ~/agenda.org)
+  C-c g g    gptel chat buffer (see :cheatsheet gptel for the rest)
+  C-c g s    gptel-send
+
+Beamer helpers are a separate sheet: :cheatsheet beamer.
+
+Handy org built-ins the helpers above wrap:
+  C-c C-,    org-insert-structure-template: any block type, wraps region
+  C-c C-x C-f  org-emphasize: prompt for a marker, wraps region
+  C-c '      org-edit-special: edit the src block at point in its own major mode
