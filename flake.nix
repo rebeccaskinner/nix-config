@@ -135,7 +135,14 @@
                   home-manager.useGlobalPkgs = true;
                   home-manager.useUserPackages = true;
                   home-manager.users.rebecca = ./julia.nix;
-                  home-manager.extraSpecialArgs = { inherit inputs; system = "x86_64-linux"; };
+                  home-manager.extraSpecialArgs = {
+                    inherit inputs;
+                    pkgsStable = import nixpkgs-stable {
+                      system = "x86_64-linux";
+                      config.allowUnfree = true;
+                      config.cudaSupport = false;
+                    };
+                    system = "x86_64-linux"; };
                 }
             ];
           };

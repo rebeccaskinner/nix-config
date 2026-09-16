@@ -1,19 +1,252 @@
-{ config, pkgs, inputs, system, ... }:
+{ config, pkgs, pkgsStable, cudaPkgs, inputs, system, ... }:
 
 let
-  load     = f: import f { inherit pkgs utils; };
-  utils    = import ./utils;
-  games    = load ./collections/games;
-in
-import ./generic.nix
-  { desktopEnvironment = "gnome";
-    platform = "x86-64";
-    extraEnvironments = [ (load ./configs/kitty.nix)
-                          games.allGames
-                        ];
-    extraPackages = [ pkgs.gparted ];
-    developmentEnvironmentArgs = {
-      haskell-formatter-package = ./development-environment/haskell/formatter/fourmolu.nix;
+
+  utils = import ./utils;
+  load = f: import f { inherit config pkgs pkgsStable cudaPkgs inputs system utils; };
+
+  cfg = p: utils.env.configOnlyEnvironment (import p);
+  mkConfigs = cfgPaths:
+    utils.env.concatEnvironments (builtins.map cfg cfgPaths);
+
+  mkImport = p: utils.env.importOnlyEnvironment (
+    import p { inherit config pkgs pkgsStable cudaPkgs inputs system utils; }
+  );
+  mkImports = importPaths:
+    utils.env.concatEnvironments (builtins.map mkImport importPaths);
+
+  desktopEnv = utils.env.concatEnvironments [
+    (load ./desktop-environment/xserverTools.nix)
+    (load ./desktop-environment/gnome)
+  ];
+
+  gtkTheme = "Adwaita:dark";
+
+  basicPackages = utils.env.packagesEnvironment (with pkgs; [
+    bat
+    pulsemixer
+    file
+    alsa-utils
+    gifsicle
+    dnsutils
+    bitwarden-cli
+    ripgrep
+    unzip
+    vim
+    # renameutils for qmv, but it conflicts with imv the image viewer
+    # renameutils
+    rename
+    graphicsmagick
+    mat2
+  ]);
+
+  audioFilteringPackages = utils.env.packagesEnvironment (with pkgs; [
+    easyeffects
+    crosspipe
+    pamixer
+  ]);
+
+  games = utils.env.packagesEnvironment (with pkgs; [
+    nethack
+    bastet
+    nsnake
+    ninvaders
+    prismlauncher
+    lbreakouthd
+    kdePackages.bomber
+    kdePackages.kbounce
+    kdePackages.kolf
+    kdePackages.kbreakout
+    kdePackages.kollision
+    kdePackages.ksnakeduel
+    kdePackages.kreversi
+    neverball
+    xmoto
+  ]);
+
+  libbluray = pkgs.libbluray.override {
+    withAACS = true;
+    withBDplus = true;
+    withJava = true;
+  };
+  vlc = pkgs.vlc.override { }; # inherit libbluray; };
+
+  multimedia = let
+    customPkgs = [ vlc
+                   libbluray
+                   pkgsStable.ccextractor
+                 ];
+    defaultPkgs = with pkgs; [
+      makemkv
+      mkvtoolnix
+      handbrake
+      ffmpeg
+      jellyfin-media-player
+      yt-dlp
+      cdparanoiaIII
+      abcde
+    ];
+  in utils.env.packagesEnvironment (customPkgs ++ defaultPkgs);
+
+  ebookTools = utils.env.packagesEnvironment (with pkgs; [
+    scantailor-advanced
+    tesseract
+    pdftk
+    ghostscript
+    calibre
+  ]);
+
+  aspellPkgs = pkgs.aspellWithDicts(dicts: with dicts; [ en en-computers en-science ]);
+
+  applications = utils.env.packagesEnvironment (with pkgs; [
+    anki # flashcards
+    baobab # disk usage visualization
+    wireshark # network traffic
+    gimp # image editing
+    drawio # diagrams
+    inkscape # svg editor
+    scrot # screenshots
+    qiv # image viewer
+    bitwarden-desktop # password manager
+    slack # communications
+    thunderbird # email
+    libreoffice # office suite
+    signal-desktop # messaging
+    kiwix # offline website archive
+    kiwix-tools # tools for kiwix
+    # simplex-chat-desktop # messaging
+    kazam # screen recording
+    aspellPkgs # spell checking
+    pandoc # document conversion
+    ispell # spell checking
+    texliveFull
+    python3Packages.pygments # syntax highlighting
+    evince # document viewer
+    kdePackages.okular # document viewer
+  ]);
+
+  devPackages = utils.env.packagesEnvironment (with pkgs; [
+    shellcheck
+    nix-index
+    curl
+    httpie
+    jq
+    s3cmd
+  ]);
+
+  rofi = import ./configs/rofi
+    { rofi-hoogle-plugin = inputs.rofi-hoogle.outputs.packages.${system}.rofi-hoogle;
+      inherit pkgs utils;
     };
-    inherit config pkgs inputs system;
-  }
+
+  configs = mkImports [
+    ./configs/kitty.nix
+    ./configs/dircolors.nix
+    ./configs/direnv.nix
+    ./configs/git.nix
+    ./configs/gpg.nix
+    ./configs/fzf.nix
+    ./configs/tmux.nix
+    ./configs/bash.nix
+    ./configs/java.nix
+    ./configs/nextcloud-client.nix
+    ./configs/chromium.nix
+    ./configs/imv.nix
+    ./configs/polkit-gnome.nix
+  ];
+
+  haskellDevelopmentEnv = import ./development-environment/haskell {
+    inherit pkgs utils;
+    formatter = ./development-environment/haskell/formatter/fourmolu.nix;
+  };
+
+  rustDevelopmentEnv =
+    import ./development-environment/rust { inherit pkgs utils; };
+
+  gccDevelopmentEnv =
+    import ./development-environment/gcc { inherit pkgs utils; };
+
+  globalDevelopmentEnv =
+    import ./development-environment/global-dev-env { inherit pkgs utils; };
+
+  agentConfig = utils.env.packagesEnvironment (with pkgs; [ claude-code ] );
+
+  devTools = utils.env.concatEnvironments [
+    devPackages
+    haskellDevelopmentEnv
+    rustDevelopmentEnv
+    gccDevelopmentEnv
+    globalDevelopmentEnv
+    agentConfig
+  ];
+
+  emacsConfig = import ./emacs {
+    inherit pkgs utils;
+    createMacosSymlink = false;
+    emacsPackage = pkgs.emacs;
+    extraPackages = ePkgs:
+      (with ePkgs; [ rustic cargo haskell-mode nix-haskell-mode ]);
+    extraConfigs =
+      [ (builtins.readFile ./development-environment/rust/rust.el) ];
+  };
+
+  environment =
+    utils.env.concatEnvironments [
+      desktopEnv
+      basicPackages
+      configs
+      games
+      multimedia
+      applications
+      rofi
+      devTools
+      emacsConfig
+      audioFilteringPackages
+    ];
+in {
+  # Let Home Manager install and manage itself.
+  programs.home-manager.enable = true;
+
+  # Home Manager needs a bit of information about you and the
+  # paths it should manage.
+  home.username = "rebecca";
+  home.homeDirectory = "/home/rebecca";
+  imports = environment.imports;
+  home.packages = environment.packages;
+  home.sessionVariables = {
+    GTK_THEME = gtkTheme;
+    EDITOR = "emacs";
+  };
+  # This value determines the Home Manager release that your
+  # configuration is compatible with. This helps avoid breakage
+  # when a new Home Manager release introduces backwards
+  # incompatible changes.
+  #
+  # You can update Home Manager without changing this value. See
+  # the Home Manager release notes for a list of state version
+  # changes in each release.
+  home.stateVersion = "24.11";
+
+}
+
+
+
+# { config, pkgs, inputs, system, ... }:
+#
+# let
+#   load     = f: import f { inherit pkgs utils; };
+#   utils    = import ./utils;
+#   games    = load ./collections/games;
+# in
+# import ./generic.nix
+#   { desktopEnvironment = "gnome";
+#     platform = "x86-64";
+#     extraEnvironments = [ (load ./configs/kitty.nix)
+#                           games.allGames
+#                         ];
+#     extraPackages = [ pkgs.gparted ];
+#     developmentEnvironmentArgs = {
+#       haskell-formatter-package = ./development-environment/haskell/formatter/fourmolu.nix;
+#     };
+#     inherit config pkgs inputs system;
+#   }

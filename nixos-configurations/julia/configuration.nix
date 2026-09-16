@@ -15,7 +15,7 @@
 
 
   security.pki.certificates = [
-''
+    ''
 -----BEGIN CERTIFICATE-----
 MIIFsjCCA5qgAwIBAgIULKseXC11/QX2Yn43njCir8qHbRcwDQYJKoZIhvcNAQEL
 BQAwFDESMBAGA1UEAwwJYm9yZy5jdWJlMB4XDTIzMDQyMzA0MjgyNVoXDTMzMDQy
@@ -138,27 +138,22 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
   };
 
   services.tailscale.enable = true;
-  services.logind.lidSwitchExternalPower = "ignore";
+  services.logind.settings.Login.HandleLidSwitchExternalPower = "ignore";
 
-  services.xserver.enable = true;
-  services.xserver.videoDrivers = ["nvidia"];
   hardware.graphics.enable = true;
 
-  # services.displayManager.sddm.enable = true;
-  services.xserver.displayManager.gdm.enable = true;
-  services.libinput.enable = true;
-  services.xserver = {
-    xkb = {
-      layout = "us";
-      options = "ctrl:nocaps";
+  services = {
+    libinput.enable = true;
+    xserver = {
+      enable = true;
+      videoDrivers = ["nvidia"];
+      xkb = {
+        layout = "us";
+        options = "ctrl:nocaps";
+      };
     };
-    # windowManager.xmonad.enable = true;
-    # desktopManager.plasma5 = { enable = true; useQtScaling = true; };
+    displayManager.gdm.enable = true;
     desktopManager.gnome.enable = true;
-    # desktopManager.cinnamon.enable = true;
-    # desktopManager.enlightenment.enable = true;
-    # desktopManager.xfce.enable = true;
-    # desktopManager.mate.enable = true;
   };
 
   hardware.nvidia = {
@@ -178,9 +173,9 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
     settings = {
       General = {
         Enable = "Source,Sink,Media,Socket";
-        };
       };
     };
+  };
 
   services.fstrim.enable = true;
   fileSystems."/".options = [ "noatime" "nodiratime" "discard" ];
@@ -196,13 +191,7 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
               ];
   };
 
-  services.resolved = {
-    enable = true;
-    dnssec = "true";
-    domains = ["~."];
-    fallbackDns = ["192.168.50.1 # local network DNS"];
-  };
-
+  networking.networkmanager.dns = "dnsmasq";
 
   # Enable sound.
   # sound.enable = true;
@@ -236,7 +225,7 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
     vim
     git
     firefox
-    xorg.xrandr
+    xrandr
     bluez
     bluez-tools
     pavucontrol
@@ -253,12 +242,10 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
     man-pages-posix
     pciutils
     usbutils
-    kde-gtk-config
     scowl
     ripgrep
     bottom
     smartmontools
-
     tailscale
     exfatprogs
 
@@ -270,7 +257,6 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
 
   documentation.dev.enable = true;
   programs.steam.enable = true;
-  programs.ssh.startAgent = true;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
