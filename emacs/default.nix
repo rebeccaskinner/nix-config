@@ -70,7 +70,6 @@ utils.env.importOnlyEnvironment ({
             flycheck
             direnv
             fill-column-indicator
-            auto-complete
             pdf-tools
             proof-general
             magit
@@ -89,14 +88,20 @@ utils.env.importOnlyEnvironment ({
             darkplum-theme
             dracula-theme
             inkpot-theme
-            counsel
-            counsel-org-clock
-            counsel-tramp
-            counsel-etags
-            counsel-jq
-            swiper
             fzf
             vterm
+
+            # completion: minibuffer
+            vertico
+            orderless
+            marginalia
+            consult
+            embark
+            embark-consult
+            # completion: in-buffer
+            corfu
+            corfu-terminal
+            cape
 
             # LLMs
             org-ai
@@ -106,6 +111,11 @@ utils.env.importOnlyEnvironment ({
 
             # evil
             evil
+            evil-collection
+            evil-org
+
+            # markdown (also pulled in by pml-mode, but init.el configures it directly)
+            markdown-mode
 
             # Git / Github integration
             forge
@@ -126,11 +136,6 @@ utils.env.importOnlyEnvironment ({
             treemacs
             lsp-treemacs
             lsp-ui
-            company # popups
-            helm
-            helm-lsp
-            ivy
-            lsp-ivy
             dap-mode
             which-key
 

@@ -8,16 +8,33 @@
 
 (require 'pml-mode)
 
+;; Evil.  evil-collection needs both of these set before evil loads.
+(setq evil-want-integration t
+      evil-want-keybinding nil)
+(require 'evil)
+(evil-mode 1)
+;; Consistent vim keys in magit, dired, help, org-agenda, and the other
+;; special-mode buffers.
+(require 'evil-collection)
+(evil-collection-init)
+;; Org-specific keys (heading motion, table navigation, agenda).
+(with-eval-after-load 'org
+  (require 'evil-org)
+  (add-hook 'org-mode-hook #'evil-org-mode)
+  (require 'evil-org-agenda)
+  (evil-org-agenda-set-keys))
+
+;; Load the theme once; it applies to every later frame, including
+;; frames the daemon creates.  Per-frame work is limited to font and
+;; chrome below.
+(load-theme 'darkplum t)
+
 (defun configure-look-and-feel ()
-  "Configure theme, font, and chrome. Safe to call per-frame under the daemon."
-  (load-theme 'darkplum t)
+  "Configure font and chrome.  Safe to call per-frame under the daemon."
   (set-face-attribute 'default nil :family "FiraCode" :foundry "ADBO" :height 130)
   (menu-bar-mode -1)
   (tool-bar-mode -1)
   (scroll-bar-mode -1))
-
-  (require 'evil)
-  (evil-mode 1)
 
 (defun deamon-look-and-feel (frame)
   "Wrapper to run look-and-feel per FRAME with emacsclient."
@@ -71,7 +88,6 @@
 ;; --- LLMs in Emacs with gptel + Org + OpenAI + Claude ---
 
 (use-package gptel
-  :ensure t
   :commands (gptel gptel-send gptel-add)
   :init
   ;; Tweak display; put chat buffers at bottom
@@ -90,11 +106,11 @@
           :endpoint "/v1/chat/completions"
           :models '("gpt-4o" "gpt-4o-mini" "gpt-5" "gpt-5-mini")))
 
+  ;; No :models here: gptel's built-in list for this backend tracks
+  ;; current Claude releases, so it stays fresh with package updates.
   (setq my/gptel-claude
         (gptel-make-anthropic "claude"
-          :key   (getenv "ANTHROPIC_API_KEY")
-          ;; Use any current Claude chat-completion model you prefer:
-          :models '("claude-opus-4-7" "claude-sonnet-4-6" "claude-haiku-4-5-20251001")))
+          :key   (getenv "ANTHROPIC_API_KEY")))
 
   (setq gptel-backends `((openai . ,my/gptel-openai)
                          (claude . ,my/gptel-claude)))
@@ -124,7 +140,6 @@
 
 ;; Optional: async HTTP client gptel can use if available
 (use-package plz
-  :ensure t
   :defer t)
 
 ;; Tip: set your API keys in your env (e.g., ~/.profile or shell rc)
@@ -149,14 +164,81 @@
 
 (setq-default indent-tabs-mode nil)
 
-(use-package ivy
-  :ensure t
-  :config
-  (progn
-    (ivy-mode)
-    (setq ivy-use-virtual-buffers t
-          enable-recursive-minibuffers t))
-)
+;; Keep Customize output out of init.el, which is a read-only symlink
+;; into the Nix store.  ~/.emacs.d itself is a real, writable directory.
+(setq custom-file (expand-file-name "custom.el" user-emacs-directory))
+(when (file-exists-p custom-file)
+  (load custom-file))
+
+;; Built-in conveniences
+(which-key-mode 1)             ; show the completions of C-c, C-c g, ... as you type
+(savehist-mode 1)              ; minibuffer histories (code-block languages, etc.) survive restarts
+(recentf-mode 1)               ; recently visited files
+(global-auto-revert-mode 1)    ; pick up changes made outside emacs (git, formatters)
+(electric-pair-mode 1)         ; auto-insert matching brackets and quotes
+(when (fboundp 'pixel-scroll-precision-mode)
+  (pixel-scroll-precision-mode 1))
+
+;; -------------------------------------------------------------------
+;; Completion.  Minibuffer: vertico + orderless + marginalia + consult
+;; + embark.  In-buffer: corfu + cape.  Keys are in :cheatsheet completion.
+;; -------------------------------------------------------------------
+(setq enable-recursive-minibuffers t)   ; embark/consult open a minibuffer from the minibuffer
+
+;; Minibuffer UI.  savehist-mode (above) is what lets vertico sort by history.
+(require 'vertico)
+(require 'vertico-directory)
+(vertico-mode 1)
+;; Same as ivy's C-M-j: accept what I typed rather than the highlighted match.
+(define-key vertico-map (kbd "C-M-j") #'vertico-exit-input)
+;; Directory navigation like ivy: RET enters a directory, DEL backs up a component.
+(define-key vertico-map (kbd "RET") #'vertico-directory-enter)
+(define-key vertico-map (kbd "DEL") #'vertico-directory-delete-char)
+(define-key vertico-map (kbd "M-DEL") #'vertico-directory-delete-word)
+(add-hook 'rfn-eshadow-update-overlay-hook #'vertico-directory-tidy)
+
+;; Matching: space-separated terms in any order; `!term' excludes.
+(require 'orderless)
+(setq completion-styles '(orderless basic)
+      completion-category-defaults nil
+      completion-category-overrides '((file (styles partial-completion))))
+
+;; Docstrings next to M-x commands, details next to files and buffers.
+(marginalia-mode 1)
+
+;; consult: better versions of a few built-in commands.
+(require 'consult)
+(setq consult-narrow-key "<")                     ; e.g. "< f" in consult-buffer shows only files
+(global-set-key (kbd "C-x b") #'consult-buffer)   ; buffers + recent files + bookmarks (ivy's virtual buffers)
+(global-set-key (kbd "M-g o") #'consult-outline)  ; jump to a heading (markdown, org) or top-level form
+(global-set-key (kbd "M-g i") #'consult-imenu)    ; jump to a definition
+(global-set-key (kbd "M-s r") #'consult-ripgrep)  ; grep the project
+
+;; embark: act on the candidate or the thing at point.
+(require 'embark)
+(require 'embark-consult)
+(global-set-key (kbd "M-o") #'embark-act)                          ; like ivy's M-o
+(define-key minibuffer-local-map (kbd "C-c C-o") #'embark-export)  ; like ivy-occur: results to a buffer
+
+;; In-buffer popup completion.
+(require 'corfu)
+(require 'corfu-auto)
+(setq corfu-auto t            ; pop up automatically, as auto-complete did
+      corfu-auto-prefix 2
+      corfu-auto-delay 0.1
+      ;; Haskell buffers stay popup-free; :cheatsheet haskell-mode says how to turn it on.
+      global-corfu-modes '((not haskell-mode haskell-cabal-mode haskell-interactive-mode) t))
+(global-corfu-mode 1)
+;; Emacs 31 can draw the popup in terminal frames natively.  Older Emacs
+;; (the Mac host runs 30.x) cannot, so there corfu-terminal draws an
+;; overlay popup in tty frames and steps aside in GUI frames, which
+;; makes it safe to enable globally under the daemon.
+(when (< emacs-major-version 31)
+  (corfu-terminal-mode 1))
+;; Completion sources for modes that provide none of their own: words
+;; from other buffers (what auto-complete gave us) and file paths.
+(add-hook 'completion-at-point-functions #'cape-dabbrev)
+(add-hook 'completion-at-point-functions #'cape-file)
 
 ;; Turn on visual line-wrapping mode
 (add-hook 'text-mode-hook 'turn-on-visual-line-mode)
@@ -171,12 +253,10 @@
 
 ;; flycheck
 (use-package flycheck
-  :ensure t
   :hook (after-init . global-flycheck-mode))
 
 ;; Rainbow Delimiters
 (use-package rainbow-delimiters
-  :ensure t
   :hook (prog-mode . rainbow-delimiters-mode))
 
 ;; Use built-in fill-column-indicator mode
@@ -184,7 +264,6 @@
 (setq display-fill-column-indicator-character ?\u2502)  ;; Set the character if you want a custom one
 
 (use-package display-fill-column-indicator
-  :ensure nil  ;; Built-in, no need to install
   :hook (after-init . global-display-fill-column-indicator-mode)  ;; Enable globally
   :config
   ;; Set the color and width (using face attributes)
@@ -219,7 +298,6 @@
 (global-set-key (kbd "C-c n") 'toggle-line-numbers)
 
 (use-package expand-region
-     :ensure t
      :bind (("C-=" . er/expand-region)))
 
 ;; mode specific configs
@@ -227,9 +305,10 @@
   "Configure some sane defaults shared across various programming-related major modes."
   (set-fill-column 80)
   (auto-fill-mode 1)
-  (auto-complete-mode 1)
   (rainbow-delimiters-mode 1)
-  (add-hook 'before-save-hook 'whitespace-cleanup)
+  ;; Buffer-local: a global hook here would strip trailing whitespace
+  ;; from every buffer, including markdown's two-space line breaks.
+  (add-hook 'before-save-hook 'whitespace-cleanup nil t)
   (setq tab-width 2)
   (local-set-key (kbd "C-)") 'forward-sexp)
   (local-set-key (kbd "C-(") 'backward-sexp)
@@ -243,6 +322,10 @@
 (add-hook 'dhall-mode-hook 'my-dhall-mode-config)
 
 ;; Markdown editing helpers (for code-focused blog posts)
+;; Highlight fenced code blocks with the named language's major mode.
+;; (C-c ' edits the block at point in that mode, like org's org-edit-special.)
+(setq markdown-fontify-code-blocks-natively t)
+
 (defvar markdown/tag-name-history '())
 (defvar markdown/tag-contents-history '())
 (defvar markdown/code-block-history '())
@@ -491,8 +574,6 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
 ;; Enable 80-column fill indicator for C files
 (add-hook 'c-mode-hook 'turn-on-auto-fill)
 
-;; set up auto-complete-mode for C files
-(add-hook 'c-mode-hook 'auto-complete-mode)
 (add-hook 'c-mode-hook 'extra-cc-keybindings)
 
 (defcustom haskell-pretty-printer nil
