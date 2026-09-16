@@ -1,4 +1,4 @@
-;;; init --- Emacs configuration
+;;; init --- Emacs configuration -*- lexical-binding: t; -*-
 ;;; provide (init)
 ;;; Commentary:
 
@@ -365,6 +365,48 @@
   (local-set-key (kbd "C-c m") 'markdown/add-inline-code))
 
 (add-hook 'markdown-mode-hook 'markdown-mode-tools)
+
+;; Org editing helpers (org-mode equivalents of the pml/markdown helpers above)
+;;
+;; Org already provides most of this natively:
+;;   C-c C-,       org-insert-structure-template  (prompts for block type, wraps region)
+;;   C-c C-x C-f   org-emphasize                  (prompts for marker, wraps region)
+;;   C-c '         org-edit-special               (edit a src block in its native mode)
+;; These wrappers just pre-fill "src <lang>" / "~" and keep a minibuffer
+;; history, so the bindings match the pml and markdown ones.
+(defvar org/code-block-history '())
+(defvar org/inline-code-history '())
+
+(defun org/add-code-block ()
+  "Insert a #+begin_src block, prompting for the language.
+With an active region, wrap the region in the block; otherwise
+leave point on an empty line inside the block."
+  (interactive)
+  (let ((lang (string-trim (read-string "language: " nil 'org/code-block-history)))
+        (region? (use-region-p)))
+    (unless (string-empty-p lang)
+      (add-to-history 'org/code-block-history lang))
+    (org-insert-structure-template (string-trim (concat "src " lang)))
+    (unless (or region? (string-empty-p lang))
+      (open-line 1))))
+
+(defun org/add-inline-code ()
+  "Insert inline code wrapped in ~ markers.
+With an active region, wrap the region; otherwise read the code
+from the minibuffer."
+  (interactive)
+  (if (use-region-p)
+      (org-emphasize ?~)
+    (let ((code (read-string "code: " nil 'org/inline-code-history)))
+      (add-to-history 'org/inline-code-history code)
+      (insert (format "~%s~" code)))))
+
+(defun org-mode-tools ()
+  "Bind org editing helpers in the current buffer."
+  (local-set-key (kbd "C-c b") 'org/add-code-block)
+  (local-set-key (kbd "C-c m") 'org/add-inline-code))
+
+(add-hook 'org-mode-hook 'org-mode-tools)
 
 ;; emacs lisp mode configuration
 (defun elisp-config ()

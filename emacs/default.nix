@@ -29,12 +29,12 @@ let
   darkplum-theme = emacsPackage.pkgs.melpaBuild {
     name = "darkplum-theme";
     pname = "darkplum-theme";
-    version = "0.0.2";
+    version = "0.3";
     src = pkgs.fetchFromGitHub {
       owner = "rebeccaskinner";
       repo = "darkplum-theme";
-      rev = "7a93038ede49c1c30e540d510d54ef83e00c2bce";
-      sha256 = "0rsfvx8nsq9sbkdzs4mjqfwsqdwg5zz9y4wyqq05pamdhchmy2al";
+      rev = "7a290bbb0dae2839825dd51e27ca4907ff06d529";
+      sha256 = "0smjim1mhh9n5vs9v5rq09pnj68vwf0ykn3dgwcgygxkd8wv52lx";
     };
     meta = {
       description = "A dark purple theme for emacs";
