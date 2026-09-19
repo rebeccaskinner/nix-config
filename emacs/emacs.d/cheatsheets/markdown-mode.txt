@@ -6,8 +6,6 @@ markdown-mode: custom bindings from init.el.
   C-)        forward-sexp
   C-(        backward-sexp
 
-Not bound:  M-x markdown/rel-link inserts a Hugo link, [name]({{<relref "#to">}}).
-
 From default-programming-config: fill column 80 with auto-fill, whitespace
 cleanup on save, rainbow delimiters, and line numbers.
 

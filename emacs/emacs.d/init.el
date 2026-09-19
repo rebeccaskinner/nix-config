@@ -467,18 +467,6 @@ from the minibuffer."
 
 (add-hook 'json-mode-hook 'json-mode-config)
 
-;; Hugo-specific markdown helpers
-(defun markdown/insert-relative-link (name to)
-  "Insert a relative link called NAME to the section named TO."
-  (insert (format "[%s]({{<relref \"#%s\">}})" name to)))
-
-(defun markdown/rel-link ()
-  "Query the user for a link name and section heading, then insert a relative link."
-  (interactive)
-  (let ((name (read-string "Link Name: "))
-        (to (read-string "Link To: ")))
-    (markdown/insert-relative-link name to)))
-
 (add-hook 'markdown-mode-hook 'default-programming-config)
 
 ;; add sql-indent when loading sql files
