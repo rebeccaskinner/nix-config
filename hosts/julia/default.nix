@@ -15,7 +15,7 @@ let
     config.allowUnfree = true;
     config.cudaSupport = false;
   };
-  haskellPackages = pkgs.haskell.packages.ghc914;
+  haskellPackages = pkgs.haskell.packages.ghc912;
   profiles = import ../../profiles;
 in
 nixpkgs.lib.nixosSystem {
@@ -48,17 +48,17 @@ nixpkgs.lib.nixosSystem {
     profiles.development.gcc
     profiles.development.haskell
     profiles.development.nix
-    profiles.development.rust
+    # profiles.development.rust
 
     profiles.emacs
 
     profiles.multimedia.client
-    profiles.multimedia.encoding
-    profiles.multimedia.ripping
+    # profiles.multimedia.encoding
+    # profiles.multimedia.ripping
 
-    profiles.latex
+    # profiles.latex
     profiles.office
-    profiles.writing
+    # profiles.writing
 
     profiles.games.steam
     profiles.games.open-source
