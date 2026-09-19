@@ -175,7 +175,6 @@
 (savehist-mode 1)              ; minibuffer histories (code-block languages, etc.) survive restarts
 (recentf-mode 1)               ; recently visited files
 (global-auto-revert-mode 1)    ; pick up changes made outside emacs (git, formatters)
-(electric-pair-mode 1)         ; auto-insert matching brackets and quotes
 (when (fboundp 'pixel-scroll-precision-mode)
   (pixel-scroll-precision-mode 1))
 
@@ -248,6 +247,7 @@
 ;; from other buffers (what auto-complete gave us) and file paths.
 (add-hook 'completion-at-point-functions #'cape-dabbrev)
 (add-hook 'completion-at-point-functions #'cape-file)
+(setq dabbrev-case-replace nil)
 
 ;; Turn on visual line-wrapping mode
 (add-hook 'text-mode-hook 'turn-on-visual-line-mode)

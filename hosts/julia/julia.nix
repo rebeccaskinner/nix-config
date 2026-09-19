@@ -1,16 +1,16 @@
-{ config, pkgs, pkgsStable, cudaPkgs, inputs, system, ... }:
+{ config, pkgs, pkgsStable, ... }:
 
 let
 
   utils = import ./utils;
-  load = f: import f { inherit config pkgs pkgsStable cudaPkgs inputs system utils; };
+  load = f: import f { inherit config pkgs pkgsStable utils; };
 
   cfg = p: utils.env.configOnlyEnvironment (import p);
   mkConfigs = cfgPaths:
     utils.env.concatEnvironments (builtins.map cfg cfgPaths);
 
   mkImport = p: utils.env.importOnlyEnvironment (
-    import p { inherit config pkgs pkgsStable cudaPkgs inputs system utils; }
+    import p { inherit config pkgs pkgsStable utils; }
   );
   mkImports = importPaths:
     utils.env.concatEnvironments (builtins.map mkImport importPaths);
@@ -33,8 +33,7 @@ let
     ripgrep
     unzip
     vim
-    # renameutils for qmv, but it conflicts with imv the image viewer
-    # renameutils
+    renameutils
     rename
     graphicsmagick
     mat2
@@ -114,7 +113,6 @@ let
     signal-desktop # messaging
     kiwix # offline website archive
     kiwix-tools # tools for kiwix
-    # simplex-chat-desktop # messaging
     kazam # screen recording
     aspellPkgs # spell checking
     pandoc # document conversion
@@ -134,11 +132,6 @@ let
     s3cmd
   ]);
 
-  rofi = import ./configs/rofi
-    { rofi-hoogle-plugin = inputs.rofi-hoogle.outputs.packages.${system}.rofi-hoogle;
-      inherit pkgs utils;
-    };
-
   configs = mkImports [
     ./configs/kitty.nix
     ./configs/dircolors.nix
@@ -151,7 +144,6 @@ let
     ./configs/java.nix
     ./configs/nextcloud-client.nix
     ./configs/chromium.nix
-    ./configs/imv.nix
     ./configs/polkit-gnome.nix
   ];
 
@@ -198,7 +190,6 @@ let
       games
       multimedia
       applications
-      rofi
       devTools
       emacsConfig
       audioFilteringPackages
@@ -228,25 +219,3 @@ in {
   home.stateVersion = "24.11";
 
 }
-
-
-
-# { config, pkgs, inputs, system, ... }:
-#
-# let
-#   load     = f: import f { inherit pkgs utils; };
-#   utils    = import ./utils;
-#   games    = load ./collections/games;
-# in
-# import ./generic.nix
-#   { desktopEnvironment = "gnome";
-#     platform = "x86-64";
-#     extraEnvironments = [ (load ./configs/kitty.nix)
-#                           games.allGames
-#                         ];
-#     extraPackages = [ pkgs.gparted ];
-#     developmentEnvironmentArgs = {
-#       haskell-formatter-package = ./development-environment/haskell/formatter/fourmolu.nix;
-#     };
-#     inherit config pkgs inputs system;
-#   }
