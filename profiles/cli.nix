@@ -13,8 +13,7 @@
     curl
     dnsutils
     file
-    htop
-    rename
+    rename 
     renameutils
     ripgrep
     tmux
