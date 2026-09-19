@@ -4,14 +4,12 @@
 
 { config, pkgs, ... }:
 {
-  nixpkgs.config.allowUnfree = true;
   nix.settings.experimental-features = ["nix-command" "flakes"];
 
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
     ];
-
 
   security.pki.certificates = [
     ''
@@ -49,7 +47,6 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
 +7q3HwSRzwwi/oXc39YFl+1eLa9e4A==
 -----END CERTIFICATE-----
 '' ];
-
 
   hardware.system76.enableAll = true;
 
@@ -104,38 +101,6 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
   #   keyMap = "us";
   # };
 
-
-  fonts.packages = let
-    nerdfonts = with pkgs.nerd-fonts; [
-      ubuntu
-      ubuntu-sans
-      ubuntu-mono
-      terminess-ttf
-      symbols-only
-      roboto-mono
-      noto
-      liberation
-    ];
-    stdfonts = with pkgs; [
-      source-code-pro
-      fira-code
-      fira-code-symbols
-      noto-fonts
-      noto-fonts-cjk-sans
-      noto-fonts-color-emoji
-      liberation_ttf
-      dina-font
-      proggyfonts
-      symbola
-      aegyptus
-    ];
-  in nerdfonts ++ stdfonts;
-
-  fonts.fontconfig = {
-    enable = true;
-    antialias = true;
-  };
-
   services.tailscale.enable = true;
   services.logind.settings.Login.HandleLidSwitchExternalPower = "ignore";
 
@@ -151,8 +116,6 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
         options = "ctrl:nocaps";
       };
     };
-    displayManager.gdm.enable = true;
-    desktopManager.gnome.enable = true;
   };
 
   hardware.nvidia = {
@@ -223,11 +186,9 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
     wget
     vim
     git
-    firefox
     xrandr
     bluez
     bluez-tools
-    pavucontrol
     system76-firmware
     virt-manager
     qemu_kvm
@@ -255,7 +216,6 @@ bZTcjwGEi1bLZPrOGDFHYyljwYJQluC/ZZF5fbTfJjb8m/OgbKvBa0Kh3PE2nkfs
   ];
 
   documentation.dev.enable = true;
-  programs.steam.enable = true;
 
   # Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.

@@ -1,13 +1,13 @@
 {
   cli = ./cli.nix;
-  desktop-environment = ./desktop-environment/default.nix;
-  development = ./development/default.nix;
+  desktop-environment = import ./desktop-environment;
+  development = import ./development;
   ebook-creation = ./ebook-creation.nix;
   emacs = ./emacs.nix;
-  games = ./games.nix;
+  games = import ./games;
   general-desktop = ./general-desktop.nix;
   latex = ./latex.nix;
-  multimedia = ./multimedia/default.nix;
+  multimedia = import ./multimedia;
   office = ./office.nix;
   writing = ./writing.nix;
 }
