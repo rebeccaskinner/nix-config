@@ -1,4 +1,4 @@
-{utils, ...}:
+{ ... }:
 let
   darkplum-settings = {
       background = "#2a2035";
