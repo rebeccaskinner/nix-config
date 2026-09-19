@@ -7,6 +7,7 @@
 (setq inhibit-splash-screen t)
 
 (require 'pml-mode)
+(require 'persistent-mode)
 
 ;; Evil.  evil-collection needs both of these set before evil loads.
 (setq evil-want-integration t
@@ -670,7 +671,6 @@ if EXTENSION is specified, use it for refreshing etags, or default to .el."
 
   )
 
-;(add-hook 'haskell-mode-hook 'nix-haskell-mode)
 (add-hook 'haskell-mode-hook 'haskell-config-setup-haskell-mode)
 
 (defun haskell-config-setup-cabal-mode()

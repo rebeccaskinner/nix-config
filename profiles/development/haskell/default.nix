@@ -1,9 +1,17 @@
+# Basic Haskell toolchain for hacking on small projects outside of a
+# project-specific nix environment.
+#
+# Hosts can pick a compiler by passing `haskellPackages` through
+# specialArgs, and add libraries with `extraHaskellPackages`. Defaults are
+# handled with `or` rather than argument defaults because the module system
+# looks every named argument up and errors when one is missing.
 { pkgs
 , primaryUser
-, haskellPackages ? pkgs.haskellPackages
-, extraHaskellPackages ? (_:[])
-, ...}:
+, ...}@args:
 let
+  haskellPackages = args.haskellPackages or pkgs.haskellPackages;
+  extraHaskellPackages = args.extraHaskellPackages or (_: []);
+
   haskellEnv = haskellPackages.ghcWithPackages(hsPkgs:
     let
       buildTools =
@@ -12,7 +20,8 @@ let
           cabal2nix ];
       devTools =
         with hsPkgs;
-        [ hoogle
+        [ fourmolu
+          hoogle
           hasktags
           hlint
         ];
@@ -42,5 +51,7 @@ in
     imports = [
       ../../../development-environment/haskell/settings/ghci/default.nix
     ];
+    xdg.configFile."fourmolu.yaml".source =
+      ../../../development-environment/haskell/formatter/fourmolu.yaml;
   };
 }

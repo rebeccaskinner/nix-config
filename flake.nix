@@ -8,6 +8,8 @@
     rofi-hoogle.inputs.nixpkgs.follows = "nixpkgs";
     foundryvtt.url = "github:reckenrode/nix-foundryvtt";
     foundryvtt.inputs.nixpkgs.follows = "nixpkgs";
+    darkplum-theme.url = "github:rebeccaskinner/darkplum-theme";
+    darkplum-theme.flake = false;
 
     darwin = {
       url = "github:lnl7/nix-darwin";

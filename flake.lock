@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "darkplum-theme": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1789528178,
+        "narHash": "sha256-nYqyOWqzP/8Yf23Y6YHjGxlpbwI4l530LjZBWEONsmo=",
+        "owner": "rebeccaskinner",
+        "repo": "darkplum-theme",
+        "rev": "7a290bbb0dae2839825dd51e27ca4907ff06d529",
+        "type": "github"
+      },
+      "original": {
+        "owner": "rebeccaskinner",
+        "repo": "darkplum-theme",
+        "type": "github"
+      }
+    },
     "darwin": {
       "inputs": {
         "nixpkgs": [
@@ -135,6 +151,7 @@
     },
     "root": {
       "inputs": {
+        "darkplum-theme": "darkplum-theme",
         "darwin": "darwin",
         "foundryvtt": "foundryvtt",
         "home-manager": "home-manager",
