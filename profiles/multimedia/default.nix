@@ -1,6 +1,5 @@
 {
-  playback = ./playback.nix;
+  client = ./client.nix;
   ripping = ./ripping.nix;
   encoding = ./encoding.nix;
-  all = ./all.nix;
 }
