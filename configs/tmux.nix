@@ -1,6 +1,4 @@
-{ pkgs
-, utils
-, ...}:
+{ pkgs, ... }:
 {
   programs.tmux = {
     enable = true;
