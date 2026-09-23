@@ -172,6 +172,7 @@
   (load custom-file))
 
 ;; Built-in conveniences
+(electric-pair-mode -1)        ; no auto-inserted closing brackets or quotes, anywhere
 (which-key-mode 1)             ; show the completions of C-c, C-c g, ... as you type
 (savehist-mode 1)              ; minibuffer histories (code-block languages, etc.) survive restarts
 (recentf-mode 1)               ; recently visited files
@@ -230,14 +231,27 @@
 (setq evil-collection-corfu-key-themes '(default tab-n-go magic-return))
 (require 'corfu)
 (require 'corfu-auto)
-(setq corfu-auto t            ; pop up automatically, as auto-complete did
-      corfu-auto-prefix 2
+(setq corfu-auto nil          ; popup only on request (C-M-i); M-x corfu-auto-toggle turns auto on
+      corfu-auto-prefix 2     ; settings for when auto is on
       corfu-auto-delay 0.1
       corfu-preselect 'prompt ; tab-n-go sets this too; stated here so it's not a surprise
       corfu-cycle t
       ;; Haskell buffers stay popup-free; :cheatsheet haskell-mode says how to turn it on.
       global-corfu-modes '((not haskell-mode haskell-cabal-mode haskell-interactive-mode) t))
 (global-corfu-mode 1)
+
+(defun corfu-auto-toggle ()
+  "Turn corfu's automatic popup on or off in every buffer.
+corfu reads `corfu-auto' only when `corfu-mode' starts in a buffer, so
+setting the variable is not enough: restart the mode where it is on."
+  (interactive)
+  (setq corfu-auto (not corfu-auto))
+  (dolist (buf (buffer-list))
+    (with-current-buffer buf
+      (when corfu-mode
+        (corfu-mode -1)
+        (corfu-mode 1))))
+  (message "corfu auto-complete %s" (if corfu-auto "on" "off")))
 ;; Emacs 31 can draw the popup in terminal frames natively.  Older Emacs
 ;; (the Mac host runs 30.x) cannot, so there corfu-terminal draws an
 ;; overlay popup in tty frames and steps aside in GUI frames, which
@@ -333,7 +347,9 @@
 
 ;; Markdown editing helpers (for code-focused blog posts)
 ;; Highlight fenced code blocks with the named language's major mode.
-;; (C-c ' edits the block at point in that mode, like org's org-edit-special.)
+;; C-c ' (markdown-edit-code-block) opens the block at point in a buffer
+;; in that mode, like org's org-edit-special; it needs edit-indirect,
+;; which the package list installs.  C-c C-c there writes the block back.
 (setq markdown-fontify-code-blocks-natively t)
 
 (defvar markdown/tag-name-history '())

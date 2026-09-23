@@ -116,6 +116,7 @@ utils.env.importOnlyEnvironment ({
 
             # markdown (also pulled in by pml-mode, but init.el configures it directly)
             markdown-mode
+            edit-indirect   # markdown-edit-code-block (C-c ')
 
             # Git / Github integration
             forge

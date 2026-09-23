@@ -9,6 +9,10 @@ markdown-mode: custom bindings from init.el.
 From default-programming-config: fill column 80 with auto-fill, whitespace
 cleanup on save, rainbow delimiters, and line numbers.
 
+Fenced code blocks (edit-indirect):
+  C-c '      markdown-edit-code-block: open the block at point in its language's mode
+             in that buffer:  C-c C-c  write it back and close    C-c C-k  discard changes
+
 Handy markdown-mode built-ins:
   C-c C-s C  markdown-insert-gfm-code-block: fenced block with language completion, wraps region
   C-c C-s c  markdown-insert-code: wrap the region in backticks

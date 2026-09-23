@@ -19,13 +19,14 @@ Minibuffer (vertico):
 Matching: words in any order.  !word excludes.  =word literal.  ,abc initialism.  ~word flex.
 Preview: consult commands show the target as you move; C-g goes back.
 
-In-buffer popup (corfu), appears after 2 characters; nothing is preselected, so
-just keep typing if you do not want it:
+In-buffer popup (corfu).  It does not open on its own; C-M-i opens it.
+M-x corfu-auto-toggle switches automatic popup (after 2 characters) on or
+off for the session.  Nothing is preselected, so typing on just keeps typing:
     TAB / S-TAB          next / previous candidate (cycles)      M-n / M-p, C-j / C-k, arrows also move
     RET                  insert the candidate if you navigated to one; otherwise a plain newline
     C-g                  close           ESC          close and leave insert state
     M-h                  documentation for the candidate
-    C-M-i                open the popup by hand (ESC TAB in a terminal)
+    C-M-i                open the popup (ESC TAB in a terminal)
 Sources: the major mode's own completion, then words from other buffers
 (cape-dabbrev) and file paths (cape-file).  Off in Haskell buffers; see
 :cheatsheet haskell-mode.

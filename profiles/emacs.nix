@@ -83,6 +83,7 @@ let
 
     # documents and org
     markdown-mode
+    edit-indirect   # markdown-edit-code-block (C-c ') edits a fenced block in its own mode
     ox-gfm
     persistent-mode
     pml-mode
