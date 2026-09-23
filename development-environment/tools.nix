@@ -7,5 +7,4 @@ with pkgs; [
   s3cmd
   gitg
   nix-prefetch-scripts
-  # rnix-lsp
 ]

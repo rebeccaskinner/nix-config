@@ -167,7 +167,7 @@ let
   haskellDevelopmentEnv = import ./development-environment/haskell {
     inherit pkgs utils;
     formatter = ./development-environment/haskell/formatter/fourmolu.nix;
-    # haskellVersion = 98;
+    haskellVersion = haskell: haskell.ghc912;
   };
 
   rustDevelopmentEnv =
@@ -228,6 +228,15 @@ in {
     GTK_THEME = gtkTheme;
     EDITOR = "emacs";
   };
+
+  # Display layout for this machine. The shared xmonad config only sets the
+  # wallpaper; each host adds its own xrandr calls here.
+  xsession.initExtra = ''
+    xrandr --dpi 90
+    xrandr --output eDP-1-1 --brightness 0.2
+    xrandr --output eDP-1-1 --off
+    xrandr --output DP-5 --left-of HDMI-0
+  '';
   # This value determines the Home Manager release that your
   # configuration is compatible with. This helps avoid breakage
   # when a new Home Manager release introduces backwards
