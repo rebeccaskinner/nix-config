@@ -11,6 +11,7 @@
     extraGroups = [ "wireshark" ];
     packages = with pkgs; [
       claude-code
+      codex
       gitg
       httpie
       s3cmd

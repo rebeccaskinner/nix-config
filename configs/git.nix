@@ -1,11 +1,13 @@
-{...}:
+{ lib, ... }:
 {
   programs.git = {
     enable = true;
     lfs.enable = true;
     settings = {
       user = {
-        email = "rebecca@rebeccaskinner.net";
+        # Hosts override this through the `gitEmailAddress` specialArg; see
+        # profiles/development/cli.nix.
+        email = lib.mkDefault "rebecca@rebeccaskinner.net";
         name = "rebecca skinner";
       };
       alias = {

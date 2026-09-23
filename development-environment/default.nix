@@ -9,6 +9,4 @@ utils.env.concatEnvironments [
   (import ./rust {inherit pkgs utils;})
   (import ./gcc {inherit pkgs utils;})
   (import ./global-dev-env {inherit pkgs utils;})
-  # (import ./nixdev {inherit pkgs utils;})
-  (import ./nvim {inherit pkgs utils;})
 ]

@@ -1,14 +1,11 @@
-# Transcoding and remuxing video, and generating subtitles.
+# Transcoding and remuxing video, and syncing subtitles.
 #
-# whisper-cpp comes from `cudaPkgs` when a host passes one through
-# specialArgs, so subtitle transcription can use the GPU; otherwise it falls
-# back to the CPU build from `pkgs`.
-{ pkgs, primaryUser, ... }@args:
-let
-  cudaPkgs = args.cudaPkgs or pkgs;
-in
+# Subtitle generation is deliberately not here: whisper-cpp is a heavy
+# dependency for something used rarely. Reach for it on demand with
+# `nix run nixpkgs#whisper-cpp` instead.
+{ pkgs, primaryUser, ... }:
 {
-  users.users.${primaryUser}.packages = (with pkgs; [
+  users.users.${primaryUser}.packages = with pkgs; [
     ab-av1
     ffmpeg
     ffsubsync
@@ -16,7 +13,5 @@ in
     mediainfo
     mkvtoolnix
     sox
-  ]) ++ [
-    cudaPkgs.whisper-cpp
   ];
 }

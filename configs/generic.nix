@@ -30,4 +30,5 @@ let
     };
 
   tmux = import ./tmux.nix { inherit pkgs utils; };
-in utils.env.concatEnvironments [generalConfigs generalImports rofi tmux]
+  gpgAgent = import ./gpg-agent.nix { inherit pkgs; };
+in utils.env.concatEnvironments [generalConfigs generalImports rofi tmux gpgAgent]
