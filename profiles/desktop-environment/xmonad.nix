@@ -7,6 +7,9 @@
       enable = true;
       packages = [ pkgs.dconf ];
     };
+    blueman = {
+      enable = true;
+    };
     displayManager.sddm.enable = true;
     gnome = {
       gnome-keyring.enable = true;
@@ -47,7 +50,7 @@
 
     programs.rofi = {
       enable = true;
-      terminal = "${pkgs.kitty}/bin/kitty";
+      settings.terminal = "${pkgs.kitty}/bin/kitty";
       theme = ../../configs/rofi/themes/darkplum.rasi;
       plugins = with pkgs; [
         rofi-emoji

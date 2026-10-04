@@ -1,7 +1,6 @@
 # Edit this configuration file to define what should be installed on
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
-{ inputs }:
 { config, pkgs, ... }:
 {
   # nixpkgs.config.allowUnfree = true;
@@ -158,14 +157,6 @@ DSNhxHVhjDOOxF8dnOQ=
   services = {
     upower.enable = true;
     avahi.enable = true;
-    dbus = {
-      enable = true;
-      packages = [ pkgs.dconf ];
-    };
-    blueman = {
-      enable = true;
-    };
-    udisks2.enable = true;
     gvfs.enable = true;
   };
   # networking.hostName = "nixos"; # Define your hostname.
@@ -268,22 +259,6 @@ DSNhxHVhjDOOxF8dnOQ=
 
   };
 
-  services.libinput.enable = true;
-  services.displayManager.sddm.enable = true;
-  services.displayManager.gdm = {
-    enable = false;
-  };
-  services.xserver = {
-    xkb.layout = "us";
-    xkb.options = "ctrl:nocaps";
-    windowManager.xmonad.enable = true;
-    # desktopManager.plasma5 = { enable = true; useQtScaling = true; };
-    # desktopManager.cinnamon.enable = true;
-    # desktopManager.enlightenment.enable = true;
-    # desktopManager.xfce.enable = true;
-    # desktopManager.mate.enable = true;
-  };
-
   services.mullvad-vpn = {
     enable = true;
     gui.enable = true;
@@ -344,18 +319,9 @@ DSNhxHVhjDOOxF8dnOQ=
   networking.networkmanager.dns = "dnsmasq";
 
   services.resolved.enable = false;
-  # services.resolved = {
-  #   enable = true;
-  #   settings.Resolve = {
-  #     dnssec = "true";
-  #     domains = ["~."];
-  #     # fallbackDns = ["192.168.50.1 # local network DNS"];
-  #     fallbackDns = [];
-  #   };
-  # };
 
   virtualisation.libvirtd.enable = false;
-  programs.dconf.enable = true;
+
   programs.obs-studio = {
     enable = true;
     enableVirtualCamera = true;
@@ -419,12 +385,6 @@ DSNhxHVhjDOOxF8dnOQ=
   documentation.dev.enable = true;
   programs.steam.enable = true;
   programs.ssh.startAgent = true;
-  services.gnome.gnome-keyring.enable = true;
-  # GNOME enables its own GCR SSH agent by default, which conflicts with the
-  # standard SSH agent above. Disable it so both xmonad and GNOME sessions
-  # share the same openssh agent. GNOME keyring (secrets/passwords) still works.
-  services.gnome.gcr-ssh-agent.enable = false;
-
 
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
