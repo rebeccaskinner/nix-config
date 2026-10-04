@@ -46,7 +46,12 @@ nixpkgs.lib.nixosSystem {
     profiles.desktop-environment.xmonad
     profiles.general-desktop
 
-    profiles.development.cli
+    ({...}@args:
+      import profiles.development.cli (args // {
+        pkgs = pkgsStable;
+      })
+    )
+    
     profiles.development.dev-tools
     profiles.development.gcc
     profiles.development.haskell

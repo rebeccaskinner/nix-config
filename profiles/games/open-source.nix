@@ -20,7 +20,6 @@ let
   ];
 
   desktop = with pkgs; [
-    cataclysm-dda
     lbreakouthd
     luanti
     neverball

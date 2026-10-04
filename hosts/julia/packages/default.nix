@@ -49,7 +49,7 @@ let
     kiwix # offline website archive
     kiwix-tools # tools for kiwix
     kazam # screen recording
-    (pkgs.aspellWithDicts(d: with d;[en en-computers en-science]))
+    (pkgs.aspellWithDicts(d: with d;[en]))
     pandoc # document conversion
     ispell # spell checking
     texliveFull
