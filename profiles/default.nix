@@ -1,4 +1,5 @@
 {
+  ai-assistants = ./ai-assistants.nix;
   cli = ./cli.nix;
   desktop-environment = import ./desktop-environment;
   development = import ./development;

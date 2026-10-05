@@ -11,6 +11,11 @@
     darkplum-theme.url = "github:rebeccaskinner/darkplum-theme";
     darkplum-theme.flake = false;
 
+    llm-agents = {
+      url = "github:numtide/llm-agents.nix";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     darwin = {
       url = "github:lnl7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -25,6 +30,7 @@
     , home-manager
     , darwin
     , foundryvtt
+    , llm-agents
     , ... }@inputs:
     {
       darwinConfigurations = {
