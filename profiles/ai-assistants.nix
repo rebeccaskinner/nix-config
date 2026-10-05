@@ -1,7 +1,7 @@
-{ llm-agents, primaryUser, ...}:
+{ llm-agents, pkgs, primaryUser, ...}:
 {
-  users.users.${primaryUser}.packages = [
-    llm-agents.chatgpt
-    llm-agents.claude-desktop
+  users.users.${primaryUser}.packages = with llm-agents.packages.${pkgs.stdenv.hostPlatform.system}; [
+    chatgpt
+    claude-desktop
   ];
 }
