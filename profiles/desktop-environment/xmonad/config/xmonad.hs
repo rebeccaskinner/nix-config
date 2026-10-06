@@ -6,6 +6,7 @@ import Data.List (find)
 import qualified Data.Map.Strict as Map
 import Polybar
 import System.IO
+import Text.Printf (printf)
 import XMonad
 import XMonad.Actions.CycleWS
 import XMonad.Hooks.DynamicLog
@@ -65,7 +66,21 @@ launchers =
   , ((mod4Mask, xK_o), rofiHoogle)
   , ((mod4Mask .|. shiftMask, xK_space), shiftNextScreen)
   ]
+ 
+compileRestart :: X ()
+compileRestart = do
+  dirs <- asks directories
+  whenX (recompile dirs True) $ do
+    restart (binFileName dirs) True
 
+wmKeys :: [((ButtonMask, KeySym), X ())]
+wmKeys =
+  [ ((mod4Mask, xK_q), compileRestart)
+  ]
+
+keybindings :: [((ButtonMask, KeySym), X ())] 
+keybindings = wmKeys <> launchers
+ 
 customLayoutHook =
   let layouts' =
         tall ||| mirrorTall ||| threeColumn ||| reverseTall ||| full
@@ -83,7 +98,8 @@ customLayoutHook =
 
 main = do
   polybarConfig <- defaultPolybarConfig
-  xmonad . ewmh . stylishConfig defaultXMonadScheme $
+  xmonadDirs <- getDirectories
+  flip launch xmonadDirs . ewmh . stylishConfig defaultXMonadScheme $
     docks
       def
         { manageHook = manageDocks <+> manageHook def
@@ -95,4 +111,4 @@ main = do
         , normalBorderColor = "#333333"
         , focusedBorderColor = "#FFAA00"
         }
-      `additionalKeys` launchers
+      `additionalKeys` keybindings
