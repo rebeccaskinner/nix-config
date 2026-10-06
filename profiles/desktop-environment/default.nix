@@ -1,4 +1,4 @@
 {
-  xmonad = ./xmonad.nix;
+  xmonad = ./xmonad/default.nix;
   gnome = ./gnome.nix;
 }

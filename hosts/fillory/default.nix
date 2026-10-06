@@ -1,6 +1,7 @@
 { nixpkgs
 , nixpkgs-stable
 , home-manager
+, rofi-hoogle
 , ... }@inputs:
 let
   system = "x86_64-linux";
@@ -38,7 +39,7 @@ nixpkgs.lib.nixosSystem {
       home-manager.useUserPackages = true;
       home-manager.users.${primaryUser} = ./fillory.nix;
       home-manager.extraSpecialArgs = {
-        inherit primaryUser pkgs pkgsStable cudaPkgs system;
+        inherit primaryUser pkgs pkgsStable cudaPkgs system rofi-hoogle;
       };
     }
 

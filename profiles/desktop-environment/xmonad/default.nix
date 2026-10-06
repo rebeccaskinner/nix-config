@@ -33,30 +33,21 @@
       thunar
       tumbler
       xcursor-themes
-    ];
+  ];
+
   home-manager.users.${primaryUser} = {
     imports = [
-      ../../desktop-environment/xmonad/blueman.nix
-      ../../desktop-environment/xmonad/dunst.nix
-      ../../desktop-environment/xmonad/feh.nix
-      ../../desktop-environment/xmonad/mimeApps.nix
-      ../../desktop-environment/xmonad/network-manager-applet.nix
-      ../../desktop-environment/xmonad/picom.nix
-      ../../desktop-environment/xmonad/polybar/default.nix
-      ../../desktop-environment/xmonad/screensaver.nix
-      ../../desktop-environment/xmonad/udiskie.nix
-      ../../desktop-environment/xmonad/xmonad/default.nix
+      ./blueman.nix
+      ./dunst.nix
+      ./feh.nix
+      ./mimeApps.nix
+      ./network-manager-applet.nix
+      ./picom.nix
+      ./polybar/default.nix
+      ./rofi/default.nix
+      ./screensaver.nix
+      ./udiskie.nix
+      ./xmonad/xmonad/default.nix
     ];
-
-    programs.rofi = {
-      enable = true;
-      settings.terminal = "${pkgs.kitty}/bin/kitty";
-      theme = ../../configs/rofi/themes/darkplum.rasi;
-      plugins = with pkgs; [
-        rofi-emoji
-        rofi-calc
-        inputs.rofi-hoogle.packages.${system}.rofi-hoogle
-      ];
-    };
   };
 }
