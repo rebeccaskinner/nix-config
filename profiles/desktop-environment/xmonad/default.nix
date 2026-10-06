@@ -47,7 +47,7 @@
       ./rofi/default.nix
       ./screensaver.nix
       ./udiskie.nix
-      ./xmonad/xmonad/default.nix
+      ./xmonad/default.nix
     ];
   };
 }

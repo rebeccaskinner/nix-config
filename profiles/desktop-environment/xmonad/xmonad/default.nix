@@ -1,30 +1,34 @@
-{ pkgs
-, utils
-, ...
-}:
-let
-  cfg = p: utils.env.configOnlyEnvironment (import p);
-  mkConfigs = cfgPaths: utils.env.concatEnvironments (builtins.map cfg cfgPaths);
+{ config, pkgs, ...}:
+{
+  home.pointerCursor = {
+    enable = true;
+    x11.enable = true;
+    x11.defaultCursor = "left_ptr";
+    package = pkgs.vanilla-dmz;
+    name = "Vanilla-DMZ";
+  };
+  xsession = {
+    enable = true;
 
-  mkImport = p: utils.env.importOnlyEnvironment (import p);
-  mkImports = importPaths: utils.env.concatEnvironments (builtins.map mkImport importPaths);
-
-  xmonadGeneralEnv =
-    mkConfigs [ ./feh.nix
-                ./blueman.nix
-                ./mimeApps.nix
-                ./network-manager-applet.nix
-                ./picom.nix
-                ./udiskie.nix
-                ./screensaver.nix
-              ];
-
-  xmonadImports = mkImports [ ./xmonad ./dunst.nix ./polybar ];
-
-  xmonadPackages = utils.env.packagesEnvironment (with pkgs;
-    [ pcmanfm candy-icons
-      thunar
-      tumbler
-    ]);
-
-in utils.env.concatEnvironments [xmonadImports xmonadGeneralEnv xmonadPackages]
+    initExtra = ''
+feh --bg-scale /home/rebecca/.config/wallpaper
+'';
+    windowManager.xmonad = {
+      enable = true;
+      enableContribAndExtras = true;
+      extraPackages = xmonadPackage: with xmonadPackage; [
+        aeson
+        dbus
+        monad-logger
+        xmonad-contrib
+      ];
+      config = ./xmonad.hs;
+      libFiles = {
+        "Polybar.hs" = ./Polybar.hs;
+        "ColorType.hs" = ./ColorType.hs;
+        "ColorX11.hs" = ./ColorX11.hs;
+        "XmonadTheme.hs" = ./XmonadTheme.hs;
+      };
+    };
+  };
+}
