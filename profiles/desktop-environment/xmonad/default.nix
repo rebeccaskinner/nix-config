@@ -36,6 +36,8 @@ in
         config = ./config/xmonad.hs;
         ghcArgs = [
           "-i${xmonadSource}/lib"
+          "-outputdir"
+          "."
         ];
       };
     };
@@ -76,7 +78,6 @@ in
       ./udiskie.nix
       ./cursor.nix
       ./wallpaper/default.nix
-      ./xmonad/default.nix
     ];
   };
 }
