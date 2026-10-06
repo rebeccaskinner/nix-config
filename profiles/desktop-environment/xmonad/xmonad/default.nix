@@ -21,6 +21,7 @@ feh --bg-scale /home/rebecca/.config/wallpaper
         dbus
         monad-logger
         xmonad-contrib
+        xmonad-extras
       ];
       config = ./xmonad.hs;
       libFiles = {
