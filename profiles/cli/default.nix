@@ -24,12 +24,12 @@
 
   home-manager.users.${primaryUser} = {
     imports = [
-      ../configs/bash.nix
-      ../configs/dircolors.nix
-      ../configs/direnv.nix
-      ../configs/fzf.nix
-      ../configs/gpg.nix
-      ../configs/tmux.nix
+      ./bash.nix
+      ./dircolors.nix
+      ./direnv.nix
+      ./fzf.nix
+      ./gpg.nix
+      ./tmux.nix
     ];
   };
 }

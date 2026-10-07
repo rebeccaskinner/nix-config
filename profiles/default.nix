@@ -1,6 +1,6 @@
 {
   ai-assistants = ./ai-assistants.nix;
-  cli = ./cli.nix;
+  cli = ./cli/default.nix;
   desktop-environment = import ./desktop-environment;
   development = import ./development;
   ebook-creation = ./ebook-creation.nix;
