@@ -90,10 +90,10 @@ in
 
   home-manager.users.${primaryUser} = {
     imports = [
-      ../configs/chromium.nix
-      ../configs/kitty.nix
-      ../configs/nextcloud-client.nix
-      ../configs/polkit-gnome.nix
+      ./chromium.nix
+      ./kitty.nix
+      ./nextcloud-client.nix
+      ./polkit-gnome.nix
     ];
 
     home.sessionVariables.GTK_THEME = "Adwaita:dark";
