@@ -23,6 +23,8 @@ in
   shell = haskellPackages.shellFor {
     packages = _: [ package ];
     withHoogle = false;
+    # Shown in the bash prompt (see configs/bash.nix).
+    NIX_DEV_SHELL_NAME = ".#xmonad";
     nativeBuildInputs = [
       haskellPackages.cabal-install
       haskellPackages.ghcid

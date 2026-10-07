@@ -30,10 +30,10 @@
       function get_PS1() {
         case $TERM in
           tmux-256color | xterm-256color | xterm-kitty)
-            echo "\n\[\e[0;35m\]\[\e]0;\u@\h:\w\a\]\u@\h:\w λ \[\e[0m\]"
+            echo "\n\[\e[0;35m\]\[\e]0;\''${NIX_DEV_SHELL_NAME:+(\$NIX_DEV_SHELL_NAME) }\u@\h:\w\a\]\''${NIX_DEV_SHELL_NAME:+(\$NIX_DEV_SHELL_NAME) }\u@\h:\w λ \[\e[0m\]"
             ;;
           *)
-            echo "\u@\h:\w $ "
+            echo "\''${NIX_DEV_SHELL_NAME:+(\$NIX_DEV_SHELL_NAME) }\u@\h:\w $ "
             ;;
         esac
       }
