@@ -15,12 +15,12 @@ let
     meta.description = "A dark purple theme for emacs";
   };
 
-  pml-mode = import ../emacs/packages/pml-mode {
+  pml-mode = import ./packages/pml-mode {
     emacs = emacsPackage;
     lib = pkgs.lib;
   };
 
-  persistent-mode = import ../emacs/packages/persistent-mode {
+  persistent-mode = import ./packages/persistent-mode {
     emacs = emacsPackage;
     lib = pkgs.lib;
   };
@@ -124,7 +124,7 @@ in
       [ "-%h/.config/secrets/emacs-llm.env" ];
 
     home.file.".emacs.d" = {
-      source = ../emacs/emacs.d;
+      source = ./emacs.d;
       recursive = true;
     };
 

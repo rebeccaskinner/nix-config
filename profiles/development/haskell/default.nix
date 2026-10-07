@@ -49,9 +49,9 @@ in
   users.users.${primaryUser}.packages = [ haskellEnv ];
   home-manager.users.${primaryUser} = {
     imports = [
-      ../../../development-environment/haskell/settings/ghci/default.nix
+      ./ghci/default.nix
     ];
     xdg.configFile."fourmolu.yaml".source =
-      ../../../development-environment/haskell/formatter/fourmolu.yaml;
+      ./fourmolu.yaml;
   };
 }

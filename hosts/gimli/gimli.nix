@@ -4,7 +4,6 @@
 { pkgs, primaryUser, ... }:
 let
   utils = import ../../utils;
-  nvim = import ../../development-environment/nvim { inherit pkgs utils; };
 in
 {
   programs.home-manager.enable = true;
@@ -12,13 +11,10 @@ in
   home.username = primaryUser;
   home.homeDirectory = "/Users/${primaryUser}";
 
-  imports = nvim.imports;
-
   # profiles.emacs owns EDITOR.
   programs.neovim.defaultEditor = pkgs.lib.mkForce false;
 
   programs.bash = {
-    shellAliases.vim = "nvim";
     bashrcExtra = ''
       PATH=/opt/homebrew/bin:/opt/homebrew/sbin:''${PATH};
       [ -z "''${MANPATH-}" ] || export MANPATH=":''${MANPATH#:}";

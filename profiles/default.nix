@@ -4,7 +4,7 @@
   desktop-environment = import ./desktop-environment;
   development = import ./development;
   ebook-creation = ./ebook-creation.nix;
-  emacs = ./emacs.nix;
+  emacs = ./emacs/default.nix;
   games = import ./games;
   general-desktop = ./general-desktop.nix;
   gnu = ./gnu.nix;
