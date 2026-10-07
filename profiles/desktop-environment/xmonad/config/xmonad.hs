@@ -13,8 +13,9 @@ import XMonad.Hooks.DynamicLog
 import XMonad.Hooks.EwmhDesktops
 import XMonad.Hooks.FadeInactive
 import XMonad.Hooks.ManageDocks
-import XMonad.Layout.Named
-import XMonad.Layout.NoBorders (smartBorders)
+import XMonad.Layout.Renamed
+import XMonad.Layout.LayoutModifier
+import XMonad.Layout.NoBorders (SmartBorder, smartBorders)
 import XMonad.Layout.Reflect
 import XMonad.Layout.ResizableTile
 import XMonad.Layout.Spacing
@@ -81,20 +82,40 @@ wmKeys =
 keybindings :: [((ButtonMask, KeySym), X ())] 
 keybindings = wmKeys <> launchers
  
-customLayoutHook =
-  let layouts' =
-        tall ||| mirrorTall ||| threeColumn ||| reverseTall ||| full
-      mkLayout f =
-        f mainWindowCount incrementRatio mainWindowRatio
-      incrementRatio = (3 / 100)
-      mainWindowRatio = (1 / 2)
-      mainWindowCount = 1
-      threeColumn = mkLayout ThreeColMid
-      tall = mkLayout Tall
-      full = Full
-      reverseTall = Mirror tall
-      mirrorTall = reflectHoriz tall
-   in spacingWithEdge 10 . smartBorders . avoidStruts $ layouts'
+-- * Layouts
+
+customLayouts ::
+  ModifiedLayout
+    Spacing
+    (ModifiedLayout
+      SmartBorder
+      (ModifiedLayout
+        AvoidStruts
+        (Choose Tall (Choose (ModifiedLayout Reflect Tall) Full))
+      )
+    )
+    a
+customLayouts = spacingWithEdge 10 . smartBorders . avoidStruts $ layout
+  where
+    layout = standardTall ||| mirrorTall ||| standardFull
+
+standardTall :: Tall a
+standardTall = Tall
+  { -- number of main panels
+    tallNMaster = 1
+    -- percentage of the screen to resize windows by
+  , tallRatioIncrement = 1 / 100
+    -- Ratio of main pain to other windows
+  , tallRatio = 1 / 2
+  }
+
+mirrorTall :: ModifiedLayout Reflect Tall a
+mirrorTall = reflectHoriz standardTall
+
+standardFull :: Full a
+standardFull = Full
+
+-- * Main
 
 main = do
   polybarConfig <- defaultPolybarConfig
@@ -103,7 +124,7 @@ main = do
     docks
       def
         { manageHook = manageDocks <+> manageHook def
-        , layoutHook = customLayoutHook
+        , layoutHook = customLayouts
         , logHook = fadeInactiveLogHook 0.9 <> polybarLogHook polybarConfig
         , modMask = mod4Mask
         , borderWidth = 2

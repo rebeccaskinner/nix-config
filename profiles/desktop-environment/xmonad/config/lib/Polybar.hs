@@ -18,15 +18,10 @@ module Polybar where
 import Codec.Binary.UTF8.String qualified as Utf8
 import ColorType
 import ColorX11 qualified as X11
-import Control.Monad.IO.Class
+import Control.Monad (void)
 import DBus qualified as D
 import DBus.Client qualified as D
-import Data.Aeson
-import Data.ByteString.Char8 qualified as BS
-import Data.ByteString.Lazy qualified as BL
 import Data.Map.Strict qualified as Map
-import Data.Text qualified as Text
-import Data.Text.Encoding qualified as Text
 import XMonad.Hooks.DynamicLog
 
 type PolybarTheme =
@@ -108,18 +103,22 @@ themedPP config =
         let wrapperFront = "%{F" <> color <> "}"
          in \s -> wrapperFront <> s <> "%{F-}"
 
-      underline s = "%{U}" <> s <> "%{U-}"
+      _underline s = "%{U}" <> s <> "%{U-}"
 
       truncateTo n s
         | length s <= (n - 3) = s
         | otherwise = take (n - 3) s <> "..."
+
+      mkTitle titleText
+        | (workspace : layout : title : rest) <- titleText = title : workspace : (rest <> pure layout)
+        | otherwise = ["title","workspace","rest"]
    in def
         { ppOutput = dbusOutput config
         , ppCurrent = \s -> fmt _themeFocusedWorkspaceText $ "[" <> s <> "]"
         , ppVisible = fmt _themeVisibleWorkspaceText
         , ppHidden = fmt _themeHiddenWorkspaceText
         , ppHiddenNoWindows = const ""
-        , ppOrder = \(workspace : layout : title : rest) -> title : workspace : (rest <> pure layout)
+        , ppOrder = mkTitle
         , ppUrgent = fmt _themeUrgentWorkspaceText
         , ppTitle = \title ->
             case title of
@@ -138,7 +137,7 @@ data PolybarConfig = PolybarConfig
 mkDbusClient :: IO D.Client
 mkDbusClient = do
   dbus <- D.connectSession
-  D.requestName dbus xmonadBusName xmonadRequestNameFlags
+  void $ D.requestName dbus xmonadBusName xmonadRequestNameFlags
   pure dbus
   where
     xmonadBusName :: D.BusName
@@ -155,7 +154,7 @@ dbusOutput :: PolybarConfig -> String -> IO ()
 dbusOutput cfg msg =
   let PolybarConfig
         { dbusClient = dbus
-        , theme = PolybarScheme{..}
+        , theme = PolybarScheme{}
         , maxTitleLength = _
         } = cfg
       objPath = D.objectPath_ "/org/xmonad/Log"
