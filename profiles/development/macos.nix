@@ -23,7 +23,7 @@
 
   home-manager.users.${primaryUser} = {
     imports = [
-      ../../configs/git.nix
+      ./git.nix
     ];
     programs.git.settings.user.email =
       lib.mkIf (args ? gitEmailAddress) args.gitEmailAddress;
