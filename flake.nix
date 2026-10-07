@@ -42,31 +42,7 @@
       checks.x86_64-linux.xmonad-config = xmonadDev.package;
 
       darwinConfigurations = {
-        "gimli" = darwin.lib.darwinSystem {
-          system = "aarch64-darwin";
-          specialArgs = {
-            inherit inputs;
-            pkgs = import nixpkgs {
-              system = "aarch64-darwin";
-              config.allowUnfree = true;
-            };
-          };
-
-          modules = [
-            (import ./nix-darwin-configuration/gimli/configuration.nix { inherit inputs; })
-
-            home-manager.darwinModules.home-manager {
-              users.users.rebeccaskinner.home = "/Users/rebeccaskinner";
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.rebeccaskinner = ./gimli.nix;
-              home-manager.extraSpecialArgs = {
-                inherit inputs;
-                system = "aarch64-darwin";
-              };
-            }
-          ];
-        };
+        gimli = import ./hosts/gimli inputs;
       };
 
       nixosConfigurations = {

@@ -7,6 +7,7 @@
   emacs = ./emacs.nix;
   games = import ./games;
   general-desktop = ./general-desktop.nix;
+  gnu = ./gnu.nix;
   latex = ./latex.nix;
   multimedia = import ./multimedia;
   office = ./office.nix;

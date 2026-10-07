@@ -5,4 +5,5 @@
   gcc = ./gcc/default.nix;
   nix = ./nix/default.nix;
   dev-tools = ./dev-tools.nix;
+  macos = ./macos.nix;
 }
