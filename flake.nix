@@ -46,28 +46,7 @@
       };
 
       nixosConfigurations = {
-        "daystrom" = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          specialArgs = {
-            inherit inputs;
-            pkgs = import nixpkgs {
-              system = "x86_64-linux";
-              config.allowUnfree = true;
-              config.cudaSupport = false;
-            };
-            pkgsStable = import nixpkgs-stable {
-              system = "x86_64-linux";
-              config.allowUnfree = true;
-              config.cudaSupport = false;
-            };
-            system = "x86_64-linux";
-          };
-          modules = [
-            (import ./nixos-configurations/daystrom/configuration.nix { inherit inputs; })
-            foundryvtt.nixosModules.foundryvtt
-          ];
-        };
-
+        daystrom = import ./hosts/daystrom inputs;
         fillory = import ./hosts/fillory inputs;
         julia = import ./hosts/julia inputs;
       };

@@ -2,8 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ inputs }:
-{ config, pkgs, pkgsStable, ... }:
+{ config, pkgs, ... }:
 
 let
 
@@ -142,9 +141,6 @@ in {
     extraGroups = [ "networkmanager" "wheel" ];
     packages = with pkgs; [];
   };
-
-# Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
 
 # List packages installed in system profile. To search, run:
 # $ nix search wget

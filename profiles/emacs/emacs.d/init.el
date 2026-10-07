@@ -34,8 +34,9 @@
   "Configure font and chrome.  Safe to call per-frame under the daemon."
   (set-face-attribute 'default nil :family "FiraCode" :foundry "ADBO" :height 130)
   (menu-bar-mode -1)
-  (tool-bar-mode -1)
-  (scroll-bar-mode -1))
+  ;; emacs-nox has no tool bar or scroll bars.
+  (when (fboundp 'tool-bar-mode) (tool-bar-mode -1))
+  (when (fboundp 'scroll-bar-mode) (scroll-bar-mode -1)))
 
 (defun deamon-look-and-feel (frame)
   "Wrapper to run look-and-feel per FRAME with emacsclient."

@@ -4,9 +4,12 @@
 # Language-specific emacs configuration used to be assembled from the
 # development profiles; that is no longer done. The major modes for the
 # languages in profiles/development are simply listed here.
-{ pkgs, primaryUser, inputs, ... }:
+#
+# Hosts can pick a different emacs build with `profiles.emacs.package`, e.g.
+# `{ profiles.emacs.package = pkgs.emacs-nox; }` on a headless machine.
+{ config, lib, pkgs, primaryUser, inputs, ... }:
 let
-  emacsPackage = pkgs.emacs;
+  emacsPackage = config.profiles.emacs.package;
 
   darkplum-theme = emacsPackage.pkgs.melpaBuild {
     pname = "darkplum-theme";
@@ -106,7 +109,14 @@ let
   ];
 in
 {
-  home-manager.users.${primaryUser} = {
+  options.profiles.emacs.package = lib.mkOption {
+    type = lib.types.package;
+    default = pkgs.emacs;
+    defaultText = lib.literalExpression "pkgs.emacs";
+    description = "The emacs build to install and run as the user daemon.";
+  };
+
+  config.home-manager.users.${primaryUser} = {
     programs.emacs = {
       enable = true;
       package = emacsPackage;
