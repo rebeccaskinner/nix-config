@@ -1,0 +1,55 @@
+cabal-version:      3.0
+name:               xmonad-config
+version:            0.1.0.0
+synopsis:           Development harness for the xmonad configuration in config/
+build-type:         Simple
+
+-- This package exists for `cabal repl`, `cabal test`, and `nix flake check`.
+-- The deployed xmonad binary is still built by the NixOS xmonad module from
+-- config/xmonad.hs and config/lib. Keep build-depends in sync with
+-- services.xserver.windowManager.xmonad.extraPackages in default.nix.
+
+common shared
+  default-language: GHC2021
+  ghc-options:      -Wall -Wno-missing-signatures -Wno-name-shadowing
+
+library
+  import:           shared
+  hs-source-dirs:   config/lib
+  exposed-modules:
+    ColorType
+    ColorX11
+    Polybar
+    XmonadTheme
+  build-depends:
+    , aeson
+    , base
+    , bytestring
+    , containers
+    , dbus
+    , text
+    , utf8-string
+    , xmonad
+    , xmonad-contrib
+
+executable xmonad
+  import:           shared
+  hs-source-dirs:   config
+  main-is:          xmonad.hs
+  ghc-options:      -threaded
+  build-depends:
+    , base
+    , containers
+    , xmonad
+    , xmonad-config
+    , xmonad-contrib
+
+test-suite spec
+  import:           shared
+  type:             exitcode-stdio-1.0
+  hs-source-dirs:   test
+  main-is:          Spec.hs
+  build-depends:
+    , base
+    , hspec
+    , xmonad-config

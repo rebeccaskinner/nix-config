@@ -32,7 +32,15 @@
     , foundryvtt
     , llm-agents
     , ... }@inputs:
+    let
+      xmonadDev = import ./profiles/desktop-environment/xmonad/dev.nix {
+        pkgs = import nixpkgs { system = "x86_64-linux"; };
+      };
+    in
     {
+      devShells.x86_64-linux.xmonad = xmonadDev.shell;
+      checks.x86_64-linux.xmonad-config = xmonadDev.package;
+
       darwinConfigurations = {
         "gimli" = darwin.lib.darwinSystem {
           system = "aarch64-darwin";
