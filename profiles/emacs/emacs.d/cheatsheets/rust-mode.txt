@@ -1,0 +1,77 @@
+rust-mode: rust-mode + flycheck (clippy) + rustfmt on save.  No language
+server by choice, so nothing pops up: errors are underlined after each save
+and their message shows in the echo area when the cursor sits on one.
+
+Cargo (output goes to a *compilation* buffer, opened only when you run one):
+  C-c C-c C-u  rust-compile: cargo build
+  C-c C-c C-k  rust-check: cargo check
+  C-c C-c C-l  rust-run-clippy: cargo clippy, the whole project
+  C-c C-c C-t  rust-test: cargo test (C-u first: add arguments, e.g. a test name filter)
+  C-c C-c C-r  rust-run: cargo run (C-u first: interactive, for programs that read stdin)
+  M-g n        next-error: jump to the next error from the last cargo run
+  M-g p        previous-error
+M-x rust-compile-release / rust-run-release add --release.  M-x compile runs
+any other command (cargo add serde, cargo doc --open, ...).
+
+In the *compilation* buffer (evil-collection):
+    RET          jump to the error under the cursor
+    go           show it in the other window, stay here
+    gj / gk      next / previous error        TAB  next error
+    ]] / [[      next / previous file
+    gr           run the same command again (recompile)
+    q            close
+
+Diagnostics (flycheck).  Checks run on save, not while typing:
+  C-c ! n      next error in this buffer
+  C-c ! p      previous error
+  C-c ! l      list all errors in a buffer of their own
+  C-c ! h      show the full message for the error at point
+  C-c ! e      explain the error at point (rustc --explain E0502, etc.)
+  C-c ! C-w    copy the messages at point
+  C-c ! c      check now
+  C-c ! v      verify setup: which checker runs and why (start here if nothing is underlined)
+The checker is rust-clippy, with --all-targets so tests and examples are
+linted too (flycheck-rust-clippy-all-targets).  It needs a Cargo.toml; a lone
+.rs file falls back to rustc.  Clippy lints are warnings, compiler failures
+are errors.  Each comes with info notes on the same spot (the suggested fix,
+a link to the lint's docs); they show with the message.  Lints can be tuned
+per project in Cargo.toml under [lints.clippy], e.g. len_zero = "allow".
+To check with plain `cargo check' instead, for this buffer:
+M-x flycheck-select-checker RET rust-cargo.
+Long multi-line clippy messages can make the echo area grow for a moment; to
+keep it to one line: (setq eldoc-echo-area-use-multiline-p nil).
+
+Formatting (rustfmt, on every save):
+  C-c C-f      rust-format-buffer: format now
+  C-c C-n      rust-goto-format-problem: jump to where rustfmt last gave up
+If rustfmt can't parse the file it leaves the buffer untouched and says so in
+the echo area; the file still saves.  Fix the syntax error and save again.
+    M-x rust-disable-format-on-save    this buffer only (rust-enable-format-on-save undoes it)
+Style comes from rustfmt.toml (or .rustfmt.toml) in the file's directory or
+the nearest parent; with none, ~/.config/rustfmt/rustfmt.toml; with none,
+rustfmt's defaults (4-space indent, 100 columns).  The closest file wins; they
+are not merged.  Useful stable settings:
+    tab_spaces = 2          max_width = 80          use_small_heuristics = "Max"
+The edition is read from Cargo.toml and passed as --edition, as cargo fmt does.
+
+Navigation (no index; tags are not generated):
+  g d          evil-goto-definition: in this file (imenu), else search for it
+  M-g i        consult-imenu: jump to a fn/struct/impl in this buffer
+  M-s r        consult-ripgrep: search the project, e.g. "fn parse" or "struct Config"
+  C-M-a        beginning of the current fn
+  C-M-e        end of the current fn
+  C-)          forward-sexp
+  C-(          backward-sexp
+M-. (xref) only works across files with a tags table, which you build by hand
+when you want one, from the project root: M-! rg --files -t rust | etags - RET
+then M-x visit-tags-table.  It goes stale as code changes; rerun it.
+
+Editing:
+  C-c C-d      rust-dbg-wrap-or-unwrap: wrap the expression at point (or region) in dbg!(), or unwrap it
+  C-M-i        complete from open buffers (corfu, on request only; ESC TAB in a terminal)
+M-x rust-promote-module-into-dir turns foo.rs into foo/mod.rs.
+Indent is rust-indent-offset (4, matching rustfmt).  Auto-fill wraps comments
+at 100 columns; code is left for rustfmt.
+
+Toolchain: cargo, clippy and rustfmt must be on PATH, from
+profiles.development.rust or a project's direnv/nix shell (direnv-mode is on).

@@ -72,13 +72,6 @@ let
     plz
     transient
 
-    # lsp
-    lsp-mode
-    lsp-ui
-    lsp-treemacs
-    treemacs
-    dap-mode
-
     # themes
     darkplum-theme
     dracula-theme
@@ -92,7 +85,6 @@ let
     pml-mode
 
     # languages
-    cargo
     dhall-mode
     format-sql
     go-mode
@@ -103,7 +95,7 @@ let
     nixfmt
     proof-general
     protobuf-mode
-    rustic
+    rust-mode
     sql-indent
     yaml-mode
   ];
