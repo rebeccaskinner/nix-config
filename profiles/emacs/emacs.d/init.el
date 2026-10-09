@@ -481,92 +481,25 @@ from the minibuffer."
 
 (add-hook 'python-mode-hook 'my-python-mode-hook)
 
+;; Rust Config
+
 (setq rust-format-on-save t
       ;; When rustfmt fails (usually a syntax error) leave the buffer
       ;; and the cursor alone; the reason goes to the echo area, and
       ;; C-c C-n jumps to it on request.
       rust-format-show-buffer nil
-      rust-format-goto-problem nil
-      ;; Lint tests, examples and benches too, not just the library and
-      ;; binaries, so errors inside #[cfg(test)] modules get underlined.
-      flycheck-rust-clippy-all-targets t)
+      rust-format-goto-problem nil)
 
-;; cargo reports paths relative to the workspace root, but flycheck runs
-;; clippy from the crate's directory. Its rust-cargo checker corrects
-;; for that and rust-clippy doesn't, so in a workspace member every
-;; error lands on "another file" (a note at the top of the buffer)
-;; instead of being underlined.  Give clippy the same correction.
-;; --all-targets builds the library twice (plain and as the test
-;; harness), so each lint also arrives twice; keep one of each.
 (require 'flycheck)
-(defun flycheck-rust-clippy-error-filter (errors)
-  "Resolve ERRORS' file names against the cargo workspace root, drop repeats."
-  (let ((root (flycheck-rust-cargo-workspace-root)))
-    (dolist (err errors)
-      (when (flycheck-error-filename err)
-        (setf (flycheck-error-filename err)
-              (expand-file-name (flycheck-error-filename err) root))))
-    (seq-uniq (flycheck-rust-error-filter errors)
-              (lambda (a b)
-                (equal (list (flycheck-error-filename a) (flycheck-error-line a)
-                             (flycheck-error-column a) (flycheck-error-level a)
-                             (flycheck-error-message a))
-                       (list (flycheck-error-filename b) (flycheck-error-line b)
-                             (flycheck-error-column b) (flycheck-error-level b)
-                             (flycheck-error-message b)))))))
-(setf (flycheck-checker-get 'rust-clippy 'error-filter)
-      #'flycheck-rust-clippy-error-filter)
-
-(defun rust-edition-from-cargo ()
-  "Return the edition in the nearest Cargo.toml that names one, or nil.
-A crate using `edition.workspace = true' has no plain `edition = \"...\"'
-line, so the search carries on up to the workspace root's Cargo.toml."
-  (let ((dir default-directory)
-        edition)
-    (while (and (not edition)
-                dir
-                (setq dir (locate-dominating-file dir "Cargo.toml")))
-      (with-temp-buffer
-        (insert-file-contents (expand-file-name "Cargo.toml" dir))
-        (when (re-search-forward "^edition *= *\"\\([0-9]+\\)\"" nil t)
-          (setq edition (match-string 1))))
-      (let ((parent (file-name-directory (directory-file-name dir))))
-        (setq dir (unless (equal parent dir) parent))))
-    edition))
-
-;; rustfmt reads the buffer from stdin, so unlike `cargo fmt' it can't
-;; see Cargo.toml and would assume the 2015 edition, where `async fn'
-;; doesn't parse.  rust-mode runs rustfmt from its *rustfmt* buffer,
-;; so a buffer-local value wouldn't reach it; bind the global one for
-;; the duration of the call instead.
-(defvar rust-rustfmt-switches)
-(defun rust-format-with-cargo-edition (format-buffer)
-  "Call FORMAT-BUFFER with rustfmt's --edition taken from Cargo.toml."
-  (let* ((edition (rust-edition-from-cargo))
-         (rust-rustfmt-switches (if edition
-                                    (append (list "--edition" edition)
-                                            rust-rustfmt-switches)
-                                  rust-rustfmt-switches)))
-    (funcall format-buffer)))
-(advice-add 'rust-format-buffer :around #'rust-format-with-cargo-edition)
-
 (defun my-rust-mode-hook ()
   "Configure settings for rust."
   (default-programming-config)
-  ;; Match rustfmt: 100 columns, and auto-fill only wraps comments.
-  (setq fill-column 100)
-  (setq-local comment-auto-fill-only-comments t)
-  ;; flycheck tries rust-cargo, then rust (rustc on this one file),
-  ;; then rust-clippy. In a cargo project skip the first two so clippy
-  ;; runs; outside one, clippy can't run and rustc is what's left.
-  (when (locate-dominating-file default-directory "Cargo.toml")
-    (setq-local flycheck-disabled-checkers
-                (append '(rust-cargo rust) flycheck-disabled-checkers)))
-  ;; Without a TAGS file xref's etags backend asks for one, so `g d'
-  ;; skips xref: imenu for this file, then a plain search.
-  (setq-local evil-goto-definition-functions
-              (remq 'evil-goto-definition-xref evil-goto-definition-functions)))
 
+  ;; 2 is the correct amount of indentation
+  (setq-local rust-indent-offset 2)
+
+  (setq-local comment-auto-fill-only-comments t)
+  )
 (add-hook 'rust-mode-hook 'my-rust-mode-hook)
 
 
