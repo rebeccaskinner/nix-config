@@ -322,17 +322,6 @@ DSNhxHVhjDOOxF8dnOQ=
 
   virtualisation.libvirtd.enable = false;
 
-  programs.obs-studio = {
-    enable = true;
-    enableVirtualCamera = true;
-    plugins = with pkgs.obs-studio-plugins; [
-      wlrobs
-      obs-backgroundremoval
-      obs-pipewire-audio-capture
-      obs-source-record
-    ];
-  };
-
   users.users.rebecca = {
     isNormalUser = true;
     home = "/home/rebecca";
