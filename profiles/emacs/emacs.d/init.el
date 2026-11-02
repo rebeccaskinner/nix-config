@@ -25,6 +25,10 @@
   (require 'evil-org-agenda)
   (evil-org-agenda-set-keys))
 
+;; Disable the audible bell
+;; use (setq visible-bell t) if you want to enable the visual bell
+(setq ring-bell-function 'ignore)
+
 ;; Load the theme once; it applies to every later frame, including
 ;; frames the daemon creates.  Per-frame work is limited to font and
 ;; chrome below.
